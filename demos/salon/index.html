@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio Nové — Friseur und Farbe in Augsburg</title>
+<link rel="preload" as="image" href="images/hero.webp" fetchpriority="high">
+<style>
+img[style*="data:image/webp"]{animation:bildScharf .45s ease forwards}
+@keyframes bildScharf{from{filter:blur(6px)}to{filter:none}}
+@media (prefers-reduced-motion:reduce){img[style*="data:image/webp"]{animation:none}}
+</style>
+
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<style>
+  :root{
+    --bg:#EFE8DE; --bg-2:#E7DFD2; --surface:#FAF6EF; --ink:#28231D; --ink-soft:#6E6456; --hair:#D8CEBD;
+    --accent:#A77E45; --accent-ink:#8A6533; --on-accent:#FBF7F0; --overlay:rgba(28,22,14,.34); color-scheme:light;
+  }
+  :root[data-theme="dark"]{
+    --bg:#15120D; --bg-2:#1C1811; --surface:#201B14; --ink:#EFE7DA; --ink-soft:#A99C86; --hair:#302A20;
+    --accent:#D2A768; --accent-ink:#D2A768; --on-accent:#15120D; --overlay:rgba(8,6,3,.46); color-scheme:dark;
+  }
+  *{box-sizing:border-box} ::selection{background:var(--accent);color:var(--on-accent)}
+  html{scroll-behavior:smooth}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:clamp(16px,1.05vw,18px);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  *{scrollbar-width:thin;scrollbar-color:var(--hair) transparent}*::-webkit-scrollbar{width:10px;height:10px}*::-webkit-scrollbar-thumb{background:var(--hair)}
+  h1,h2,h3,.serif{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;line-height:1.03;margin:0}
+  p{margin:0}a{color:inherit;text-decoration:none}img{display:block;max-width:100%;height:auto}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .wrap{width:min(1160px,100% - 3rem);margin-inline:auto}
+  .label{font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;font-weight:700;color:var(--accent-ink)}
+  .tnum{font-variant-numeric:tabular-nums}
+  header.nav{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:.95rem 0}
+  .brand{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.7rem;letter-spacing:.06em}
+  .nav-links{display:flex;gap:2rem}.nav-links a{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);transition:color .2s}.nav-links a:hover{color:var(--ink)}
+  .nav-right{display:flex;align-items:center;gap:1.1rem}
+  .tt{background:none;border:0;color:var(--ink-soft);cursor:pointer;width:30px;height:30px;display:grid;place-items:center;padding:0}.tt:hover{color:var(--accent)}.tt svg{width:20px;height:20px}
+  .pill{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--on-accent);background:var(--accent);border-radius:999px;padding:.55em 1.2em}
+  @media(max-width:760px){.nav-links{display:none}}
+  .hero{position:relative;height:min(90vh,820px);min-height:540px;display:flex;align-items:flex-end;overflow:hidden}
+  .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.28),transparent 26%,transparent 40%,rgba(0,0,0,.66))}
+  .hero-in{position:relative;z-index:2;padding-bottom:clamp(2.6rem,6vw,4.6rem);color:#FBF7F0}
+  .hero .kicker{text-shadow:0 1px 14px rgba(0,0,0,.6)}
+  .hero h1{font-size:clamp(3.4rem,11vw,8.5rem);font-weight:500;letter-spacing:.02em;line-height:.92;text-shadow:0 2px 30px rgba(0,0,0,.35)}
+  .hero .tag{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(1.3rem,2.2vw,1.9rem);margin-top:.4rem;text-shadow:0 1px 16px rgba(0,0,0,.4)}
+  .hero .cta{margin-top:1.7rem}
+  .hero .kicker,.hero h1,.hero .tag,.hero .cta{opacity:0;transform:translateY(22px)}
+  .on .hero .kicker{opacity:.95;transform:none;transition:.7s ease .05s}
+  .on .hero h1{opacity:1;transform:none;transition:.9s cubic-bezier(.2,.9,.2,1) .12s}
+  .on .hero .tag{opacity:1;transform:none;transition:.8s ease .3s}
+  .on .hero .cta{opacity:1;transform:none;transition:.7s ease .45s}
+  @media(prefers-reduced-motion:reduce){.hero *{opacity:1!important;transform:none!important}}
+  .btn{display:inline-flex;align-items:center;gap:.5em;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--on-accent);background:var(--accent);border-radius:999px;padding:.85em 1.6em;transition:transform .18s}.btn:hover{transform:translateY(-2px)}
+  section{padding:clamp(4rem,8vw,6.5rem) 0}
+  .sec-head{max-width:54ch;margin-bottom:2.6rem}.sec-head h2{font-size:clamp(2.6rem,6vw,4.4rem);margin-top:.6rem}
+  .svc{background:var(--bg-2)}
+  .svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.2rem 3.5rem}
+  .srow{display:grid;grid-template-columns:1fr auto;gap:.4rem;align-items:baseline;padding:1rem 0;border-bottom:1px solid var(--hair)}
+  .srow .nm{font-family:"Cormorant Garamond",serif;font-size:1.7rem}
+  .srow .pr{font-family:"Cormorant Garamond",serif;color:var(--accent-ink);font-size:1.4rem}
+  .srow .ds{grid-column:1/-1;color:var(--ink-soft);font-size:.9rem;margin-top:.15rem}
+  @media(max-width:760px){.svc-grid{grid-template-columns:1fr;gap:0}}
+  .looks{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  .looks figure{margin:0;border-radius:6px;overflow:hidden;background:var(--surface);position:relative}
+  .looks img{width:100%;height:100%;object-fit:cover;aspect-ratio:3/4;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+  .looks figure:hover img{transform:scale(1.04)}
+  .looks figcaption{position:absolute;left:.9rem;bottom:.8rem;color:#fff;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.2rem;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+  @media(max-width:760px){.looks{grid-template-columns:1fr 1fr}}
+  .team{background:var(--bg-2)}
+  .team-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2rem,5vw,4.5rem);align-items:center}
+  .team .ph{border-radius:6px;overflow:hidden;background:var(--surface)}.team .ph img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5}
+  .team h2{font-size:clamp(2.2rem,4.5vw,3.4rem);margin:.6rem 0 1.2rem}
+  .team p+p{margin-top:1rem}
+  @media(max-width:760px){.team-grid{grid-template-columns:1fr;gap:2rem}}
+  .book{text-align:center}
+  .book h2{font-size:clamp(2.6rem,6vw,4.6rem)}.book .lead{color:var(--ink-soft);max-width:38ch;margin:1rem auto 2rem}
+  .book .actions{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;align-items:center}
+  .book .call{border-bottom:1.5px solid var(--hair);padding-bottom:2px}.book .call:hover{border-color:var(--accent)}
+  footer{padding:3rem 0;border-top:1px solid var(--hair)}
+  .foot-in{display:flex;justify-content:space-between;gap:1.4rem;flex-wrap:wrap;align-items:center;color:var(--ink-soft);font-size:.85rem}.foot-in .brand{color:var(--ink);font-size:1.4rem}
+</style>
+<header class="nav"><div class="wrap nav-in">
+  <a class="brand" href="#top">STUDIO NOVÉ</a>
+  <nav class="nav-links"><a href="#services">Leistungen</a><a href="#looks">Arbeiten</a><a href="#team">Studio</a><a href="#book">Termin</a></nav>
+  <div class="nav-right"><button class="tt" id="tb" aria-label="Hell oder dunkel umschalten"><svg id="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></svg></button><a href="#book" class="pill">Termin buchen</a></div>
+</div></header>
+<main id="top">
+  <section class="hero"><img src="images/hero.webp" alt="Warmer, eleganter Innenraum des Salons mit runden Spiegeln und Holz" width="1100" height="603" fetchpriority="high" decoding="async" style="background-image:url(data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAAAQBACdASoYAA0APuleqE0pJSQiMAgBIB0JQBOmUABP+kp9oalOf/fB2AD+CLo4SQAi8Rane740zfr3+MVIL87ZBNjKiCkZIyudog0xWr8NViJ2Ct/SdrWzVnTtObWzN3+ekIX2v7Wz5UkeEIBfPP011ghx+swdOSA+sozxmOYuZVyah8MQUp7kA9K3NJsD9wyP1QojIZuLtwAA);background-size:cover;background-position:center">
+    <div class="wrap hero-in">
+      <p class="label kicker" style="color:#EFE7DA">Schnitt &amp; Farbe · Augsburg</p>
+      <h1>Studio Nové</h1>
+      <p class="tag">Schnitte mit Ruhe, Farbe mit Leuchtkraft.</p>
+      <a href="#book" class="btn cta">Termin vereinbaren →</a>
+    </div>
+  </section>
+
+  <section class="svc" id="services"><div class="wrap">
+    <div class="sec-head"><p class="label">Leistungen</p><h2>Was wir machen — und was es kostet.</h2></div>
+    <div class="svc-grid">
+      <div>
+        <div class="srow"><span class="nm">Schnitt &amp; Styling</span><span class="pr tnum">€65</span><span class="ds">Beratung, Waschen, Präzisionsschnitt, Föhnen.</span></div>
+        <div class="srow"><span class="nm">Balayage</span><span class="pr tnum">€180</span><span class="ds">Von Hand gemalt, weich herauswachsend. Inklusive Glanz und Styling.</span></div>
+      </div>
+      <div>
+        <div class="srow"><span class="nm">Komplette Farbe</span><span class="pr tnum">€120</span><span class="ds">In einem Durchgang, Ansatz bis Spitzen, abgetönt.</span></div>
+        <div class="srow"><span class="nm">Föhnen &amp; Wellen</span><span class="pr tnum">€45</span><span class="ds">Styling für den Anlass, hält den ganzen Abend.</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <section id="looks"><div class="wrap">
+    <div class="sec-head"><p class="label">Aktuelle Arbeiten</p><h2>Ein paar, auf die wir stolz sind.</h2></div>
+    <div class="looks">
+      <figure><img src="images/look-blowout.webp" alt="Glänzend glatt geföhntes braunes Haar" width="1280" height="1688" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRtoAAABXRUJQVlA4IM4AAAAwBQCdASoYACAAPulorFApJaQiqAqpIB0JQBOgZYBPmDrkDMi2Byo3q0uVEH7SSRLqAAD8XVWvS+pai/kJg6a+meBYAQ8enaqJQUdqSGn3wVWJR5ehLt2HyH1mvMrttoPocEQTmv2RcpLNPNuw8hpYEp4hL7CVJaUZvy6WcS0lvUfbnmFZek9R103nCwHng1p4SIXUPBU00JMKMCWmd/KxhFezejNmmASgB4rhns7nHniwsfxwIyBKhDM0jOBFcdQ5BQeP1ph36PCB4/AAAA==);background-size:cover;background-position:center"><figcaption>Spiegelglanz</figcaption></figure>
+      <figure><img src="images/look-balayage.webp" alt="Warmes blondes Balayage mit weichen Wellen von hinten" width="1280" height="1707" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAADwBQCdASoYACAAPulkqU6pJaOiKA1RIB0JQBOmYTjeMZuZxQV3IJ89Ox0F1kbP1o25SBeIFE2sAAD+zBBIYyAkzinW9wH+a/r/Gt4p+Jr7ICcwOm1VX3whdRQKxO+vNbC1nG5NiHj92WuISS0daJ7OBsXPaLxdCOpQpEKPzUG7G5jaL4VW9lBqSAXfQIZIJfzQe3wj1jEsBVqpguuMkAjb1CFIX7dawxCRhdlc7GUfYr0YN3pn+TfXcmfRxmOtWYsHiliFF3wfibL0SwbmoyJPSMd3bIlxM3rQLGAA);background-size:cover;background-position:center"><figcaption>Sonnenblond</figcaption></figure>
+      <figure><img src="images/styling.webp" alt="Stylistin beim Haareschneiden im Salon" width="1280" height="846" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRtIAAABXRUJQVlA4IMYAAADwBACdASoYABAAPuleqE0pJSOiMAgBIB0JQBOg1luDiaGLkwAtxgur18f4jPTjKUAA/ushf8tn15BaHrHvEE1D0yPtrMtu+5BagSFgmqoJSiyIl4NU18WeIJQST5O6zLAP9DPNPsRJmYG/uNcWGsVUHKYRldR412bZI5vuOVvtu5p7GZA+pB+qJhSM/mwvKf5bf2xDtvHZTd2Ginrjo1PHDfZ3r8cadcjAuM6tPdJ0MmVOq6RyH4vy2D/+Q0UwsdCMHvIEAAA=);background-size:cover;background-position:center"><figcaption>Am Stuhl</figcaption></figure>
+    </div>
+  </div></section>
+
+  <section class="team" id="team"><div class="wrap team-grid">
+    <div class="ph"><img src="images/stylist.webp" alt="Porträt der leitenden Stylistin" width="1280" height="1704" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRkQBAABXRUJQVlA4IDgBAAAQBwCdASoYACAAPulep00pJSOiMAgBIB0JQBajbJUgWDq1gyHxwfIWeKWml1P2UpB/+qxwj9aaWMYs/kq9Fb+j8AD9Pj69hTlsi6A/l9ubWs8sGfWRK/85FZZzKeAEoLGzwLLzN2rXMSqCCFYN2aFdjkld+iTjEvWLpd2xOeAw75b/KTLnaIucaBUF0cDYdzq/5PUwXi1xswO5V2dsHnhanbNUkpNmpehixR7Sqc0NnBRaDZP6igYR897OiMjgRItTpht19AlTvQ/zwJmm2q01lYOV5Ld6dnYE0+jQaUIDypC12T7DTabVllPaLK9yMLvi1/HK6IKC4Z/FMBT7blhUwrBn/iHGE2XBCwy2aoPjuXDKCPq4Fp/U9XZyUf70FsdwzhgD9+O7671ydLrar1d39boFopc0wAA=);background-size:cover;background-position:center"></div>
+    <div><p class="label">Das Studio</p><h2>Kleines Team, großer Blick fürs Detail.</h2>
+      <p>Studio Nové ist ein Salon mit zwei Stühlen in der Augsburger Altstadt. Wir nehmen uns bewusst Zeit — ein Gast nach dem anderen, kein Fließband.</p>
+      <p>Lena führt das Studio. Wir sind Farbspezialistinnen und arbeiten haarschonend. Du kommst wegen des Schnitts — und bleibst wegen der Kopfmassage.</p>
+    </div>
+  </div></section>
+
+  <section class="book" id="book"><div class="wrap">
+    <p class="label">Termin</p><h2>Zeit für etwas Neues?</h2>
+    <p class="lead">Online buchen oder kurz anrufen — wir finden einen Termin.</p>
+    <div class="actions"><a href="#book" class="btn">Online buchen</a><a href="tel:+4300000000" class="call tnum">oder anrufen: 0821 000 00 00</a></div>
+  </div></section>
+</main>
+<footer><div class="wrap foot-in">
+  <span class="brand serif">STUDIO NOVÉ</span><span>Maximilianstraße 12 · 86150 Augsburg · Dienstag bis Samstag</span><span>© 2026 Studio Nové — Beispielseite von ORDÉ</span>
+</div></footer>
+<script>
+(function(){var r=document.documentElement,b=document.getElementById('tb'),i=document.getElementById('ti'),K='nove-t';
+var sun='<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';var moon='<path d="M20 14.5A7.5 7.5 0 019.5 4 7.5 7.5 0 1020 14.5Z"/>';
+function res(){return r.getAttribute('data-theme')||'light';}function pa(){i.innerHTML=res()==='dark'?moon:sun;}
+try{var s=localStorage.getItem(K);if(s)r.setAttribute('data-theme',s);}catch(e){}pa();
+b.onclick=function(){var n=res()==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem(K,n);}catch(e){}pa();};
+requestAnimationFrame(function(){requestAnimationFrame(function(){document.body.classList.add('on');});});})();
+</script>
+<div id="ordeBalken">
+  <a href="../../referenzen.html">&larr; Zur&uuml;ck zu ORD&Eacute;</a>
+  <span>Beispielseite &middot; kein echter Betrieb</span>
+  <a class="ordeCta" href="../../anfrage.html">So eine Seite anfragen</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px;box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+body{padding-bottom:64px}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px;font-size:13px}
+  #ordeBalken span{display:none}
+  body{padding-bottom:58px}
+}
+@media print{#ordeBalken{display:none}}
+</style>

@@ -1,0 +1,68 @@
+name: Demos hochladen
+
+# Laedt die Beispielseiten per FTP nach /demos/ auf den Server.
+#
+# Getrennt vom Upload der Website: beide schreiben in verschiedene Ordner
+# und loeschen nichts voneinander (dangerous-clean-slate steht auf false).
+#
+# Vorher einrichten unter Settings -> Secrets and variables -> Actions:
+#   FTP_SERVER     Serveradresse von Hostinger
+#   FTP_USERNAME   FTP-Benutzername
+#   FTP_PASSWORD   FTP-Passwort
+#
+# Solange die Secrets fehlen, wird das Hochladen mit einem Hinweis
+# uebersprungen statt fehlzuschlagen.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: demos-hochladen
+  cancel-in-progress: false
+
+jobs:
+  hochladen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dateien holen
+        uses: actions/checkout@v4
+
+      - name: Pruefen, ob die Zugangsdaten hinterlegt sind
+        id: pruefung
+        run: |
+          if [ -z "${{ secrets.FTP_SERVER }}" ]; then
+            echo "bereit=nein" >> "$GITHUB_OUTPUT"
+            echo "::notice::Hochladen uebersprungen - FTP_SERVER ist noch nicht gesetzt."
+          else
+            echo "bereit=ja" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Beispielseiten hochladen
+        if: steps.pruefung.outputs.bereit == 'ja'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./demos/
+          server-dir: ./public_html/demos/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/*.md
+
+      - name: Vorschaubilder hochladen
+        if: steps.pruefung.outputs.bereit == 'ja'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./vorschau/
+          server-dir: ./public_html/demos/vorschau/
+          dangerous-clean-slate: false

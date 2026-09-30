@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+__pycache__/
+*.py[cod]
+.venv/
+*.zip
+*.log
+*.bak
+vorschau/*.png
+.env
+.env.*

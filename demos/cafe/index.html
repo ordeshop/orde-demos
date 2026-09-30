@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MØRK — Kaffee und Frühstück in Landsberg am Lech</title>
+<link rel="preload" as="image" href="images/hero.webp" fetchpriority="high">
+<style>
+img[style*="data:image/webp"]{animation:bildScharf .45s ease forwards}
+@keyframes bildScharf{from{filter:blur(6px)}to{filter:none}}
+@media (prefers-reduced-motion:reduce){img[style*="data:image/webp"]{animation:none}}
+</style>
+
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<style>
+  :root{--bg:#F2EEE4;--bg-2:#EAE4D6;--surface:#FBF8F1;--ink:#2A2620;--ink-soft:#6C6455;--hair:#DBD3C2;--accent:#5E6B4C;--accent-ink:#4A553C;--on-accent:#F7F4EC;--overlay:rgba(28,24,16,.42);color-scheme:light}
+  :root[data-theme="dark"]{--bg:#14120D;--bg-2:#1B1811;--surface:#1F1B14;--ink:#EFEADD;--ink-soft:#A79C86;--hair:#302A20;--accent:#A9BE86;--accent-ink:#A9BE86;--on-accent:#14120D;--overlay:rgba(8,6,3,.5);color-scheme:dark}
+  *{box-sizing:border-box}::selection{background:var(--accent);color:var(--on-accent)}
+  html{scroll-behavior:smooth}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:clamp(16px,1.05vw,18px);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  *{scrollbar-width:thin;scrollbar-color:var(--hair) transparent}*::-webkit-scrollbar{width:10px;height:10px}*::-webkit-scrollbar-thumb{background:var(--hair)}
+  h1,h2,h3,.serif{font-family:"Fraunces",Iowan Old Style,Georgia,"Times New Roman",serif;font-weight:500;line-height:1.02;margin:0}
+  p{margin:0}a{color:inherit;text-decoration:none}img{display:block;max-width:100%;height:auto}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .wrap{width:min(1160px,100% - 3rem);margin-inline:auto}
+  .label{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--accent-ink)}
+  .tnum{font-variant-numeric:tabular-nums}
+  header.nav{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:.95rem 0}
+  .brand{font-family:"Fraunces",serif;font-weight:600;font-size:1.5rem;letter-spacing:.02em}
+  .nav-links{display:flex;gap:2rem}.nav-links a{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);transition:color .2s}
+  .nav-links a:hover,.nav-links a.active{color:var(--ink)}.nav-links a.active{border-bottom:1.5px solid var(--accent);padding-bottom:2px}
+  .nav-right{display:flex;align-items:center;gap:1.1rem}
+  .tt{background:none;border:0;color:var(--ink-soft);cursor:pointer;width:30px;height:30px;display:grid;place-items:center;padding:0}.tt:hover{color:var(--accent)}.tt svg{width:20px;height:20px}
+  .pill{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--on-accent);background:var(--accent);border-radius:999px;padding:.55em 1.1em}
+  @media(max-width:760px){.nav-links{display:none}}
+  .btn{display:inline-flex;align-items:center;gap:.5em;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--on-accent);background:var(--accent);border-radius:999px;padding:.85em 1.5em;transition:transform .18s}.btn:hover{transform:translateY(-2px)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--hair)}.btn.ghost:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .hero{position:relative;height:min(82vh,720px);min-height:500px;display:flex;align-items:flex-end;overflow:hidden}
+  .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.30),transparent 28%,transparent 42%,rgba(0,0,0,.66))}
+  .hero-in{position:relative;z-index:2;padding-bottom:clamp(2.5rem,6vw,4.5rem);color:#FBF8F1}
+  .hero .kicker,.hero .meta{text-shadow:0 1px 14px rgba(0,0,0,.65)}
+  .hero h1{font-size:clamp(4rem,15vw,10rem);font-weight:600;letter-spacing:.01em;line-height:.9;text-shadow:0 2px 30px rgba(0,0,0,.35)}
+  .hero .tag{font-size:clamp(1.1rem,1.7vw,1.4rem);margin-top:.8rem;max-width:34ch;text-shadow:0 1px 16px rgba(0,0,0,.4)}
+  .hero .meta{display:flex;gap:1.6rem;flex-wrap:wrap;margin-top:1.6rem;font-size:.9rem}
+  .hero .cta{margin-top:1.8rem;display:flex;gap:1rem;flex-wrap:wrap}
+  .hero .btn.ghost{background:rgba(255,255,255,.08);color:#FBF8F1;border-color:rgba(251,248,241,.55)}.hero .btn.ghost:hover{border-color:#FBF8F1;color:#FBF8F1;background:rgba(255,255,255,.16)}
+  section{padding:clamp(4rem,8vw,6.5rem) 0}
+  .sec-head{max-width:52ch;margin-bottom:2.4rem}.sec-head h2{font-size:clamp(2.2rem,5vw,3.4rem);margin-top:.8rem}
+  .split{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+  .split .ph{border-radius:8px;overflow:hidden;background:var(--surface)}.split .ph img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/3}
+  .split p+p{margin-top:1rem;color:var(--ink-soft)}
+  @media(max-width:760px){.split{grid-template-columns:1fr;gap:1.6rem}}
+  .hl{background:var(--bg-2)}
+  .hl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2rem}
+  .hl .c{background:var(--surface);border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+  .hl .c img{width:100%;height:150px;object-fit:cover}
+  .hl .c .b{padding:1rem 1.1rem 1.3rem}
+  .hl .c h3{font-size:1.3rem;margin-bottom:.2rem}.hl .c .p{color:var(--accent-ink);font-family:"Fraunces",serif}
+  @media(max-width:760px){.hl-grid{grid-template-columns:1fr}}
+  .visit{background:var(--bg-2)}
+  .visit-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,4.5rem)}
+  .hours .row{display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--hair);font-size:.95rem}
+  .hours .row.today{color:var(--accent-ink);font-weight:700}
+  .addr{font-family:"Fraunces",serif;font-size:1.6rem;line-height:1.3;margin-bottom:.8rem}
+  @media(max-width:760px){.visit-grid{grid-template-columns:1fr;gap:2.2rem}}
+  footer{padding:3rem 0;border-top:1px solid var(--hair)}
+  .foot-in{display:flex;justify-content:space-between;gap:1.4rem;flex-wrap:wrap;align-items:center;color:var(--ink-soft);font-size:.85rem}.foot-in .brand{color:var(--ink);font-size:1.2rem}
+  .foot-nav{display:flex;gap:1.4rem;flex-wrap:wrap}.foot-nav a:hover{color:var(--accent-ink)}
+</style>
+<header class="nav"><div class="wrap nav-in">
+  <a class="brand" href="index.html">MØRK</a>
+  <nav class="nav-links"><a href="index.html" class="active">Start</a><a href="menu.html">Menü</a><a href="ueber.html">Über uns</a></nav>
+  <div class="nav-right"><button class="tt" id="tb" aria-label="Hell oder dunkel umschalten"><svg id="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></svg></button><a href="#visit" class="pill">Ab 8 Uhr geöffnet</a></div>
+</div></header>
+<main id="top">
+  <section class="hero" style="padding:0"><img src="images/hero.webp" alt="Heller Innenraum des Cafés MØRK mit Holztheke im Morgenlicht" width="1100" height="606" fetchpriority="high" decoding="async" style="background-image:url(data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAABQBACdASoYAA0APulgp00pJaOiMAgBIB0JQBdgMZPZ+qz1TZnsaYHsv5YAAP6U6ApXBj0u4P18fyDU20G0QZg12ZejSl4bZuvZy4qdsMeo0rZeSiN60+qDHx7UjCZ1GIci6d+Z9BWUxRXJSoajJy/4qlsmD0EIOSc6UMe2nxuITQYPfDWPhXqgGUdJEuVW0aCIa41aDSKyKQDgDRdLKBAA);background-size:cover;background-position:center">
+    <div class="wrap hero-in">
+      <p class="label kicker" style="color:#EFEADD">Spezialitätenkaffee · Landsberg am Lech</p>
+      <h1>MØRK</h1>
+      <p class="tag">Kaffee in kleinen Chargen und Frühstück den ganzen Tag, in einem Raum für lange Morgen.</p>
+      <div class="meta"><span>◔ Täglich ab 8 Uhr</span><span>◈ Eigene Röstung</span><span>❋ Vegane Auswahl</span></div>
+      <div class="cta"><a href="menu.html" class="btn">Zur Karte →</a><a href="ueber.html" class="btn ghost">Über uns</a></div>
+    </div>
+  </section>
+
+  <section class="hl"><div class="wrap">
+    <div class="sec-head"><p class="label">Beliebt</p><h2>Ein paar Lieblinge.</h2></div>
+    <div class="hl-grid">
+      <div class="c"><img src="images/coffee.webp" alt="Flat White mit Latte Art" width="1280" height="1584" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRjIBAABXRUJQVlA4ICYBAADwBgCdASoYAB4APuloqU6pJiOiMBgIASAdCUAWovgtmAN8ywvG3KHlWIID/PA4txxeok5BDyg6HI2HbQB3esAAAP7KcX1qu9UMCszB43jig/Zbz9hQNjypox4ZoIBnF7oxJc7khDPahK6WMmZPqMUNM99isXnYpV9e/44PzQwB+GqYnbTZ5GeQqIdq4WEM4v4+CMAbdX62SFGS8CKEJP+iSxSSUnEz5TDfAKVyoCsHuOK7Rem4ibJ4n1tFfcq8U4erdsXxMwpAlrda94YhXzb3mAub/UGgQOe08n5lmNQLE8HVuOzQhQBGWHtzpAOObes0wM3qSGxuU90UFEZCtodPgrdZDuUzE8KMIvTd+sXRml757R/u+/NID7xIsZyeCUzN4ERwAAA=);background-size:cover;background-position:center"><div class="b"><h3>Flat White</h3><div class="p tnum">4.2 €</div></div></div>
+      <div class="c"><img src="images/brunch.webp" alt="Avocado-Brot zum Frühstück" width="1280" height="1274" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRgYBAABXRUJQVlA4IPoAAADwBQCdASoYABgAPulqrFGpJaQiqAgBIB0JQBdmW+nANpKN9rgn5xZp59osnnCIhU3/VgtEi/EAAAD+5z8mRsxNKh4t12/dICH3n+frPIlA2oz13SnENDQSMLg5uplyEdNSjZKU7wrfPimPrZ6Pvm16h6aYFgpkYymFucvkB/NKn15fqsTZ6kf/VQow//vmL+t6lnoNJb69oQxx75HJeyi2+XzrJR2SHuoT3+tfipVwkzRj8hXoQjqKANE6A3IU5ukHnXC4tEqgX81HI2vro7HV0vbKwfoB8LG2hJj/KQCNmw1FXa/TMDqSU63FMa5eF+0yarnKSADUAAAA);background-size:cover;background-position:center"><div class="b"><h3>Avocado Toast</h3><div class="p tnum">11 €</div></div></div>
+      <div class="c"><img src="images/counter.webp" alt="Frisches Gebäck an der Theke" width="1280" height="850" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRq4AAABXRUJQVlA4IKIAAACwBACdASoYABAAPulep00pJSOiMAgBIB0JQBbZtQYwFUgKyfqX2SZQ9ZeXfRJgAP7vzBRZnsVE0n90aN+gTwY4S6xqCKXJlUQpfIsnyekjNZ44ESQR8AneeFKNbSyvFPh2HPqR2s3yNtj6oSyXrSE9UtbG43ZOgitqDeMUonrS5DoI3UFC46GblSU4v/0HwFGQakIbINgRkXfN9q+q/yumIAA=);background-size:cover;background-position:center"><div class="b"><h3>Zimtschnecke</h3><div class="p tnum">4.5 €</div></div></div>
+    </div>
+    <a href="menu.html" class="btn ghost">Ganze Karte ansehen →</a>
+  </div></section>
+
+  <section><div class="wrap split">
+    <div class="ph"><img src="images/barista.webp" alt="Barista bei der Zubereitung eines Kaffees" width="1280" height="1706" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRkABAABXRUJQVlA4IDQBAAAwBgCdASoYACAAPuloqU6pJiOiMBgIASAdCUAYZwFxsBW8NUyynVi9INuiZwKo75QqaNvdNctYwsxQAP7z28CXlCuQn/gur9aFvc37cfU5vDKzR8G0N/TQsV6xwY02KYsLdiWXWHex8vGvWwF8uHdr+H9nQEBwyPYx3/fuM7NGvbxo/eLUkW66u+Ku5pVjLetcVr5RV5YRb1dJsDj6jIyfRVeYIjcdDB1epe3QM5PnL65bWY5FRdtv3fEp836Gfp8Tr0RtqzwW9BHvGE+Y7qK8e/ZtEo+EYdbvzA8LSE+HFafzOG44pklxIqeRxLkqqzfVhCGc/r00c6wUJyV3KOHdJP91jolTqX6yybyf53TmUgIRO53fj/e2dSZ/b3Bx/quxMTJlVREF0LQcdXzaFK+oMBcAAA==);background-size:cover;background-position:center"></div>
+    <div><p class="label">MØRK</p><h2 style="margin:.6rem 0 1.2rem">Kaffee, mit Ruhe gemacht.</h2>
+      <p>Wir rösten in kleinen Chargen, mahlen frisch pro Tasse und nehmen uns Zeit — für den Kaffee und für dich.</p>
+      <p>Die Küche kocht den ganzen Tag Frühstück: einfach, saisonal, gut. <a href="ueber.html" style="color:var(--accent-ink);font-weight:600">Mehr über uns →</a></p>
+    </div>
+  </div></section>
+
+  <section class="visit" id="visit"><div class="wrap visit-grid">
+    <div><p class="label">Öffnungszeiten</p>
+      <div class="hours" style="margin-top:1rem">
+        <div class="row today"><span>Montag bis Freitag</span><span class="tnum">8 – 17</span></div>
+        <div class="row"><span>Samstag</span><span class="tnum">9 – 17</span></div>
+        <div class="row"><span>Sonntag</span><span class="tnum">9 – 15</span></div>
+      </div>
+    </div>
+    <div><p class="label">Wo</p>
+      <p class="addr" style="margin-top:1rem">Kirchstraße 7<br>86899 Landsberg am Lech</p>
+      <p style="color:var(--ink-soft);max-width:32ch">An der Ecke beim Altstadtplatz. Hunde willkommen, Laptops bis mittags.</p>
+      <a href="#top" class="btn" style="margin-top:1.4rem">Route öffnen →</a>
+    </div>
+  </div></section>
+</main>
+<footer><div class="wrap foot-in">
+  <span class="brand serif">MØRK</span>
+  <nav class="foot-nav"><a href="index.html">Start</a><a href="menu.html">Menü</a><a href="ueber.html">Über uns</a></nav>
+  <span>© 2026 MØRK — Beispielseite von ORDÉ</span>
+</div></footer>
+<script>
+(function(){var r=document.documentElement,b=document.getElementById('tb'),i=document.getElementById('ti'),K='mork-t';
+var sun='<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';var moon='<path d="M20 14.5A7.5 7.5 0 019.5 4 7.5 7.5 0 1020 14.5Z"/>';
+function res(){return r.getAttribute('data-theme')||'light';}function pa(){i.innerHTML=res()==='dark'?moon:sun;}
+try{var s=localStorage.getItem(K);if(s)r.setAttribute('data-theme',s);}catch(e){}pa();
+b.onclick=function(){var n=res()==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem(K,n);}catch(e){}pa();};})();
+</script>
+<div id="ordeBalken">
+  <a href="../../referenzen.html">&larr; Zur&uuml;ck zu ORD&Eacute;</a>
+  <span>Beispielseite &middot; kein echter Betrieb</span>
+  <a class="ordeCta" href="../../anfrage.html">So eine Seite anfragen</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px;box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+body{padding-bottom:64px}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px;font-size:13px}
+  #ordeBalken span{display:none}
+  body{padding-bottom:58px}
+}
+@media print{#ordeBalken{display:none}}
+</style>

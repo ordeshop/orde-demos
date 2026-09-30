@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elektro Brandl — Elektriker in Landsberg am Lech und Umgebung</title>
+<link rel="preload" as="image" href="images/hero.webp" fetchpriority="high">
+<style>
+img[style*="data:image/webp"]{animation:bildScharf .45s ease forwards}
+@keyframes bildScharf{from{filter:blur(6px)}to{filter:none}}
+@media (prefers-reduced-motion:reduce){img[style*="data:image/webp"]{animation:none}}
+</style>
+
+<meta name="description" content="Elektrobetrieb in Landsberg am Lech: Elektroinstallation, Wallbox, Zählerschrank und Störungsdienst. Termin in der Regel innerhalb von zwei Wochen.">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<style>
+:root{
+  --bg:#F4F5F7; --flaeche:#FFFFFF; --ink:#141922; --ink-soft:#5B6470;
+  --linie:#DDE1E7; --signal:#0B5FA5; --signal-2:#0A4C84; --gelb:#F2B705;
+  --radius:12px;
+}
+:root[data-theme="dark"]{
+  --bg:#0E1218; --flaeche:#161C25; --ink:#E9EDF3; --ink-soft:#9AA5B4;
+  --linie:#26303C; --signal:#4DA3E8; --signal-2:#6FB8F0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hanken Grotesk","Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--signal)}
+.wrap{width:min(1140px,100% - 2.5rem);margin-inline:auto}
+h1,h2,h3{font-family:"Fraunces","Iowan Old Style",Georgia,serif;font-weight:400;line-height:1.1;letter-spacing:-.015em;margin:0 0 .5em}
+h1{font-size:clamp(2.2rem,6vw,3.7rem)}
+h2{font-size:clamp(1.55rem,4vw,2.3rem)}
+h3{font-family:inherit;font-weight:600;font-size:1.06rem;margin:0 0 .3em}
+p{margin:0 0 1.05em}
+.label{display:inline-block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--signal);font-weight:600;margin-bottom:.9em}
+.lead{font-size:clamp(1.02rem,2.2vw,1.2rem);color:var(--ink-soft);max-width:54ch}
+
+/* Notruf-Leiste */
+.alarm{background:var(--ink);color:#fff;font-size:.86rem;padding:9px 0}
+.alarm .wrap{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;text-align:center}
+.alarm a{color:var(--gelb);font-weight:600;text-decoration:none}
+.alarm a:hover{text-decoration:underline}
+
+/* Kopf */
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--linie)}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:66px}
+.marke{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
+.blitz{width:34px;height:34px;border-radius:9px;background:var(--signal);display:grid;place-items:center;flex:0 0 auto}
+.blitz svg{width:19px;height:19px;fill:#fff}
+.marke b{font-family:"Fraunces",Georgia,serif;font-weight:400;font-size:1.22rem;letter-spacing:.01em;display:block;line-height:1.1}
+.marke small{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;align-items:center}
+nav a{text-decoration:none;color:var(--ink);font-size:.93rem}
+nav a:hover{color:var(--signal)}
+nav a.cta{background:var(--signal);color:#fff;padding:10px 18px;border-radius:999px;font-weight:600}
+nav a.cta:hover{background:var(--signal-2);color:#fff}
+.tt{background:none;border:0;color:var(--ink-soft);cursor:pointer;padding:6px;display:grid;place-items:center}
+.tt:hover{color:var(--signal)}
+.tt svg{width:19px;height:19px}
+.burger{display:none;background:none;border:0;padding:8px;cursor:pointer}
+.burger span{display:block;width:23px;height:2px;background:var(--ink);margin:5px 0;transition:.2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.rechts{display:flex;align-items:center;gap:10px}
+
+/* Hero */
+.hero{position:relative;min-height:min(78vh,660px);display:flex;align-items:flex-end;overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,16,24,.30),rgba(10,16,24,.15) 40%,rgba(10,16,24,.82))}
+.hero-in{position:relative;z-index:2;color:#fff;padding:clamp(2.4rem,6vw,4.5rem) 0}
+.hero h1{max-width:15ch;text-shadow:0 2px 26px rgba(0,0,0,.4)}
+.hero .lead{color:#E4E9F0;text-shadow:0 1px 14px rgba(0,0,0,.5)}
+.hero .btns{display:flex;gap:11px;flex-wrap:wrap;margin-top:1.5rem}
+.merkmale{display:flex;gap:26px;flex-wrap:wrap;margin-top:1.8rem;font-size:.92rem;color:#D6DEE8}
+.merkmale span{display:flex;align-items:center;gap:8px}
+.merkmale svg{width:17px;height:17px;stroke:var(--gelb);fill:none;stroke-width:2}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--signal);color:#fff;text-decoration:none;
+  padding:13px 24px;border-radius:999px;font-size:.96rem;font-weight:600;border:1px solid var(--signal);transition:.18s}
+.btn:hover{background:var(--signal-2);border-color:var(--signal-2);transform:translateY(-1px)}
+.btn.hell{background:#fff;color:var(--ink);border-color:#fff}
+.btn.hell:hover{background:#E9EEF4;color:var(--ink)}
+.btn.klar{background:transparent;color:var(--ink);border-color:var(--linie)}
+.btn.klar:hover{background:transparent;border-color:var(--signal);color:var(--signal)}
+.hero .btn.klar{color:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.08)}
+
+section{padding:clamp(3rem,6.5vw,5.5rem) 0}
+.alt{background:var(--flaeche);border-top:1px solid var(--linie);border-bottom:1px solid var(--linie)}
+.kopf{max-width:56ch;margin-bottom:2rem}
+
+/* Leistungen */
+.leistungen{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.karte{background:var(--flaeche);border:1px solid var(--linie);border-radius:var(--radius);padding:24px;transition:.2s}
+.karte:hover{border-color:var(--signal);transform:translateY(-3px)}
+.ikon{width:38px;height:38px;border-radius:10px;background:color-mix(in srgb,var(--signal) 12%,transparent);
+  display:grid;place-items:center;margin-bottom:13px}
+.ikon svg{width:20px;height:20px;stroke:var(--signal);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.karte p{margin:0;color:var(--ink-soft);font-size:.95rem}
+
+/* Ablauf */
+.schritte{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.schritte li{counter-increment:s;background:var(--bg);border:1px solid var(--linie);border-radius:var(--radius);padding:22px;position:relative}
+.schritte li::before{content:"0" counter(s);font-family:"Fraunces",Georgia,serif;font-size:1.6rem;color:var(--signal);opacity:.35;display:block;margin-bottom:8px}
+.schritte p{margin:0;font-size:.94rem;color:var(--ink-soft)}
+
+/* Zwei Spalten mit Bild */
+.paar{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.6rem,4vw,3.4rem);align-items:center}
+.paar img{border-radius:var(--radius);width:100%;aspect-ratio:4/3;object-fit:cover}
+.paar.dreh > div:first-child{order:2}
+
+/* Gebiet */
+.orte{display:flex;flex-wrap:wrap;gap:9px;margin:1.2em 0 0;padding:0;list-style:none}
+.orte li{background:var(--bg);border:1px solid var(--linie);border-radius:999px;padding:7px 15px;font-size:.88rem;color:var(--ink-soft)}
+
+/* Stimmen */
+.stimmen{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.stimme{background:var(--flaeche);border:1px solid var(--linie);border-radius:var(--radius);padding:24px}
+.sterne{color:var(--gelb);letter-spacing:2px;font-size:.95rem;margin-bottom:9px}
+.stimme p{font-size:.97rem;margin-bottom:.9em}
+.stimme cite{font-style:normal;font-size:.86rem;color:var(--ink-soft)}
+
+/* Kontakt */
+.kontakt{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.6rem,4vw,3rem)}
+.box{background:var(--flaeche);border:1px solid var(--linie);border-radius:var(--radius);padding:26px}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 18px;font-size:.96rem}
+dt{color:var(--ink-soft)}
+dd{margin:0}
+form{display:grid;gap:13px}
+label{display:grid;gap:5px;font-size:.88rem;color:var(--ink-soft)}
+input,select,textarea{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--linie);border-radius:9px;padding:11px 13px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--signal);outline-offset:1px;border-color:var(--signal)}
+.zwei{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.klein{font-size:.83rem;color:var(--ink-soft)}
+.zeiten{list-style:none;margin:1rem 0 0;padding:0}
+.zeiten li{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.94rem}
+.zeiten li.heute{font-weight:600;color:var(--signal)}
+
+/* Fuß */
+footer{background:var(--ink);color:#A7B2C0;padding:46px 0 22px;font-size:.92rem}
+footer a{color:#A7B2C0;text-decoration:none}
+footer a:hover{color:#fff;text-decoration:underline}
+.f-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:30px}
+.f-grid h3{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin:0 0 11px;font-family:inherit}
+.f-grid ul{list-style:none;margin:0;padding:0}
+.f-grid li{margin-bottom:7px}
+.f-base{border-top:1px solid #232B36;margin-top:30px;padding-top:16px;font-size:.82rem;color:#6E7A88;
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+/* Animation */
+.rev{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.3,1)}
+.rev.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rev{opacity:1;transform:none}}
+
+@media (max-width:900px){ .paar,.kontakt{grid-template-columns:1fr} .paar.dreh > div:first-child{order:0} }
+@media (max-width:720px){
+  .burger{display:block}
+  nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--linie);padding:6px 1.25rem 16px}
+  nav.open{display:block}
+  nav ul{flex-direction:column;align-items:stretch;gap:0}
+  nav li{border-bottom:1px solid var(--linie)}
+  nav a{display:block;padding:13px 0}
+  nav a.cta{text-align:center;margin-top:12px}
+  nav li:last-child{border-bottom:0}
+  .zwei{grid-template-columns:1fr}
+  .hero .btns .btn{flex:1 1 100%;justify-content:center}
+}
+</style>
+
+<div class="alarm"><div class="wrap">
+  <span>⚡ Störung oder Stromausfall?</span>
+  <a href="tel:+4981910000000">Notdienst: 08191 000 00 00</a>
+</div></div>
+
+<header class="top"><div class="wrap top-in">
+  <a class="marke" href="#top">
+    <span class="blitz"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg></span>
+    <span><b>Elektro Brandl</b><small>Meisterbetrieb</small></span>
+  </a>
+  <button class="burger" aria-expanded="false" aria-controls="nav" aria-label="Menü öffnen"><span></span><span></span><span></span></button>
+  <div class="rechts">
+    <nav id="nav"><ul>
+      <li><a href="#leistungen">Leistungen</a></li>
+      <li><a href="#ablauf">Ablauf</a></li>
+      <li><a href="#gebiet">Einsatzgebiet</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a class="cta" href="#kontakt">Termin anfragen</a></li>
+    </ul></nav>
+    <button class="tt" id="tb" aria-label="Hell oder dunkel umschalten"><svg id="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></svg></button>
+  </div>
+</div></header>
+
+<main id="top">
+  <section class="hero" style="padding:0">
+    <img src="images/hero.webp" alt="Elektriker montiert einen Sicherungskasten in einem hellen Neubau" width="1100" height="609" fetchpriority="high" decoding="async" style="background-image:url(data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAADwAwCdASoYAA0APulgqE0pJaOiMAgBIB0JQBdl4AAy5FNAySDMrq+AAP3uxHiIAThp57KJjhDR0kQerIkBlCGFuQxH44YXdLW+I1v9tG23U9puI6TpKRy85SOSTLmT6X9UbsKHTuvnxNeUH9V20/L+x7cXypdLXbgTPe1ARyRuP8bpzuWP8CGMiV2rB798rQAAAA==);background-size:cover;background-position:center">
+    <div class="wrap hero-in">
+      <p class="label" style="color:var(--gelb)">Elektro &middot; Landsberg am Lech</p>
+      <h1>Strom ist Vertrauenssache.</h1>
+      <p class="lead">Meisterbetrieb für Elektroinstallation, Wallbox und Zählerschrank. Für Privathaushalte und Gewerbe im Umkreis von 30 Kilometern.</p>
+      <div class="btns">
+        <a href="#kontakt" class="btn hell">Termin anfragen</a>
+        <a href="tel:+4981910000000" class="btn klar">08191 000 00 00</a>
+      </div>
+      <div class="merkmale">
+        <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Meisterbetrieb seit 1998</span>
+        <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Festpreis vor Arbeitsbeginn</span>
+        <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Termin meist in 2 Wochen</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="leistungen"><div class="wrap">
+    <div class="kopf rev">
+      <p class="label">Leistungen</p>
+      <h2>Was wir für Sie machen</h2>
+      <p class="lead">Von der kaputten Steckdose bis zur kompletten Elektrik im Neubau. Wenn etwas nicht in unser Fach fällt, sagen wir Ihnen, wer es kann.</p>
+    </div>
+    <div class="leistungen">
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></div>
+        <h3>Elektroinstallation</h3><p>Neubau, Umbau und Sanierung. Leitungen, Steckdosen, Schalter und Beleuchtung, sauber geplant und dokumentiert.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="12" height="11" rx="2"/><path d="M15 11h3a2 2 0 0 1 2 2v3M7 4v3M11 4v3"/></svg></div>
+        <h3>Wallbox &amp; E-Mobilität</h3><p>Beratung zur passenden Ladeleistung, Anmeldung beim Netzbetreiber, Montage und Inbetriebnahme.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="3.5"/></svg></div>
+        <h3>Zählerschrank &amp; Sicherungen</h3><p>Erneuerung alter Verteiler nach heutigem Stand, FI-Schutzschalter, Überspannungsschutz.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><path d="M3 20h18M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/></svg></div>
+        <h3>Smart Home</h3><p>Licht, Rollläden und Heizung steuerbar machen, ohne dass Sie Informatiker sein müssen.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Störungsdienst</h3><p>Sicherung fliegt raus, kein Strom, Brandgeruch? Rufen Sie an, wir kommen so schnell es geht.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3>E-Check &amp; Prüfungen</h3><p>Prüfung Ihrer Anlage und ortsveränderlicher Geräte, mit Protokoll für Versicherung und Vermieter.</p></div>
+    </div>
+  </div></section>
+
+  <section class="alt"><div class="wrap paar">
+    <div class="rev"><img src="images/detail.webp" alt="Hände eines Elektrikers beim Verklemmen von Adern in einer Unterputzdose" width="1280" height="945" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAACwBQCdASoYABIAPulorU+pJiQiKAqpIB0JYgCdMxG2S0jY4pnOtAydSH6MpK/NTUmVJVLEPZgA/sHJbXFg3qK56CzSNp3IqtS+b0AbMAZzMKGFFxmdoEutOG5Vo6uLeRJyCThJtw1aTf0gXilYzmUpeMG6DyItY9z401ty98uvnbDVK/CEqEjtaMAxI1da4TyWm7FqJV62S+Xz54pMJ6O1acYgqD2d72KriJ3DrChTcONzGmMTAisa6leOHFEa0AA=);background-size:cover;background-position:center"></div>
+    <div class="rev">
+      <p class="label">Unsere Arbeitsweise</p>
+      <h2>Festpreis, bevor wir anfangen.</h2>
+      <p>Wir schauen uns die Sache vor Ort an und sagen Ihnen vorher, was es kostet. Keine Überraschung auf der Rechnung, keine Nachforderung, weil es länger gedauert hat.</p>
+      <p>Wenn während der Arbeit etwas auftaucht, das wir nicht sehen konnten, halten wir an und fragen Sie. Erst danach geht es weiter.</p>
+    </div>
+  </div></section>
+
+  <section id="ablauf"><div class="wrap">
+    <div class="kopf rev"><p class="label">So läuft es ab</p><h2>Vier Schritte, keine Rätsel</h2></div>
+    <ol class="schritte">
+      <li class="rev"><h3>Anrufen oder schreiben</h3><p>Sie schildern kurz, worum es geht. Bei einer Störung gleich anrufen.</p></li>
+      <li class="rev"><h3>Termin vor Ort</h3><p>Wir schauen es uns an. Der Besichtigungstermin ist kostenlos.</p></li>
+      <li class="rev"><h3>Festpreis-Angebot</h3><p>Schriftlich, verständlich, innerhalb von zwei Werktagen.</p></li>
+      <li class="rev"><h3>Ausführung</h3><p>Zum vereinbarten Termin, mit Abnahme und Protokoll am Ende.</p></li>
+    </ol>
+  </div></section>
+
+  <section class="alt" id="gebiet"><div class="wrap paar dreh">
+    <div class="rev">
+      <p class="label">Einsatzgebiet</p>
+      <h2>Wir kommen hierher</h2>
+      <p>Landsberg am Lech und alles im Umkreis von rund 30 Kilometern. Weiter weg nur nach Absprache, weil sonst die Anfahrt teurer wird als die Arbeit.</p>
+      <ul class="orte">
+        <li>Landsberg am Lech</li><li>Kaufering</li><li>Penzing</li><li>Igling</li>
+        <li>Buchloe</li><li>Schongau</li><li>Fürstenfeldbruck</li><li>Germering</li>
+      </ul>
+    </div>
+    <div class="rev"><img src="images/transporter.webp" alt="Handwerker-Transporter mit offener Hecktür vor einem Einfamilienhaus" width="1280" height="926" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAACwBACdASoYABEAPuloq1ApJaOiqAqpIB0JZwDH5A0XDAxW8Qd7JUmziyxRbS4AAP7nk1fqE0pKsoOBi31gnQkqnHCuHzuYSEvMuB8vVgm5+NvUFIFB5QnmlLPhXjquy8a9qh84YeIzl6XaCZUNCpYtKIbnqmY7e+qHa168UTdcgo7YaZfZ+ecsz3MNmGLVTcrWIDqiXmhJb7BEUwkAAA==);background-size:cover;background-position:center"></div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="kopf rev"><p class="label">Kundenstimmen</p><h2>Was Kunden sagen</h2></div>
+    <div class="stimmen">
+      <div class="stimme rev"><div class="sterne">★★★★★</div>
+        <p>Wallbox angefragt, zwei Tage später das Angebot, nach drei Wochen war sie dran. Alles genau wie besprochen, auch der Preis.</p>
+        <cite>— Familie K., Kaufering</cite></div>
+      <div class="stimme rev"><div class="sterne">★★★★★</div>
+        <p>Abends kein Strom mehr im halben Haus. Nach dem Anruf war jemand in einer Stunde da und hat den Fehler gefunden.</p>
+        <cite>— M. Reiter, Landsberg</cite></div>
+      <div class="stimme rev"><div class="sterne">★★★★★</div>
+        <p>Kompletter Zählerschrank erneuert. Sauber gearbeitet, alles beschriftet, hinterher war die Baustelle aufgeräumt.</p>
+        <cite>— Hausverwaltung S., Penzing</cite></div>
+    </div>
+    <p class="klein rev" style="margin-top:1.4em">Beispielseite — die Stimmen sind erfunden und stehen hier stellvertretend für echte Bewertungen.</p>
+  </div></section>
+
+  <section class="alt" id="kontakt"><div class="wrap">
+    <div class="kopf rev"><p class="label">Kontakt</p><h2>Termin anfragen</h2>
+      <p class="lead">Bei einer Störung rufen Sie besser an. Alles andere geht bequem über das Formular.</p></div>
+    <div class="kontakt">
+      <div class="box rev">
+        <dl>
+          <dt>Telefon</dt><dd><a href="tel:+4981910000000">08191 000 00 00</a></dd>
+          <dt>E-Mail</dt><dd><a href="mailto:info@elektro-brandl.de">info@elektro-brandl.de</a></dd>
+          <dt>Werkstatt</dt><dd>Gewerbering 8<br>86899 Landsberg am Lech</dd>
+          <dt>Notdienst</dt><dd>Rund um die Uhr, auch am Wochenende</dd>
+        </dl>
+        <h3 style="margin-top:1.6rem">Bürozeiten</h3>
+        <ul class="zeiten" id="zeitenListe">
+          <li data-tag="1"><span>Montag bis Donnerstag</span><span>07:00 – 16:30</span></li>
+          <li data-tag="5"><span>Freitag</span><span>07:00 – 13:00</span></li>
+          <li data-tag="6"><span>Samstag und Sonntag</span><span>nur Notdienst</span></li>
+        </ul>
+      </div>
+      <div class="box rev">
+        <form onsubmit="event.preventDefault();this.querySelector('.ok').hidden=false;">
+          <div class="zwei">
+            <label>Name<input type="text" required></label>
+            <label>Telefon<input type="tel" required></label>
+          </div>
+          <label>E-Mail<input type="email"></label>
+          <label>Worum geht es?
+            <select>
+              <option>Elektroinstallation</option>
+              <option>Wallbox / E-Mobilität</option>
+              <option>Zählerschrank / Sicherungen</option>
+              <option>Smart Home</option>
+              <option>E-Check / Prüfung</option>
+              <option>Störung (bitte lieber anrufen)</option>
+            </select>
+          </label>
+          <label>Wo? <input type="text" placeholder="Ort oder Postleitzahl"></label>
+          <label>Beschreibung<textarea rows="4" placeholder="Was soll gemacht werden? Wie alt ist das Haus?"></textarea></label>
+          <button class="btn" type="submit">Anfrage senden</button>
+          <p class="klein ok" hidden style="color:var(--signal)">Danke! Auf einer echten Seite geht die Anfrage jetzt direkt ins Postfach.</p>
+          <p class="klein">Wir melden uns innerhalb eines Werktags.</p>
+        </form>
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap paar">
+    <div class="rev"><img src="images/wallbox.webp" alt="Fertig installierte Wallbox an einer Hauswand" width="1280" height="934" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAAAQBACdASoYABIAPulsrlGpJaQiqAgBIB0JZwAAKyITgnk8++w8dQPmAAD99p+sjLqHZOOGAROs1SfjBI5vaARpnRK26Llo4CRq8qzLAuL1Krz4Poif1fS4pGxa/Gzeklbw9GI2jjUbnkBD0zIFkkK0necYUXAAAAA=);background-size:cover;background-position:center"></div>
+    <div class="rev">
+      <p class="label">Aktuell gefragt</p>
+      <h2>Wallbox für zuhause</h2>
+      <p>Wir klären vorab, ob Ihr Hausanschluss die Ladeleistung hergibt, übernehmen die Anmeldung beim Netzbetreiber und bauen die Box so ein, dass später auch ein zweites Auto laden kann.</p>
+      <p><a href="#kontakt" class="btn">Wallbox anfragen</a></p>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="f-grid">
+    <div>
+      <p style="color:#fff;font-family:'Fraunces',Georgia,serif;font-size:1.2rem;margin-bottom:8px">Elektro Brandl</p>
+      <p style="max-width:34ch">Elektro-Meisterbetrieb in Landsberg am Lech. Installation, Wallbox, Zählerschrank und Störungsdienst für Privat und Gewerbe.</p>
+    </div>
+    <div><h3>Seite</h3><ul>
+      <li><a href="#leistungen">Leistungen</a></li>
+      <li><a href="#ablauf">Ablauf</a></li>
+      <li><a href="#gebiet">Einsatzgebiet</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul></div>
+    <div><h3>Rechtliches</h3><ul>
+      <li><a href="#">Impressum</a></li>
+      <li><a href="#">Datenschutz</a></li>
+    </ul></div>
+  </div>
+  <div class="f-base">
+    <span>© 2026 Elektro Brandl · Beispielseite, kein echter Betrieb</span>
+    <span>Gebaut von ORDÉ</span>
+  </div>
+</div></footer>
+
+<script>
+// Menü
+(function(){
+  var b=document.querySelector('.burger'), n=document.getElementById('nav');
+  b.addEventListener('click',function(){
+    var o=n.classList.toggle('open');
+    b.setAttribute('aria-expanded',o?'true':'false');
+  });
+  n.addEventListener('click',function(e){ if(e.target.tagName==='A'){ n.classList.remove('open'); b.setAttribute('aria-expanded','false'); }});
+})();
+
+// Hell / dunkel
+(function(){
+  var r=document.documentElement, b=document.getElementById('tb'), i=document.getElementById('ti'), K='brandl-t';
+  var sonne='<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';
+  var mond='<path d="M20 14.5A7.5 7.5 0 019.5 4 7.5 7.5 0 1020 14.5Z"/>';
+  function akt(){ return r.getAttribute('data-theme')||'light'; }
+  function mal(){ i.innerHTML = akt()==='dark' ? mond : sonne; }
+  try{ var s=localStorage.getItem(K); if(s) r.setAttribute('data-theme',s); }catch(e){}
+  mal();
+  b.onclick=function(){ var n=akt()==='dark'?'light':'dark'; r.setAttribute('data-theme',n); try{localStorage.setItem(K,n);}catch(e){} mal(); };
+})();
+
+// Heutigen Bürotag hervorheben
+(function(){
+  var tag=new Date().getDay();
+  var ziel = (tag>=1&&tag<=4) ? 1 : (tag===5 ? 5 : 6);
+  var li=document.querySelector('#zeitenListe li[data-tag="'+ziel+'"]');
+  if(li) li.classList.add('heute');
+})();
+
+// Einblenden
+(function(){
+  var els=document.querySelectorAll('.rev');
+  if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    els.forEach(function(e){e.classList.add('in')}); return;
+  }
+  var io=new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target);} }); },{threshold:.12});
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+</html>
+<div id="ordeBalken">
+  <a href="../../referenzen.html">&larr; Zur&uuml;ck zu ORD&Eacute;</a>
+  <span>Beispielseite &middot; kein echter Betrieb</span>
+  <a class="ordeCta" href="../../anfrage.html">So eine Seite anfragen</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px;box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+body{padding-bottom:64px}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px;font-size:13px}
+  #ordeBalken span{display:none}
+  body{padding-bottom:58px}
+}
+@media print{#ordeBalken{display:none}}
+</style>
