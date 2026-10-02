@@ -5,6 +5,11 @@ Fuer jede Demo entstehen zwei Bilder:
   vorschau/<name>.webp         Desktop, 1100 x 705
   vorschau/<name>-handy.webp   Handy,   640 x 1313
 
+Liegt neben der index.html eine englische Fassung en.html (US-Markt),
+entstehen zusaetzlich:
+  vorschau/<name>-en.webp
+  vorschau/<name>-en-handy.webp
+
 Diese Bilder zeigt die ORDE-Website auf der Startseite und unter
 "Beispiele". Aendert sich eine Demo, muss dieses Skript einmal laufen,
 sonst zeigt die Website noch den alten Stand.
@@ -67,9 +72,15 @@ def main():
     with sync_playwright() as p:
         start = {"executable_path": browser_pfad} if browser_pfad else {}
         browser = p.chromium.launch(**start)
+        # Je Demo die deutsche Seite, und die englische, wenn es sie gibt
+        auftraege = []
         for name in namen:
+            auftraege.append((name, "index.html", name))
+            if os.path.exists(os.path.join(DEMOS, name, "en.html")):
+                auftraege.append((name, "en.html", name + "-en"))
+        for ordner, datei, name in auftraege:
             seite_datei = os.path.abspath(
-                os.path.join(DEMOS, name, "index.html"))
+                os.path.join(DEMOS, ordner, datei))
             for form in (BREIT, SCHMAL):
                 seite = browser.new_page(
                     viewport={"width": form["breite"], "height": form["hoehe"]},
@@ -97,7 +108,7 @@ def main():
                       % (ziel, os.path.getsize(ziel) / 1024))
         browser.close()
 
-    print("\nFertig. %d Demo(s), %d Bilder." % (len(namen), len(namen) * 2))
+    print("\nFertig. %d Demo(s), %d Bilder." % (len(namen), len(auftraege) * 2))
     print("Die Website liest sie unter demos/vorschau/ - dort landen sie "
           "beim Hochladen von selbst.")
 

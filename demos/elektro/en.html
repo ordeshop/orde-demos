@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brandl Electric — Electrician in Columbus, Ohio and Surrounding Areas</title>
+<link rel="preload" as="image" href="images/hero.webp" fetchpriority="high">
+<style>
+img[style*="data:image/webp"]{animation:bildScharf .45s ease forwards}
+@keyframes bildScharf{from{filter:blur(6px)}to{filter:none}}
+@media (prefers-reduced-motion:reduce){img[style*="data:image/webp"]{animation:none}}
+</style>
+
+<meta name="description" content="Electrical contractor in Columbus, Ohio: wiring, EV charger installation, panel upgrades and 24/7 emergency service. Most jobs scheduled within two weeks.">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<style>
+:root{
+  --bg:#F4F5F7; --flaeche:#FFFFFF; --ink:#141922; --ink-soft:#5B6470;
+  --linie:#DDE1E7; --signal:#0B5FA5; --signal-2:#0A4C84; --gelb:#F2B705;
+  --radius:12px;
+}
+:root[data-theme="dark"]{
+  --bg:#0E1218; --flaeche:#161C25; --ink:#E9EDF3; --ink-soft:#9AA5B4;
+  --linie:#26303C; --signal:#4DA3E8; --signal-2:#6FB8F0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hanken Grotesk","Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--signal)}
+.wrap{width:min(1140px,100% - 2.5rem);margin-inline:auto}
+h1,h2,h3{font-family:"Fraunces","Iowan Old Style",Georgia,serif;font-weight:400;line-height:1.1;letter-spacing:-.015em;margin:0 0 .5em}
+h1{font-size:clamp(2.2rem,6vw,3.7rem)}
+h2{font-size:clamp(1.55rem,4vw,2.3rem)}
+h3{font-family:inherit;font-weight:600;font-size:1.06rem;margin:0 0 .3em}
+p{margin:0 0 1.05em}
+.label{display:inline-block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--signal);font-weight:600;margin-bottom:.9em}
+.lead{font-size:clamp(1.02rem,2.2vw,1.2rem);color:var(--ink-soft);max-width:54ch}
+
+/* Emergency bar */
+.alarm{background:var(--ink);color:#fff;font-size:.86rem;padding:9px 0}
+.alarm .wrap{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;text-align:center}
+.alarm a{color:var(--gelb);font-weight:600;text-decoration:none}
+.alarm a:hover{text-decoration:underline}
+
+/* Header */
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--linie)}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:66px}
+.marke{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
+.blitz{width:34px;height:34px;border-radius:9px;background:var(--signal);display:grid;place-items:center;flex:0 0 auto}
+.blitz svg{width:19px;height:19px;fill:#fff}
+.marke b{font-family:"Fraunces",Georgia,serif;font-weight:400;font-size:1.22rem;letter-spacing:.01em;display:block;line-height:1.1}
+.marke small{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;align-items:center}
+nav a{text-decoration:none;color:var(--ink);font-size:.93rem}
+nav a:hover{color:var(--signal)}
+nav a.cta{background:var(--signal);color:#fff;padding:10px 18px;border-radius:999px;font-weight:600}
+nav a.cta:hover{background:var(--signal-2);color:#fff}
+.tt{background:none;border:0;color:var(--ink-soft);cursor:pointer;padding:6px;display:grid;place-items:center}
+.tt:hover{color:var(--signal)}
+.tt svg{width:19px;height:19px}
+.burger{display:none;background:none;border:0;padding:8px;cursor:pointer}
+.burger span{display:block;width:23px;height:2px;background:var(--ink);margin:5px 0;transition:.2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.rechts{display:flex;align-items:center;gap:10px}
+
+/* Hero */
+.hero{position:relative;min-height:min(78vh,660px);display:flex;align-items:flex-end;overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,16,24,.30),rgba(10,16,24,.15) 40%,rgba(10,16,24,.82))}
+.hero-in{position:relative;z-index:2;color:#fff;padding:clamp(2.4rem,6vw,4.5rem) 0}
+.hero h1{max-width:15ch;text-shadow:0 2px 26px rgba(0,0,0,.4)}
+.hero .lead{color:#E4E9F0;text-shadow:0 1px 14px rgba(0,0,0,.5)}
+.hero .btns{display:flex;gap:11px;flex-wrap:wrap;margin-top:1.5rem}
+.merkmale{display:flex;gap:26px;flex-wrap:wrap;margin-top:1.8rem;font-size:.92rem;color:#D6DEE8}
+.merkmale span{display:flex;align-items:center;gap:8px}
+.merkmale svg{width:17px;height:17px;stroke:var(--gelb);fill:none;stroke-width:2}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--signal);color:#fff;text-decoration:none;
+  padding:13px 24px;border-radius:999px;font-size:.96rem;font-weight:600;border:1px solid var(--signal);transition:.18s}
+.btn:hover{background:var(--signal-2);border-color:var(--signal-2);transform:translateY(-1px)}
+.btn.hell{background:#fff;color:var(--ink);border-color:#fff}
+.btn.hell:hover{background:#E9EEF4;color:var(--ink)}
+.btn.klar{background:transparent;color:var(--ink);border-color:var(--linie)}
+.btn.klar:hover{background:transparent;border-color:var(--signal);color:var(--signal)}
+.hero .btn.klar{color:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.08)}
+
+section{padding:clamp(3rem,6.5vw,5.5rem) 0}
+.alt{background:var(--flaeche);border-top:1px solid var(--linie);border-bottom:1px solid var(--linie)}
+.kopf{max-width:56ch;margin-bottom:2rem}
+
+/* Services */
+.leistungen{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.karte{background:var(--flaeche);border:1px solid var(--linie);border-radius:var(--radius);padding:24px;transition:.2s}
+.karte:hover{border-color:var(--signal);transform:translateY(-3px)}
+.ikon{width:38px;height:38px;border-radius:10px;background:color-mix(in srgb,var(--signal) 12%,transparent);
+  display:grid;place-items:center;margin-bottom:13px}
+.ikon svg{width:20px;height:20px;stroke:var(--signal);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.karte p{margin:0;color:var(--ink-soft);font-size:.95rem}
+
+/* Process */
+.schritte{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.schritte li{counter-increment:s;background:var(--bg);border:1px solid var(--linie);border-radius:var(--radius);padding:22px;position:relative}
+.schritte li::before{content:"0" counter(s);font-family:"Fraunces",Georgia,serif;font-size:1.6rem;color:var(--signal);opacity:.35;display:block;margin-bottom:8px}
+.schritte p{margin:0;font-size:.94rem;color:var(--ink-soft)}
+
+/* Two columns with image */
+.paar{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.6rem,4vw,3.4rem);align-items:center}
+.paar img{border-radius:var(--radius);width:100%;aspect-ratio:4/3;object-fit:cover}
+.paar.dreh > div:first-child{order:2}
+
+/* Service area */
+.orte{display:flex;flex-wrap:wrap;gap:9px;margin:1.2em 0 0;padding:0;list-style:none}
+.orte li{background:var(--bg);border:1px solid var(--linie);border-radius:999px;padding:7px 15px;font-size:.88rem;color:var(--ink-soft)}
+
+/* Testimonials */
+.stimmen{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.stimme{background:var(--flaeche);border:1px solid var(--linie);border-radius:var(--radius);padding:24px}
+.sterne{color:var(--gelb);letter-spacing:2px;font-size:.95rem;margin-bottom:9px}
+.stimme p{font-size:.97rem;margin-bottom:.9em}
+.stimme cite{font-style:normal;font-size:.86rem;color:var(--ink-soft)}
+
+/* Contact */
+.kontakt{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.6rem,4vw,3rem)}
+.box{background:var(--flaeche);border:1px solid var(--linie);border-radius:var(--radius);padding:26px}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 18px;font-size:.96rem}
+dt{color:var(--ink-soft)}
+dd{margin:0}
+form{display:grid;gap:13px}
+label{display:grid;gap:5px;font-size:.88rem;color:var(--ink-soft)}
+input,select,textarea{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--linie);border-radius:9px;padding:11px 13px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--signal);outline-offset:1px;border-color:var(--signal)}
+.zwei{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.klein{font-size:.83rem;color:var(--ink-soft)}
+.zeiten{list-style:none;margin:1rem 0 0;padding:0}
+.zeiten li{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--linie);font-size:.94rem}
+.zeiten li.heute{font-weight:600;color:var(--signal)}
+
+/* Footer */
+footer{background:var(--ink);color:#A7B2C0;padding:46px 0 22px;font-size:.92rem}
+footer a{color:#A7B2C0;text-decoration:none}
+footer a:hover{color:#fff;text-decoration:underline}
+.f-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:30px}
+.f-grid h3{color:#fff;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;margin:0 0 11px;font-family:inherit}
+.f-grid ul{list-style:none;margin:0;padding:0}
+.f-grid li{margin-bottom:7px}
+.f-base{border-top:1px solid #232B36;margin-top:30px;padding-top:16px;font-size:.82rem;color:#6E7A88;
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+/* Animation */
+.rev{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.3,1)}
+.rev.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rev{opacity:1;transform:none}}
+
+@media (max-width:900px){ .paar,.kontakt{grid-template-columns:1fr} .paar.dreh > div:first-child{order:0} }
+@media (max-width:720px){
+  .burger{display:block}
+  nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--linie);padding:6px 1.25rem 16px}
+  nav.open{display:block}
+  nav ul{flex-direction:column;align-items:stretch;gap:0}
+  nav li{border-bottom:1px solid var(--linie)}
+  nav a{display:block;padding:13px 0}
+  nav a.cta{text-align:center;margin-top:12px}
+  nav li:last-child{border-bottom:0}
+  .zwei{grid-template-columns:1fr}
+  .hero .btns .btn{flex:1 1 100%;justify-content:center}
+}
+</style>
+
+<div class="alarm"><div class="wrap">
+  <span>⚡ Power out or electrical problem?</span>
+  <a href="tel:+16145550158">24/7 emergency line: (614) 555-0158</a>
+</div></div>
+
+<header class="top"><div class="wrap top-in">
+  <a class="marke" href="#top">
+    <span class="blitz"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg></span>
+    <span><b>Brandl Electric</b><small>Licensed &amp; Insured</small></span>
+  </a>
+  <button class="burger" aria-expanded="false" aria-controls="nav" aria-label="Open menu"><span></span><span></span><span></span></button>
+  <div class="rechts">
+    <nav id="nav"><ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">How It Works</a></li>
+      <li><a href="#area">Service Area</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a class="cta" href="#contact">Request a Visit</a></li>
+    </ul></nav>
+    <button class="tt" id="tb" aria-label="Switch between light and dark mode"><svg id="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></svg></button>
+  </div>
+</div></header>
+
+<main id="top">
+  <section class="hero" style="padding:0">
+    <img src="images/hero.webp" alt="Electrician installing a breaker panel in a bright new-construction home" width="1100" height="609" fetchpriority="high" decoding="async" style="background-image:url(data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAADwAwCdASoYAA0APulgqE0pJaOiMAgBIB0JQBdl4AAy5FNAySDMrq+AAP3uxHiIAThp57KJjhDR0kQerIkBlCGFuQxH44YXdLW+I1v9tG23U9puI6TpKRy85SOSTLmT6X9UbsKHTuvnxNeUH9V20/L+x7cXypdLXbgTPe1ARyRuP8bpzuWP8CGMiV2rB798rQAAAA==);background-size:cover;background-position:center">
+    <div class="wrap hero-in">
+      <p class="label" style="color:var(--gelb)">Electrician &middot; Columbus, Ohio</p>
+      <h1>Electrical work you can trust.</h1>
+      <p class="lead">Licensed and insured electricians for wiring, EV chargers and panel upgrades. Serving homes and businesses within 20 miles of Columbus.</p>
+      <div class="btns">
+        <a href="#contact" class="btn hell">Request a Visit</a>
+        <a href="tel:+16145550158" class="btn klar">(614) 555-0158</a>
+      </div>
+      <div class="merkmale">
+        <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Licensed electricians since 1998</span>
+        <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Flat-rate price before we start</span>
+        <span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Usually scheduled within 2 weeks</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="services"><div class="wrap">
+    <div class="kopf rev">
+      <p class="label">Services</p>
+      <h2>What we can do for you</h2>
+      <p class="lead">From a dead outlet to wiring an entire new build. And if a job is outside our trade, we will point you to someone who can handle it.</p>
+    </div>
+    <div class="leistungen">
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></div>
+        <h3>Wiring &amp; Installation</h3><p>New construction, remodels and rewiring. Circuits, outlets, switches and lighting, carefully planned and fully documented.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="12" height="11" rx="2"/><path d="M15 11h3a2 2 0 0 1 2 2v3M7 4v3M11 4v3"/></svg></div>
+        <h3>EV Charger Installation</h3><p>Help choosing the right charging speed, permit and utility paperwork, installation and a full test before we leave.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="3.5"/></svg></div>
+        <h3>Panel Upgrades &amp; Breakers</h3><p>Replacing outdated panels to meet current code, plus GFCI protection and whole-home surge protection.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><path d="M3 20h18M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/></svg></div>
+        <h3>Smart Home</h3><p>Control your lights, shades and thermostat without needing a degree in computer science.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>24/7 Emergency Service</h3><p>Breaker keeps tripping, no power, a burning smell? Call us and we will get there as fast as we can.</p></div>
+      <div class="karte rev"><div class="ikon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3>Safety Inspections</h3><p>A thorough check of your electrical system and equipment, with a written report for your insurer or landlord.</p></div>
+    </div>
+  </div></section>
+
+  <section class="alt"><div class="wrap paar">
+    <div class="rev"><img src="images/detail.webp" alt="An electrician's hands connecting wires in a recessed wall box" width="1280" height="945" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAACwBQCdASoYABIAPulorU+pJiQiKAqpIB0JYgCdMxG2S0jY4pnOtAydSH6MpK/NTUmVJVLEPZgA/sHJbXFg3qK56CzSNp3IqtS+b0AbMAZzMKGFFxmdoEutOG5Vo6uLeRJyCThJtw1aTf0gXilYzmUpeMG6DyItY9z401ty98uvnbDVK/CEqEjtaMAxI1da4TyWm7FqJV62S+Xz54pMJ6O1acYgqD2d72KriJ3DrChTcONzGmMTAisa6leOHFEa0AA=);background-size:cover;background-position:center"></div>
+    <div class="rev">
+      <p class="label">How we work</p>
+      <h2>A flat-rate price before we start.</h2>
+      <p>We look at the job on site and tell you up front what it will cost. No surprises on the invoice, and no extra charges because it took longer than expected.</p>
+      <p>If something turns up during the work that we could not have seen, we stop and check with you. Nothing moves forward until you say so.</p>
+    </div>
+  </div></section>
+
+  <section id="process"><div class="wrap">
+    <div class="kopf rev"><p class="label">How it works</p><h2>Four steps, no guesswork</h2></div>
+    <ol class="schritte">
+      <li class="rev"><h3>Call or message us</h3><p>Tell us briefly what you need. If it is an emergency, call right away.</p></li>
+      <li class="rev"><h3>On-site visit</h3><p>We come out and take a look. The estimate visit is free.</p></li>
+      <li class="rev"><h3>Flat-rate quote</h3><p>In writing, in plain language, within two business days.</p></li>
+      <li class="rev"><h3>The work</h3><p>On the agreed date, finished with a walkthrough and written documentation.</p></li>
+    </ol>
+  </div></section>
+
+  <section class="alt" id="area"><div class="wrap paar dreh">
+    <div class="rev">
+      <p class="label">Service area</p>
+      <h2>Where we work</h2>
+      <p>Columbus and everything within about 20 miles. Farther out by arrangement only, because otherwise the drive ends up costing more than the job.</p>
+      <ul class="orte">
+        <li>Columbus</li><li>Hilliard</li><li>Dublin</li><li>Grove City</li>
+        <li>Westerville</li><li>Gahanna</li><li>Worthington</li><li>Upper Arlington</li>
+      </ul>
+    </div>
+    <div class="rev"><img src="images/transporter.webp" alt="Work van with its rear door open, parked in front of a single-family home" width="1280" height="926" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAACwBACdASoYABEAPuloq1ApJaOiqAqpIB0JZwDH5A0XDAxW8Qd7JUmziyxRbS4AAP7nk1fqE0pKsoOBi31gnQkqnHCuHzuYSEvMuB8vVgm5+NvUFIFB5QnmlLPhXjquy8a9qh84YeIzl6XaCZUNCpYtKIbnqmY7e+qHa168UTdcgo7YaZfZ+ecsz3MNmGLVTcrWIDqiXmhJb7BEUwkAAA==);background-size:cover;background-position:center"></div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="kopf rev"><p class="label">Reviews</p><h2>What customers say</h2></div>
+    <div class="stimmen">
+      <div class="stimme rev"><div class="sterne">★★★★★</div>
+        <p>Asked about an EV charger, had the quote two days later, and it was on the wall three weeks after that. Everything exactly as discussed, including the price.</p>
+        <cite>— The K. family, Hilliard</cite></div>
+      <div class="stimme rev"><div class="sterne">★★★★★</div>
+        <p>Half the house lost power one evening. Someone was here within an hour of my call and tracked down the problem.</p>
+        <cite>— M. Reed, Columbus</cite></div>
+      <div class="stimme rev"><div class="sterne">★★★★★</div>
+        <p>Full panel replacement. Clean work, every breaker labeled, and they left the place spotless when they were done.</p>
+        <cite>— S. Property Management, Dublin</cite></div>
+    </div>
+    <p class="klein rev" style="margin-top:1.4em">Example site — these reviews are made up and stand in for real customer reviews.</p>
+  </div></section>
+
+  <section class="alt" id="contact"><div class="wrap">
+    <div class="kopf rev"><p class="label">Contact</p><h2>Request a visit</h2>
+      <p class="lead">For an emergency, please call. For everything else, the form is the easiest way to reach us.</p></div>
+    <div class="kontakt">
+      <div class="box rev">
+        <dl>
+          <dt>Phone</dt><dd><a href="tel:+16145550158">(614) 555-0158</a></dd>
+          <dt>Email</dt><dd><a href="mailto:info@brandl-electric.com">info@brandl-electric.com</a></dd>
+          <dt>Shop</dt><dd>2180 Millrace Commerce Dr<br>Columbus, OH 43228</dd>
+          <dt>Emergency</dt><dd>24/7, including weekends</dd>
+        </dl>
+        <h3 style="margin-top:1.6rem">Office hours</h3>
+        <ul class="zeiten" id="zeitenListe">
+          <li data-tag="1"><span>Monday to Thursday</span><span>7:00 am – 4:30 pm</span></li>
+          <li data-tag="5"><span>Friday</span><span>7:00 am – 1:00 pm</span></li>
+          <li data-tag="6"><span>Saturday and Sunday</span><span>emergencies only</span></li>
+        </ul>
+      </div>
+      <div class="box rev">
+        <form onsubmit="event.preventDefault();this.querySelector('.ok').hidden=false;">
+          <div class="zwei">
+            <label>Name<input type="text" required></label>
+            <label>Phone<input type="tel" required></label>
+          </div>
+          <label>Email<input type="email"></label>
+          <label>What do you need help with?
+            <select>
+              <option>Wiring / installation</option>
+              <option>EV charger installation</option>
+              <option>Panel upgrade / breakers</option>
+              <option>Smart Home</option>
+              <option>Safety inspection</option>
+              <option>Emergency (please call instead)</option>
+            </select>
+          </label>
+          <label>Where? <input type="text" placeholder="City or ZIP code"></label>
+          <label>Details<textarea rows="4" placeholder="What needs to be done? How old is the house?"></textarea></label>
+          <button class="btn" type="submit">Send Request</button>
+          <p class="klein ok" hidden style="color:var(--signal)">Thank you! On a live site, your request would now go straight to our inbox.</p>
+          <p class="klein">We will get back to you within one business day.</p>
+        </form>
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap paar">
+    <div class="rev"><img src="images/wallbox.webp" alt="Finished EV charger mounted on the exterior wall of a house" width="1280" height="934" loading="lazy" decoding="async" style="background-image:url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAAAQBACdASoYABIAPulsrlGpJaQiqAgBIB0JZwAAKyITgnk8++w8dQPmAAD99p+sjLqHZOOGAROs1SfjBI5vaARpnRK26Llo4CRq8qzLAuL1Krz4Poif1fS4pGxa/Gzeklbw9GI2jjUbnkBD0zIFkkK0necYUXAAAAA=);background-size:cover;background-position:center"></div>
+    <div class="rev">
+      <p class="label">In demand right now</p>
+      <h2>EV charging at home</h2>
+      <p>We check up front whether your electrical service can handle the load, take care of the permit and utility paperwork, and install the charger so a second car can plug in later.</p>
+      <p><a href="#contact" class="btn">Get an EV Charger Quote</a></p>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="f-grid">
+    <div>
+      <p style="color:#fff;font-family:'Fraunces',Georgia,serif;font-size:1.2rem;margin-bottom:8px">Brandl Electric</p>
+      <p style="max-width:34ch">Licensed and insured electrical contractor in Columbus, Ohio. Wiring, EV chargers, panel upgrades and emergency service for homes and businesses.</p>
+    </div>
+    <div><h3>Site</h3><ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">How It Works</a></li>
+      <li><a href="#area">Service Area</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul></div>
+    <div><h3>Legal</h3><ul>
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Terms</a></li>
+    </ul></div>
+  </div>
+  <div class="f-base">
+    <span>© 2026 Brandl Electric · Example site, not a real business</span>
+    <span>Built by ORDÉ</span>
+  </div>
+</div></footer>
+
+<script>
+// Menu
+(function(){
+  var b=document.querySelector('.burger'), n=document.getElementById('nav');
+  b.addEventListener('click',function(){
+    var o=n.classList.toggle('open');
+    b.setAttribute('aria-expanded',o?'true':'false');
+  });
+  n.addEventListener('click',function(e){ if(e.target.tagName==='A'){ n.classList.remove('open'); b.setAttribute('aria-expanded','false'); }});
+})();
+
+// Light / dark
+(function(){
+  var r=document.documentElement, b=document.getElementById('tb'), i=document.getElementById('ti'), K='brandl-t';
+  var sonne='<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>';
+  var mond='<path d="M20 14.5A7.5 7.5 0 019.5 4 7.5 7.5 0 1020 14.5Z"/>';
+  function akt(){ return r.getAttribute('data-theme')||'light'; }
+  function mal(){ i.innerHTML = akt()==='dark' ? mond : sonne; }
+  try{ var s=localStorage.getItem(K); if(s) r.setAttribute('data-theme',s); }catch(e){}
+  mal();
+  b.onclick=function(){ var n=akt()==='dark'?'light':'dark'; r.setAttribute('data-theme',n); try{localStorage.setItem(K,n);}catch(e){} mal(); };
+})();
+
+// Highlight today in the office hours
+(function(){
+  var tag=new Date().getDay();
+  var ziel = (tag>=1&&tag<=4) ? 1 : (tag===5 ? 5 : 6);
+  var li=document.querySelector('#zeitenListe li[data-tag="'+ziel+'"]');
+  if(li) li.classList.add('heute');
+})();
+
+// Reveal on scroll
+(function(){
+  var els=document.querySelectorAll('.rev');
+  if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    els.forEach(function(e){e.classList.add('in')}); return;
+  }
+  var io=new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target);} }); },{threshold:.12});
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+</html>
+<div id="ordeBalken">
+  <a href="../../en/examples.html">&larr; Back to ORD&Eacute;</a>
+  <span>Example site &middot; not a real business</span>
+  <a class="ordeCta" href="../../en/contact.html">Request a site like this</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px;box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+body{padding-bottom:64px}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px;font-size:13px}
+  #ordeBalken span{display:none}
+  body{padding-bottom:58px}
+}
+@media print{#ordeBalken{display:none}}
+</style>
