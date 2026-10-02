@@ -15,6 +15,24 @@ Keine echten Betriebe. Arbeitssprache Deutsch.
 Jede Demo ist eine einzelne HTML-Datei mit eingebettetem CSS plus einem
 Bilderordner. Kein Build, kein Framework.
 
+## Englische Fassungen für den US-Markt
+
+Fünf Demos haben eine englische Fassung neben der deutschen: `en.html`
+(beim Café zusätzlich `menu-en.html` und `about-en.html`). Gleiche
+Gestaltung, gleiche Bilder, aber eigene Texte: erfundener Standort in den
+USA, Preise in Dollar, Uhrzeiten mit am/pm. Die Praxis hat bewusst keine
+(Gesundheitsdaten, HIPAA).
+
+Der Rückkehr-Balken führt dort auf die englischen ORDÉ-Seiten unter `/en/`.
+
+Ändert sich an einer Demo Aufbau oder Gestaltung, muss die englische Datei
+von Hand nachgezogen werden. `vorschau-erzeugen.py` erzeugt die englischen
+Vorschaubilder von selbst mit (`<name>-en.webp`, `<name>-en-handy.webp`).
+
+Für richtige Vorschaubilder müssen die Schriften erreichbar sein: Die Demos
+laden sie aus `../../assets/fonts/`, also aus dem Repo `orde-website`. Fehlt
+der Ordner, entstehen die Bilder mit Ersatzschriften.
+
 ## Nach jeder Änderung an einer Demo
 
 **Vorschaubilder neu erzeugen**, sonst zeigt die ORDÉ-Startseite wochenlang
