@@ -19,7 +19,7 @@ Hinweis „Beispielseite · kein echter Betrieb" und einem Weg zurück zu ORDÉ.
 ```
 demos/           die sechs Seiten, je ein Ordner mit index.html
 demos/entwuerfe/ Entwürfe für echte Betriebe, nicht verlinkt (siehe CLAUDE.md)
-entwuerfe/       Quellen und Bauskripte dieser Entwürfe, wird nicht hochgeladen
+entwuerfe/       Quellen, Bauskripte und PDF-Werkzeug dieser Entwürfe (Anleitung: entwuerfe/README.md), wird nicht hochgeladen
 vorschau/        Screenshots, die die ORDÉ-Website anzeigt
 vorschau-erzeugen.py
 ```

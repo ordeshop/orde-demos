@@ -4,7 +4,7 @@ Gestaltungsvorschlag für dream-spielcenter.de, einen **echten Betrieb**. Noch
 kein Auftrag: kein Briefing, keine Anzahlung. Wird es einer, zieht das Projekt
 nach `ordeshop/orde-kunde-dream-spielcenter` um und wird hier gelöscht.
 
-Online (nach dem Upload): `ordeshop.net/demos/entwuerfe/dream-spielcenter/`.
+Vorschau-Link: https://ordeshop.github.io/orde-demos/demos/entwuerfe/dream-spielcenter/
 Nirgends verlinkt, nicht in `BRANCHEN` der ORDÉ-Website, `noindex`. Kein
 Rückkehr-Balken, weil der Link an den Betreiber geht; stattdessen oben der
 Entwurfs-Hinweis.
@@ -17,11 +17,11 @@ Spielerschutz, Kontakt, Impressum und Datenschutz (Platzhalter).
 ## Bauen
 
     python3 entwuerfe/dream-spielcenter/build.py      # Seiten nach demos/entwuerfe/dream-spielcenter/
-    python3 entwuerfe/dream-spielcenter/vorschau.py   # dream-demo.html hier: alles in einer Datei
+    python3 entwuerfe/pdf-erzeugen.py dream-spielcenter   # PDF hier im Ordner
 
 Inhalte nur in `seiten/` ändern, Kopf, Fuß und Öffnungszeiten (`STANDORTE`)
 in `build.py`. Die HTML-Dateien im Demos-Ordner werden überschrieben.
-`Dream-Entwurf.pdf` sind Screenshots aller Seiten zum Weiterschicken.
+`Entwurf-dream-spielcenter.pdf` sind Screenshots aller Seiten zum Weiterschicken.
 
 ## Technik
 

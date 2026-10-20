@@ -24,6 +24,11 @@ Der Link geht nur an den Betrieb. Quelle und Bauskript liegen außerhalb des
 Upload-Ordners unter `entwuerfe/<name>/`. Wird daraus ein Auftrag, zieht das
 Projekt in sein eigenes `orde-kunde-<name>`-Repo um und wird hier gelöscht.
 
+**Wie ein Entwurf gebaut, geprüft und gezeigt wird: `entwuerfe/README.md`.**
+Kurz: so viele Seiten, wie der Kunde haben will; Link ist
+`https://ordeshop.github.io/orde-demos/demos/entwuerfe/<name>/`; dazu das PDF
+aus `entwuerfe/pdf-erzeugen.py`; nie eine HTML-Datei an den Kunden.
+
 ## Englische Fassungen für den US-Markt
 
 Fünf Demos haben eine englische Fassung neben der deutschen: `en.html`

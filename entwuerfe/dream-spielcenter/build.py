@@ -6,7 +6,7 @@ Jede Datei in seiten/ beginnt mit einer Kopfzeile:
   <!-- titel: … | beschreibung: … | nav: standorte -->
 Platzhalter im Inhalt: {{ZEITEN:<slug>}} (Öffnungszeiten-Tabelle),
 {{OFFEN:<slug>}} (data-Attribute für den Live-Status).
-Danach baut vorschau.py die Ein-Datei-Vorschau.
+PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py dream-spielcenter
 """
 import pathlib
 import re
