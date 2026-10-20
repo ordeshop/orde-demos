@@ -81,6 +81,15 @@ Betrieb umgebaut — nicht kopiert.
 
 ## Wo das online liegt
 
+**Zum Zeigen: GitHub Pages** (Repo öffentlich, Pages auf `main` / Root):
+`https://ordeshop.github.io/orde-demos/demos/<name>/`, Entwürfe unter
+`https://ordeshop.github.io/orde-demos/demos/entwuerfe/<name>/`. Geht nach
+jedem Push auf `main` nach ein bis zwei Minuten online. `.nojekyll` sorgt
+dafür, dass GitHub die Dateien unverändert ausliefert. Die sechs Demos laden
+ihre Schriften aus `orde-website` und zeigen auf Pages Ersatzschriften.
+
+**Auf der eigenen Seite:**
+
 Auf dem Server unter `/demos/`, also `ordeshop.net/demos/cafe/`. Eigener
 FTP-Upload, getrennt von der Website. Beide schreiben in verschiedene Ordner
 und löschen nichts voneinander (`dangerous-clean-slate: false`).
