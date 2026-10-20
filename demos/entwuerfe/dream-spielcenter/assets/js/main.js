@@ -23,13 +23,14 @@ function state(el) {
 document.querySelectorAll('[data-open]').forEach(el => {
   const s = state(el);
   el.querySelectorAll('.status').forEach(st => {
-    st.textContent = s.isOpen ? 'Jetzt geöffnet · bis ' + s.close + ':00 Uhr' : 'Geschlossen · öffnet um ' + s.opens + ':00 Uhr';
+    const bis = s.close === 0 ? 'Mitternacht' : s.close + ':00 Uhr';
+    st.textContent = s.isOpen ? 'Jetzt geöffnet · bis ' + bis : 'Geschlossen · öffnet um ' + s.opens + ':00 Uhr';
     st.classList.toggle('open', s.isOpen);
   });
   el.querySelector(`tr[data-d="${s.bizDay}"]`)?.classList.add('today');
   const big = el.querySelector('.now-big'), sub = el.querySelector('.now-sub');
   if (big) big.innerHTML = s.isOpen ? 'Jetzt <span>geöffnet</span>' : 'Ab <span>' + s.opens + ' Uhr</span>';
-  if (sub) sub.textContent = s.isOpen ? 'Heute Nacht bis ' + s.close + ':00 Uhr.' : 'Heute wieder ab ' + s.opens + ':00 Uhr für Sie da.';
+  if (sub) sub.textContent = s.isOpen ? 'Heute geöffnet bis ' + (s.close === 0 ? 'Mitternacht' : s.close + ':00 Uhr') + '.' : 'Heute wieder ab ' + s.opens + ':00 Uhr für Sie da.';
 });
 
 // Formulare sind im Entwurf nur Attrappen

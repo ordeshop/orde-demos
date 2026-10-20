@@ -42,6 +42,14 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
 5. Inhalte nur aus dem, was belegt ist: bestehende Website, Angaben des
    Kunden, Branchenverzeichnis. Alles Ungeprüfte als gelber Platzhalter.
    Impressum und Datenschutz bleiben Platzhalter, Formulare sind Attrappen.
+6. **Recherche:** zuerst die bestehende Website, dann Google-Profil und
+   Branchenverzeichnisse. Ist die alte Seite nicht direkt abrufbar, ihre
+   Inhalte über die Websuche mit `allowed_domains` auf die Domain des Kunden
+   holen. Nur übernehmen, was die offizielle Seite belegt; Abweichungen
+   zwischen Quellen als Platzhalter markieren und in der README des Entwurfs
+   mit Quelle festhalten.
+7. Angaben, die auf mehreren Seiten vorkommen (Standorte, Zeiten, Telefon),
+   nur an **einer** Stelle in `build.py` pflegen.
 
 ## Prüfen
 

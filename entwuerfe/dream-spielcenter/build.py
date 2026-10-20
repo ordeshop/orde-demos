@@ -5,7 +5,10 @@ Quelle hier, fertige Seiten nach demos/entwuerfe/dream-spielcenter/ (wird hochge
 Jede Datei in seiten/ beginnt mit einer Kopfzeile:
   <!-- titel: … | beschreibung: … | nav: standorte -->
 Platzhalter im Inhalt: {{ZEITEN:<slug>}} (Öffnungszeiten-Tabelle),
-{{OFFEN:<slug>}} (data-Attribute für den Live-Status).
+{{OFFEN:<slug>}} (data-Attribute für den Live-Status), {{STANDORTE_DETAIL}},
+{{STANDORTE_UEBERSICHT}}, {{STANDORT_OPTIONEN}}, {{STANDORTE_TELEFON}},
+{{STANDORT_NAMEN}}, {{ANZAHL}}, {{ZENTRALE_TEL}}, {{ZENTRALE_TEL_LINK}},
+{{ZENTRALE_MAIL}}, {{FIRMA}}. Alle Standortangaben stehen nur in STANDORTE.
 PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py dream-spielcenter
 """
 import pathlib
@@ -15,9 +18,41 @@ HIER = pathlib.Path(__file__).resolve().parent
 SEITEN = HIER / "seiten"
 ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "dream-spielcenter"
 
-# Standorte. Öffnungsstunden Mo..So, Schluss am Folgetag um CLOSE Uhr.
+# Standorte. Quelle: Standortseite dream-spielcenter.de/spielhallen (Stand
+# laut Suchindex etwa 2024) und Branchenverzeichnisse, abgeglichen 20.10.2026.
+# open: Öffnungsstunde Mo..So (Feiertage wie Sonntag), close: Schluss am
+# Folgetag um diese Stunde (0 = Mitternacht). alter: None = unbekannt.
 STANDORTE = {
-    "kaufering": {"open": [9, 9, 9, 9, 9, 9, 11], "close": 3},
+    "fuessen": {
+        "name": "Füssen", "strasse": "Kemptener Str. 129", "zusatz": "",
+        "plz": "87629", "ort": "Füssen", "tel": "08362 926299", "alter": None,
+        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
+    },
+    "heidenheim": {
+        "name": "Heidenheim-Schnaitheim", "strasse": "Riedstr. 3", "zusatz": "",
+        "plz": "89520", "ort": "Heidenheim an der Brenz", "tel": "07321 609343", "alter": 18,
+        "open": [6, 6, 6, 6, 6, 7, 8], "close": 0, "hinweis": "",
+    },
+    "kaufering": {
+        "name": "Kaufering", "strasse": "Viktor-Frankl-Str. 15", "zusatz": "",
+        "plz": "86916", "ort": "Kaufering", "tel": "08191 4299104", "alter": 21,
+        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
+    },
+    "senden": {
+        "name": "Senden", "strasse": "Berliner Str. 9", "zusatz": "im Iller-Center",
+        "plz": "89250", "ort": "Senden", "tel": "07307 32320", "alter": 21,
+        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
+    },
+    "wiesbaden": {
+        "name": "Wiesbaden-Biebrich", "strasse": "Didierstr. 27a", "zusatz": "",
+        "plz": "65203", "ort": "Wiesbaden", "tel": "0611 608382", "alter": 21,
+        "open": [10, 10, 10, 10, 10, 10, 12], "close": 4,
+        "hinweis": "Adresse prüfen: manche Verzeichnisse nennen Äppelallee 27a",
+    },
+}
+ZENTRALE = {
+    "firma": "MSW Spiel + Freizeit GmbH", "ort": "Eislingen/Fils",
+    "tel": "07161 98824-0", "mail": "info@dream-spielcenter.de",
 }
 TAGE = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
@@ -45,18 +80,102 @@ LOGO = """<svg width="0" height="0" style="position:absolute" aria-hidden="true"
 </svg>"""
 
 
+def uhr(h):
+    return "24:00" if h == 0 else f"{h:02d}:00"
+
+
+def tel_link(nr):
+    return "tel:+49" + nr.replace(" ", "").replace("-", "")[1:]
+
+
+def maps_link(s):
+    q = f"{s['strasse']} {s['plz']} {s['ort']}".replace(" ", "+")
+    return f"https://www.google.com/maps/search/?api=1&amp;query={q}"
+
+
 def zeiten(slug):
     s = STANDORTE[slug]
     rows = []
     for i, tag in enumerate(TAGE):
         d = (i + 1) % 7  # JS-Wochentag: So = 0
-        rows.append(f'<tr data-d="{d}"><th scope="row">{tag}</th><td>{s["open"][i]:02d}:00 – {s["close"]:02d}:00</td></tr>')
-    return "<table>\n<caption>Öffnungszeiten <span class=\"todo\" style=\"margin:0 0 0 8px\">bitte prüfen</span></caption>\n<tbody>\n" + "\n".join(rows) + "\n</tbody>\n</table>"
+        rows.append(f'<tr data-d="{d}"><th scope="row">{tag}</th><td>{uhr(s["open"][i])} – {uhr(s["close"])}</td></tr>')
+    return ('<table>\n<caption>Öffnungszeiten · an Feiertagen wie sonntags '
+            '<span class="todo" style="margin:0 0 0 8px">bitte prüfen</span></caption>\n<tbody>\n'
+            + "\n".join(rows) + "\n</tbody>\n</table>")
 
 
 def offen(slug):
     s = STANDORTE[slug]
     return f'data-open="{",".join(map(str, s["open"]))}" data-close="{s["close"]}"'
+
+
+def alter(s):
+    if s["alter"]:
+        return f'<li><i class="ti ti-id" aria-hidden="true"></i>Zutritt ab {s["alter"]}</li>'
+    return '<li><i class="ti ti-id" aria-hidden="true"></i>Zutritt ab <span class="todo">18 oder 21?</span></li>'
+
+
+def adresse(s):
+    zusatz = f'<br>{s["zusatz"]}' if s["zusatz"] else ""
+    return f'{s["strasse"]}{zusatz}<br>{s["plz"]} {s["ort"]}'
+
+
+def standorte_detail():
+    teile = []
+    for slug, s in STANDORTE.items():
+        hinweis = f'<span class="todo">{s["hinweis"]}</span>' if s["hinweis"] else ""
+        teile.append(f"""      <article class="site-detail" id="{slug}" {offen(slug)}>
+        <div class="loc-img rv" role="img" aria-label="Platzhalter für ein Foto der Außenansicht in {s["name"]}"><span class="photo">Foto Außenansicht</span><span class="neon" aria-hidden="true">dream</span></div>
+        <div class="site-card rv" id="zeiten-{slug}">
+          <span class="status" aria-live="polite">Öffnungszeiten prüfen</span>
+          <h2>{s["name"]}</h2>
+          <address style="font-style:normal;color:var(--muted)">{adresse(s)}</address>{hinweis}
+{zeiten(slug)}
+          <ul class="facts" aria-label="Hinweise zum Standort">
+            {alter(s)}
+            <li><i class="ti ti-parking" aria-hidden="true"></i>Parken <span class="todo">?</span></li>
+          </ul>
+          <div class="loc-links">
+            <a href="{maps_link(s)}" target="_blank" rel="noopener"><i class="ti ti-route" aria-hidden="true"></i>Route<span class="sr"> nach {s["name"]} (öffnet Google Maps)</span></a>
+            <a href="{tel_link(s["tel"])}"><i class="ti ti-phone" aria-hidden="true"></i>{s["tel"]}</a>
+          </div>
+        </div>
+      </article>""")
+    return "\n".join(teile)
+
+
+def standorte_uebersicht():
+    teile = []
+    for slug, s in STANDORTE.items():
+        bis = {0: "bis Mitternacht"}.get(s["close"], f"bis {s['close']} Uhr nachts")
+        teile.append(f"""        <article class="loc rv" {offen(slug)}>
+          <div class="loc-body">
+            <span class="status" aria-live="polite">Öffnungszeiten prüfen</span>
+            <h3>{s["name"]}</h3>
+            <address>{adresse(s)}</address>
+            <p class="hint">Täglich geöffnet, {bis}</p>
+            <div class="loc-links">
+              <a href="standorte.html#{slug}"><i class="ti ti-clock" aria-hidden="true"></i>Zeiten<span class="sr"> in {s["name"]}</span></a>
+              <a href="{maps_link(s)}" target="_blank" rel="noopener"><i class="ti ti-route" aria-hidden="true"></i>Route<span class="sr"> nach {s["name"]} (öffnet Google Maps)</span></a>
+            </div>
+          </div>
+        </article>""")
+    return "\n".join(teile)
+
+
+def standort_optionen():
+    return "".join(f"<option>{s['name']}</option>" for s in STANDORTE.values())
+
+
+def standorte_telefon():
+    return "\n".join(
+        f'          <a href="{tel_link(s["tel"])}"><i class="ti ti-map-pin" aria-hidden="true"></i><span><small>{s["name"]}</small>{s["tel"]}</span></a>'
+        for s in STANDORTE.values())
+
+
+def standort_namen():
+    namen = [s["name"].split("-")[0] for s in STANDORTE.values()]
+    return ", ".join(namen[:-1]) + " und " + namen[-1]
 
 
 def layout(name, titel, beschreibung, inhalt):
@@ -111,7 +230,7 @@ def layout(name, titel, beschreibung, inhalt):
         <a href="#" aria-label="Dream auf Instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i></a>
       </div>
     </div>
-    <p class="copy">© <span class="year">2026</span> Dream Spielcenter · Teilnahme ab 21 Jahren · Glücksspiel kann süchtig machen. Hilfe: <a href="tel:08001372700">0800 1 37 27 00</a></p>
+    <p class="copy">© <span class="year">2026</span> Dream Spielcenter · {ZENTRALE["firma"]} · Teilnahme ab 18 Jahren, an vielen Standorten ab 21 · Glücksspiel kann süchtig machen. Hilfe: <a href="tel:08001372700">0800 1 37 27 00</a></p>
   </div>
 </footer>
 
@@ -131,6 +250,20 @@ def main():
         meta = {k.strip(): v.strip() for k, v in meta.items()}
         inhalt = re.sub(r"\{\{ZEITEN:(\w+)\}\}", lambda m: zeiten(m.group(1)), inhalt)
         inhalt = re.sub(r"\{\{OFFEN:(\w+)\}\}", lambda m: offen(m.group(1)), inhalt)
+        ersatz = {
+            "{{STANDORTE_DETAIL}}": standorte_detail(),
+            "{{STANDORTE_UEBERSICHT}}": standorte_uebersicht(),
+            "{{STANDORT_OPTIONEN}}": standort_optionen(),
+            "{{STANDORTE_TELEFON}}": standorte_telefon(),
+            "{{STANDORT_NAMEN}}": standort_namen(),
+            "{{ANZAHL}}": str(len(STANDORTE)),
+            "{{ZENTRALE_TEL}}": ZENTRALE["tel"],
+            "{{ZENTRALE_TEL_LINK}}": tel_link(ZENTRALE["tel"]),
+            "{{ZENTRALE_MAIL}}": ZENTRALE["mail"],
+            "{{FIRMA}}": ZENTRALE["firma"],
+        }
+        for alt, neu in ersatz.items():
+            inhalt = inhalt.replace(alt, neu)
         html = layout(datei.stem, meta["titel"], meta["beschreibung"], inhalt.rstrip())
         (ROOT / datei.name).write_text(html)
         print("gebaut:", datei.name)

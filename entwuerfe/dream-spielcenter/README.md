@@ -47,13 +47,31 @@ in `build.py`. Die HTML-Dateien im Demos-Ordner werden überschrieben.
 GSAP 3.12.5, Tabler Icons 3.19.0, Barlow, Barlow Condensed und Lobster liegen
 lokal unter `assets/`. Nichts wird von Google oder CDNs geladen (DSGVO).
 
+## Quellen der Angaben (Stand 20.10.2026)
+
+Die alte Seite dream-spielcenter.de war von der Arbeitsumgebung aus nicht
+abrufbar. Die Angaben stammen deshalb aus dem Suchindex der offiziellen
+Seiten (`/spielhallen/`, `/impressum/`, laut Index etwa von 2024) und wurden
+mit Branchenverzeichnissen (Das Örtliche, Gelbe Seiten, Cylex,
+Öffnungszeitenbuch) abgeglichen. Alle Standortdaten stehen nur in
+`STANDORTE` in `build.py`.
+
+- Fünf Standorte: Füssen, Heidenheim-Schnaitheim, Kaufering, Senden
+  (Iller-Center), Wiesbaden-Biebrich
+- Betreiber: MSW Spiel + Freizeit GmbH, Eislingen/Fils, Tel. 07161 98824-0,
+  info@dream-spielcenter.de
+- Nicht übernommen: ein Eintrag „Dream Spielcenter“ in Waldkraiburg, der nicht
+  auf der offiziellen Liste steht
+
 ## Offen (vom Betreiber)
 
 - Original-Logo als Datei (jetzt SVG-Nachbau)
 - Fotos: außen, innen, Geräte, Team
-- alle Standorte mit Adresse und Zeiten (bekannt nur Kaufering, aus Branchenverzeichnis)
-- Telefon, E-Mail, Betreiber laut Impressum, Social-Links
+- alle Öffnungszeiten bestätigen (Quelle etwa 2024)
+- Füssen: Altersgrenze 18 oder 21?
+- Wiesbaden: Adresse Didierstr. 27a oder Äppelallee 27a?
+- Social-Links (Facebook-Seite „Dream Spielhalle“ gefunden, bestätigen; Instagram?)
 - echte offene Stellen (jetzt Beispiele)
-- Altersgrenze 21 bestätigen, Ausstattung (Parken, Getränke, Klima, Nichtraucher)
+- Ausstattung je Standort (Parken, Getränke, Klima, Nichtraucher)
 - Impressum und Datenschutzerklärung (vom Betreiber, nicht von ORDÉ)
 - Formulare sind Attrappen; für den Live-Gang Versand per PHP bauen
