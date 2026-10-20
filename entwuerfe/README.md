@@ -1,9 +1,9 @@
 # Entwürfe für echte Betriebe
 
-Kostenlose Gestaltungsvorschläge **vor** einem Auftrag. Der Ablauf drumherum
-(wann es einen Entwurf gibt, was danach kommt) steht im Business-Handbuch in
-`ABLAUF-KUNDENAUFTRAG.md`, Schritt 1a. Hier steht, wie er gebaut und gezeigt
-wird.
+Hier liegt die Vorschau jedes Kunden: erst der kostenlose Entwurf, nach der
+Zusage der aktuelle Baustand. Der Ablauf drumherum steht im Business-Handbuch
+in `ABLAUF-KUNDENAUFTRAG.md` (Phase 2 Entwurf, Phase 8 Vorschau während des
+Auftrags). Hier steht, wie gebaut und gezeigt wird.
 
 ## Ordner
 
@@ -57,7 +57,15 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
 
 ## Danach
 
-- Wird es ein Auftrag: Inhalte nach `orde-kunde-<name>` übernehmen, dann
-  beide Ordner hier löschen.
-- Wird es keiner: beide Ordner löschen. Der Entwurf zeigt einen echten
-  Betrieb und soll nicht dauerhaft öffentlich herumliegen.
+- **Zusage:** Gestaltung und Inhalte nach `orde-kunde-<name>` übernehmen. Der
+  Link bleibt derselbe: ab jetzt wird `site/` aus dem Kunden-Repo hierher nach
+  `demos/entwuerfe/<name>/` gespiegelt (ohne `*.php`). `entwuerfe/<name>/`
+  mit dem alten Bauskript löschen.
+- **Live-Gang:** `demos/entwuerfe/<name>/` löschen.
+- **Absage:** beide Ordner löschen. Der Entwurf zeigt einen echten Betrieb und
+  soll nicht dauerhaft öffentlich herumliegen.
+
+## Checkliste
+
+Jede `entwuerfe/<name>/README.md` enthält die Checkliste aus
+`ABLAUF-KUNDENAUFTRAG.md` und wird laufend abgehakt.

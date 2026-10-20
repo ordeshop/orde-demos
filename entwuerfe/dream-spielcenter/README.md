@@ -9,6 +9,25 @@ Nirgends verlinkt, nicht in `BRANCHEN` der ORDÉ-Website, `noindex`. Kein
 Rückkehr-Balken, weil der Link an den Betreiber geht; stattdessen oben der
 Entwurfs-Hinweis.
 
+## Stand
+
+```
+- [x] 1  Anfrage: DACH, Unternehmen, persönlicher Kontakt, Slug dream-spielcenter
+- [ ] 1  Veit-Prüfung, gewünschte Seitenzahl bestätigen
+- [x] 2  Entwurf gebaut und geprüft (8 Seiten), PDF erzeugt
+- [ ] 2  Link geöffnet (wartet auf GitHub Pages), Mail-Entwurf an Artur
+- [ ] 3  Angebot raus (mit AGB/Widerruf)
+- [ ] 4  Zusage, Auftragsbestätigung mit Briefing-Link
+- [ ] 5  Anzahlung da
+- [ ] 6  Briefing vollständig
+- [ ] 7  Repo angelegt, gebaut, geprüft
+- [ ] 8  Vorschau gezeigt, Korrekturrunde erledigt
+- [ ] 9  Hosting/Domain gebucht, Secrets eingetragen, Upload läuft
+- [ ] 10 Abnahme, Schlussrechnung bezahlt
+- [ ] 11 Live, Vorschau-Ordner gelöscht, Übergabe, Referenz erfragt
+- [ ] 12 Betreuung bis: –
+```
+
 ## Seiten
 
 Start, Angebot, Standorte (mit Öffnungszeiten), Jobs (mit Bewerbung),
