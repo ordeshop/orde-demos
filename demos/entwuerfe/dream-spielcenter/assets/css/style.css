@@ -211,7 +211,8 @@
     .shield{grid-column:1/-1}
   }
   @media (max-width:820px){
-    .burger{display:block}
+    .burger{display:block;margin-left:auto;margin-right:-8px}
+    .top-in{justify-content:flex-start}
     .menu{position:fixed;inset:76px 0 auto 0;flex-direction:column;align-items:stretch;gap:0;background:var(--black);border-bottom:1px solid var(--line);padding:12px 16px 24px;transform:translateY(-12px);opacity:0;visibility:hidden;transition:opacity .3s,transform .4s var(--ease),visibility .3s}
     .menu.open{opacity:1;transform:none;visibility:visible}
     .menu a{display:flex;min-height:56px;font-size:24px;border-bottom:1px solid var(--line)}
