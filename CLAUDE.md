@@ -15,6 +15,15 @@ Keine echten Betriebe. Arbeitssprache Deutsch.
 Jede Demo ist eine einzelne HTML-Datei mit eingebettetem CSS plus einem
 Bilderordner. Kein Build, kein Framework.
 
+## Entwürfe für echte Betriebe
+
+`demos/entwuerfe/<name>/` sind Gestaltungsvorschläge für **echte** Betriebe,
+vor einem Auftrag. Sie gehören nicht zu den sechs Beispielseiten: nicht in
+`BRANCHEN` eintragen, keine Vorschaubilder, kein Rückkehr-Balken, `noindex`.
+Der Link geht nur an den Betrieb. Quelle und Bauskript liegen außerhalb des
+Upload-Ordners unter `entwuerfe/<name>/`. Wird daraus ein Auftrag, zieht das
+Projekt in sein eigenes `orde-kunde-<name>`-Repo um und wird hier gelöscht.
+
 ## Englische Fassungen für den US-Markt
 
 Fünf Demos haben eine englische Fassung neben der deutschen: `en.html`
