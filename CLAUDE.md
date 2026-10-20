@@ -26,7 +26,7 @@ Projekt in sein eigenes `orde-kunde-<name>`-Repo um und wird hier gelöscht.
 
 **Wie ein Entwurf gebaut, geprüft und gezeigt wird: `entwuerfe/README.md`.**
 Kurz: so viele Seiten, wie der Kunde haben will; Link ist
-`https://ordeshop.github.io/orde-demos/demos/entwuerfe/<name>/`; dazu das PDF
+`https://vorschau.byorde.com/<name>/`; dazu das PDF
 aus `entwuerfe/pdf-erzeugen.py`; nie eine HTML-Datei an den Kunden.
 
 ## Englische Fassungen für den US-Markt
@@ -86,14 +86,16 @@ Betrieb umgebaut — nicht kopiert.
 
 ## Wo das online liegt
 
-**Zum Zeigen: GitHub Pages** (Repo öffentlich, Pages auf `main` / Root):
-`https://ordeshop.github.io/orde-demos/demos/<name>/`, Entwürfe unter
-`https://ordeshop.github.io/orde-demos/demos/entwuerfe/<name>/`. Geht nach
-jedem Push auf `main` nach ein bis zwei Minuten online. `.nojekyll` sorgt
-dafür, dass GitHub die Dateien unverändert ausliefert. Die sechs Demos laden
-ihre Schriften aus `orde-website` und zeigen auf Pages Ersatzschriften.
+**Kunden-Vorschauen:** `demos/entwuerfe/` geht über GitHub Pages unter
+**`https://vorschau.byorde.com/<slug>/`** online, und nur dieser Ordner
+(`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push auf
+`main` dauert es ein bis zwei Minuten. Die Startseite `vorschau.byorde.com`
+zeigt bewusst keine Kundenliste, `robots.txt` sperrt Suchmaschinen aus.
+Eingerichtet in Settings → Pages: Source „GitHub Actions“, Custom domain
+`vorschau.byorde.com`, HTTPS erzwungen; DNS-Eintrag bei Hostinger
+(CNAME `vorschau` → `ordeshop.github.io`).
 
-**Auf der eigenen Seite:**
+**Die sechs Beispielseiten** auf der eigenen Seite:
 
 Auf dem Server unter `/demos/`, also `ordeshop.net/demos/cafe/`. Eigener
 FTP-Upload, getrennt von der Website. Beide schreiben in verschiedene Ordner

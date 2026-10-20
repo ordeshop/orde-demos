@@ -18,7 +18,7 @@ Hinweis „Beispielseite · kein echter Betrieb" und einem Weg zurück zu ORDÉ.
 
 ```
 demos/           die sechs Seiten, je ein Ordner mit index.html
-demos/entwuerfe/ Entwürfe für echte Betriebe, nicht verlinkt (siehe CLAUDE.md)
+demos/entwuerfe/ Kunden-Vorschauen → vorschau.byorde.com/<slug>/ (siehe entwuerfe/README.md)
 entwuerfe/       Quellen, Bauskripte und PDF-Werkzeug dieser Entwürfe (Anleitung: entwuerfe/README.md), wird nicht hochgeladen
 vorschau/        Screenshots, die die ORDÉ-Website anzeigt
 vorschau-erzeugen.py
@@ -30,21 +30,23 @@ auf die `index.html`.
 
 ## Wo das online liegt
 
-**Zum Zeigen: GitHub Pages** (Repo öffentlich, Pages auf `main` / Root):
-`https://ordeshop.github.io/orde-demos/demos/<name>/`, Entwürfe unter
-`https://ordeshop.github.io/orde-demos/demos/entwuerfe/<name>/`. Geht nach
-jedem Push auf `main` nach ein bis zwei Minuten online. `.nojekyll` sorgt
-dafür, dass GitHub die Dateien unverändert ausliefert. Die sechs Demos laden
-ihre Schriften aus `orde-website` und zeigen auf Pages Ersatzschriften.
+**Kunden-Vorschauen:** `demos/entwuerfe/` geht über GitHub Pages unter
+**`https://vorschau.byorde.com/<slug>/`** online, und nur dieser Ordner
+(`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push auf
+`main` dauert es ein bis zwei Minuten. Die Startseite `vorschau.byorde.com`
+zeigt bewusst keine Kundenliste, `robots.txt` sperrt Suchmaschinen aus.
+Eingerichtet in Settings → Pages: Source „GitHub Actions“, Custom domain
+`vorschau.byorde.com`, HTTPS erzwungen; DNS-Eintrag bei Hostinger
+(CNAME `vorschau` → `ordeshop.github.io`).
 
-**Auf der eigenen Seite:**
+**Die sechs Beispielseiten** auf der eigenen Seite:
 
 Auf dem Server unter **`/demos/`**, also `ordeshop.net/demos/cafe/` und so
 weiter. Die ORDÉ-Website verlinkt dorthin und zeigt die Bilder aus
 `vorschau/` unter `demos/vorschau/`.
 
 Hochgeladen wird per FTP durch `.github/workflows/demos-hochladen.yml`.
-Das ist ein **eigener Upload**, getrennt von der Website — beide schreiben in
+Kunden-Vorschauen gehen dort nicht mit. Das ist ein **eigener Upload**, getrennt von der Website — beide schreiben in
 verschiedene Ordner auf demselben Server und kommen sich nicht ins Gehege.
 
 ## Eine Demo ändern

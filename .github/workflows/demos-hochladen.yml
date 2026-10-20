@@ -1,6 +1,8 @@
 name: Demos hochladen
 
 # Laedt die Beispielseiten per FTP nach /demos/ auf den Server.
+# Die Kunden-Vorschauen (demos/entwuerfe/) gehen NICHT mit, die laufen
+# ueber vorschau-veroeffentlichen.yml auf vorschau.byorde.com.
 #
 # Getrennt vom Upload der Website: beide schreiben in verschiedene Ordner
 # und loeschen nichts voneinander (dangerous-clean-slate steht auf false).
@@ -54,6 +56,7 @@ jobs:
             **/.git*
             **/.git*/**
             **/*.md
+            entwuerfe/**
 
       - name: Vorschaubilder hochladen
         if: steps.pruefung.outputs.bereit == 'ja'

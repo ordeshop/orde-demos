@@ -4,7 +4,7 @@ Gestaltungsvorschlag für dream-spielcenter.de, einen **echten Betrieb**. Noch
 kein Auftrag: kein Briefing, keine Anzahlung. Wird es einer, zieht das Projekt
 nach `ordeshop/orde-kunde-dream-spielcenter` um und wird hier gelöscht.
 
-Vorschau-Link: https://ordeshop.github.io/orde-demos/demos/entwuerfe/dream-spielcenter/
+Vorschau-Link: https://vorschau.byorde.com/dream-spielcenter/
 Nirgends verlinkt, nicht in `BRANCHEN` der ORDÉ-Website, `noindex`. Kein
 Rückkehr-Balken, weil der Link an den Betreiber geht; stattdessen oben der
 Entwurfs-Hinweis.

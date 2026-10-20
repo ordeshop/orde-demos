@@ -1,0 +1,48 @@
+name: Vorschau veröffentlichen
+
+# Stellt die Kunden-Vorschauen aus demos/entwuerfe/ auf GitHub Pages:
+#   https://vorschau.byorde.com/<slug>/
+#
+# Nur dieser Ordner geht online, nicht das restliche Repo. Die eigene
+# Adresse ist unter Settings -> Pages -> Custom domain eingetragen, der
+# DNS-Eintrag (CNAME vorschau -> ordeshop.github.io) liegt bei Hostinger.
+# Unter Settings -> Pages muss "Source" auf "GitHub Actions" stehen.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "demos/entwuerfe/**"
+      - ".github/workflows/vorschau-veroeffentlichen.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: vorschau-pages
+  cancel-in-progress: false
+
+jobs:
+  veroeffentlichen:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Dateien holen
+        uses: actions/checkout@v4
+
+      - name: Pages vorbereiten
+        uses: actions/configure-pages@v5
+
+      - name: Vorschau-Ordner verpacken
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./demos/entwuerfe/
+
+      - name: Veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v4
