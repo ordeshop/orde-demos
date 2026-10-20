@@ -4,7 +4,7 @@ Gestaltungsvorschlag für dream-spielcenter.de, einen **echten Betrieb**. Noch
 kein Auftrag: kein Briefing, keine Anzahlung. Wird es einer, zieht das Projekt
 nach `ordeshop/orde-kunde-dream-spielcenter` um und wird hier gelöscht.
 
-Vorschau-Link: https://vorschau.byorde.com/dream-spielcenter/
+Vorschau-Link: https://ordeshop.github.io/orde-demos/dream-spielcenter/
 Nirgends verlinkt, nicht in `BRANCHEN` der ORDÉ-Website, `noindex`. Kein
 Rückkehr-Balken, weil der Link an den Betreiber geht; stattdessen oben der
 Entwurfs-Hinweis.
@@ -22,7 +22,7 @@ Entwurfs-Hinweis.
 - [ ] 6  Briefing vollständig
 - [ ] 7  Repo angelegt, gebaut, geprüft
 - [ ] 8  Vorschau gezeigt, Korrekturrunde erledigt
-- [ ] 9  Hosting/Domain gebucht, Secrets eingetragen, Upload läuft
+- [ ] 9  Relaunch (Fall B): Anbieter von Domain/Hosting klären, alte Seite sichern, Weiterleitungen, Secrets, umschalten, testen
 - [ ] 10 Abnahme, Schlussrechnung bezahlt
 - [ ] 11 Live, Vorschau-Ordner gelöscht, Übergabe, Referenz erfragt
 - [ ] 12 Betreuung bis: –

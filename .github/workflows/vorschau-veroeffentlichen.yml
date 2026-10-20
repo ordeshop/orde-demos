@@ -1,12 +1,12 @@
 name: Vorschau veröffentlichen
 
 # Stellt die Kunden-Vorschauen aus demos/entwuerfe/ auf GitHub Pages:
-#   https://vorschau.byorde.com/<slug>/
+#   https://ordeshop.github.io/orde-demos/<slug>/
 #
-# Nur dieser Ordner geht online, nicht das restliche Repo. Die eigene
-# Adresse ist unter Settings -> Pages -> Custom domain eingetragen, der
-# DNS-Eintrag (CNAME vorschau -> ordeshop.github.io) liegt bei Hostinger.
+# Nur dieser Ordner geht online, nicht das restliche Repo.
 # Unter Settings -> Pages muss "Source" auf "GitHub Actions" stehen.
+# Spaeter moeglich: eigene Adresse vorschau.byorde.com (CNAME bei Hostinger,
+# Settings -> Pages -> Custom domain).
 
 on:
   push:

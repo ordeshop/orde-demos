@@ -18,7 +18,7 @@ Hinweis „Beispielseite · kein echter Betrieb" und einem Weg zurück zu ORDÉ.
 
 ```
 demos/           die sechs Seiten, je ein Ordner mit index.html
-demos/entwuerfe/ Kunden-Vorschauen → vorschau.byorde.com/<slug>/ (siehe entwuerfe/README.md)
+demos/entwuerfe/ Kunden-Vorschauen → ordeshop.github.io/orde-demos/<slug>/ (siehe entwuerfe/README.md)
 entwuerfe/       Quellen, Bauskripte und PDF-Werkzeug dieser Entwürfe (Anleitung: entwuerfe/README.md), wird nicht hochgeladen
 vorschau/        Screenshots, die die ORDÉ-Website anzeigt
 vorschau-erzeugen.py
@@ -31,13 +31,13 @@ auf die `index.html`.
 ## Wo das online liegt
 
 **Kunden-Vorschauen:** `demos/entwuerfe/` geht über GitHub Pages unter
-**`https://vorschau.byorde.com/<slug>/`** online, und nur dieser Ordner
-(`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push auf
-`main` dauert es ein bis zwei Minuten. Die Startseite `vorschau.byorde.com`
-zeigt bewusst keine Kundenliste, `robots.txt` sperrt Suchmaschinen aus.
-Eingerichtet in Settings → Pages: Source „GitHub Actions“, Custom domain
-`vorschau.byorde.com`, HTTPS erzwungen; DNS-Eintrag bei Hostinger
-(CNAME `vorschau` → `ordeshop.github.io`).
+**`https://ordeshop.github.io/orde-demos/<slug>/`** online, und nur dieser
+Ordner (`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push
+auf `main` dauert es ein bis zwei Minuten. Die Startseite zeigt bewusst keine
+Kundenliste, `robots.txt` sperrt Suchmaschinen aus. Eingerichtet in
+Settings → Pages: Source „GitHub Actions“. Später möglich: eigene Adresse
+`vorschau.byorde.com` (CNAME bei Hostinger, Custom domain in den Pages-
+Einstellungen); dann alle Links in Doku und Skill umstellen.
 
 **Die sechs Beispielseiten** auf der eigenen Seite:
 

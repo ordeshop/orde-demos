@@ -26,7 +26,7 @@ Projekt in sein eigenes `orde-kunde-<name>`-Repo um und wird hier gelöscht.
 
 **Wie ein Entwurf gebaut, geprüft und gezeigt wird: `entwuerfe/README.md`.**
 Kurz: so viele Seiten, wie der Kunde haben will; Link ist
-`https://vorschau.byorde.com/<name>/`; dazu das PDF
+`https://ordeshop.github.io/orde-demos/<name>/`; dazu das PDF
 aus `entwuerfe/pdf-erzeugen.py`; nie eine HTML-Datei an den Kunden.
 
 ## Englische Fassungen für den US-Markt
@@ -87,13 +87,13 @@ Betrieb umgebaut — nicht kopiert.
 ## Wo das online liegt
 
 **Kunden-Vorschauen:** `demos/entwuerfe/` geht über GitHub Pages unter
-**`https://vorschau.byorde.com/<slug>/`** online, und nur dieser Ordner
-(`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push auf
-`main` dauert es ein bis zwei Minuten. Die Startseite `vorschau.byorde.com`
-zeigt bewusst keine Kundenliste, `robots.txt` sperrt Suchmaschinen aus.
-Eingerichtet in Settings → Pages: Source „GitHub Actions“, Custom domain
-`vorschau.byorde.com`, HTTPS erzwungen; DNS-Eintrag bei Hostinger
-(CNAME `vorschau` → `ordeshop.github.io`).
+**`https://ordeshop.github.io/orde-demos/<slug>/`** online, und nur dieser
+Ordner (`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push
+auf `main` dauert es ein bis zwei Minuten. Die Startseite zeigt bewusst keine
+Kundenliste, `robots.txt` sperrt Suchmaschinen aus. Eingerichtet in
+Settings → Pages: Source „GitHub Actions“. Später möglich: eigene Adresse
+`vorschau.byorde.com` (CNAME bei Hostinger, Custom domain in den Pages-
+Einstellungen); dann alle Links in Doku und Skill umstellen.
 
 **Die sechs Beispielseiten** auf der eigenen Seite:
 

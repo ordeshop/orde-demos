@@ -2,7 +2,7 @@ name: Demos hochladen
 
 # Laedt die Beispielseiten per FTP nach /demos/ auf den Server.
 # Die Kunden-Vorschauen (demos/entwuerfe/) gehen NICHT mit, die laufen
-# ueber vorschau-veroeffentlichen.yml auf vorschau.byorde.com.
+# ueber vorschau-veroeffentlichen.yml auf GitHub Pages.
 #
 # Getrennt vom Upload der Website: beide schreiben in verschiedene Ordner
 # und loeschen nichts voneinander (dangerous-clean-slate steht auf false).

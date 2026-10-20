@@ -10,11 +10,11 @@ Auftrags). Hier steht, wie gebaut und gezeigt wird.
 ```
 entwuerfe/<name>/            Quelle: build.py, seiten/, README.md, PDF
                              (wird nicht hochgeladen)
-demos/entwuerfe/index.html   neutrale Startseite von vorschau.byorde.com (keine Kundenliste)
+demos/entwuerfe/index.html   neutrale Startseite der Vorschau-Adresse (keine Kundenliste)
 demos/entwuerfe/404.html     Seite für falsche oder gelöschte Links
 demos/entwuerfe/robots.txt   sperrt Suchmaschinen aus
 demos/entwuerfe/<name>/      die fertigen Seiten mit assets/
-                             → https://vorschau.byorde.com/<name>/
+                             → https://ordeshop.github.io/orde-demos/<name>/
 entwuerfe/pdf-erzeugen.py    macht aus einem Entwurf das PDF zum Weiterschicken
 ```
 
@@ -52,7 +52,7 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
 ## Zeigen
 
 1. Commit und Push auf `main`. Nach ein bis zwei Minuten ist der Entwurf
-   unter `https://vorschau.byorde.com/<name>/` online (Lauf „Vorschau
+   unter `https://ordeshop.github.io/orde-demos/<name>/` online (Lauf „Vorschau
    veröffentlichen“ unter Actions). **Den Link selbst öffnen**, bevor er
    rausgeht.
 2. `python3 entwuerfe/pdf-erzeugen.py <name>` – das PDF zeigt alle Seiten am
