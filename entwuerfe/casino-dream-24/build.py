@@ -1,50 +1,54 @@
 """Baut die Seiten des Dream-Entwurfs aus Layout + Seiteninhalt.
 
-Aufruf:  python3 entwuerfe/dream-spielcenter/build.py
-Quelle hier, fertige Seiten nach demos/entwuerfe/dream-spielcenter/ (wird hochgeladen).
+Aufruf:  python3 entwuerfe/casino-dream-24/build.py
+Quelle hier, fertige Seiten nach demos/entwuerfe/casino-dream-24/ (wird hochgeladen).
 Jede Datei in seiten/ beginnt mit einer Kopfzeile:
   <!-- titel: … | beschreibung: … | nav: standorte -->
 Platzhalter im Inhalt: {{ZEITEN:<slug>}} (Öffnungszeiten-Tabelle),
 {{OFFEN:<slug>}} (data-Attribute für den Live-Status), {{STANDORTE_DETAIL}},
-{{STANDORTE_UEBERSICHT}}, {{STANDORT_OPTIONEN}}, {{STANDORTE_TELEFON}},
+{{STANDORTE_UEBERSICHT}}, {{STANDORT_SPRUNG}}, {{STANDORT_OPTIONEN}}, {{STANDORTE_TELEFON}},
 {{STANDORT_NAMEN}}, {{ANZAHL}}, {{ZENTRALE_TEL}}, {{ZENTRALE_TEL_LINK}},
 {{ZENTRALE_MAIL}}, {{FIRMA}}. Alle Standortangaben stehen nur in STANDORTE.
-PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py dream-spielcenter
+PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py casino-dream-24
 """
 import pathlib
 import re
 
 HIER = pathlib.Path(__file__).resolve().parent
 SEITEN = HIER / "seiten"
-ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "dream-spielcenter"
+ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "casino-dream-24"
 
 # Standorte. Quelle: Standortseite dream-spielcenter.de/spielhallen (Stand
 # laut Suchindex etwa 2024) und Branchenverzeichnisse, abgeglichen 20.10.2026.
 # open: Öffnungsstunde Mo..So (Feiertage wie Sonntag), close: Schluss am
 # Folgetag um diese Stunde (0 = Mitternacht). alter: None = unbekannt.
+# region: Großraum zur Orientierung. marke: Name des Hauses vor Ort, falls belegt.
+# Kaufering heißt laut Verzeichnis (werkenntdenbesten.de) und Domain
+# casino-dream24.de „Casino Dream 24“; die Domain leitet auf dream-spielcenter.de.
 STANDORTE = {
     "fuessen": {
-        "name": "Füssen", "strasse": "Kemptener Str. 129", "zusatz": "",
+        "name": "Füssen", "region": "im Allgäu", "strasse": "Kemptener Str. 129", "zusatz": "",
         "plz": "87629", "ort": "Füssen", "tel": "08362 926299", "alter": None,
         "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
     },
     "heidenheim": {
-        "name": "Heidenheim-Schnaitheim", "strasse": "Riedstr. 3", "zusatz": "",
+        "name": "Heidenheim-Schnaitheim", "region": "", "strasse": "Riedstr. 3", "zusatz": "",
         "plz": "89520", "ort": "Heidenheim an der Brenz", "tel": "07321 609343", "alter": 18,
         "open": [6, 6, 6, 6, 6, 7, 8], "close": 0, "hinweis": "",
     },
     "kaufering": {
-        "name": "Kaufering", "strasse": "Viktor-Frankl-Str. 15", "zusatz": "",
-        "plz": "86916", "ort": "Kaufering", "tel": "08191 4299104", "alter": 21,
-        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
+        "name": "Kaufering", "region": "bei Landsberg am Lech", "strasse": "Viktor-Frankl-Str. 15", "zusatz": "",
+        "plz": "86916", "ort": "Kaufering", "tel": "08191 4299104", "alter": 21, "marke": "Casino Dream 24",
+        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3,
+        "hinweis": "Zeiten prüfen: ein Verzeichnis nennt täglich 6 bis 3 Uhr",
     },
     "senden": {
-        "name": "Senden", "strasse": "Berliner Str. 9", "zusatz": "im Iller-Center",
+        "name": "Senden", "region": "bei Ulm", "strasse": "Berliner Str. 9", "zusatz": "im Iller-Center",
         "plz": "89250", "ort": "Senden", "tel": "07307 32320", "alter": 21,
         "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
     },
     "wiesbaden": {
-        "name": "Wiesbaden-Biebrich", "strasse": "Didierstr. 27a", "zusatz": "",
+        "name": "Wiesbaden-Biebrich", "region": "", "strasse": "Didierstr. 27a", "zusatz": "",
         "plz": "65203", "ort": "Wiesbaden", "tel": "0611 608382", "alter": 21,
         "open": [10, 10, 10, 10, 10, 10, 12], "close": 4,
         "hinweis": "Adresse prüfen: manche Verzeichnisse nennen Äppelallee 27a",
@@ -94,11 +98,19 @@ def maps_link(s):
 
 
 def zeiten(slug):
+    """Tage mit gleichen Zeiten in eine Zeile, z. B. „Montag – Samstag“."""
     s = STANDORTE[slug]
+    gruppen = []
+    for i in range(7):
+        if gruppen and s["open"][gruppen[-1][-1]] == s["open"][i]:
+            gruppen[-1].append(i)
+        else:
+            gruppen.append([i])
     rows = []
-    for i, tag in enumerate(TAGE):
-        d = (i + 1) % 7  # JS-Wochentag: So = 0
-        rows.append(f'<tr data-d="{d}"><th scope="row">{tag}</th><td>{uhr(s["open"][i])} – {uhr(s["close"])}</td></tr>')
+    for g in gruppen:
+        tage = TAGE[g[0]] if len(g) == 1 else f"{TAGE[g[0]]} – {TAGE[g[-1]]}"
+        d = " ".join(str((i + 1) % 7) for i in g)  # JS-Wochentage: So = 0
+        rows.append(f'<tr data-d="{d}"><th scope="row">{tage}</th><td>{uhr(s["open"][g[0]])} – {uhr(s["close"])}</td></tr>')
     return ('<table>\n<caption>Öffnungszeiten · an Feiertagen wie sonntags '
             '<span class="todo" style="margin:0 0 0 8px">bitte prüfen</span></caption>\n<tbody>\n'
             + "\n".join(rows) + "\n</tbody>\n</table>")
@@ -115,6 +127,19 @@ def alter(s):
     return '<li><i class="ti ti-id" aria-hidden="true"></i>Zutritt ab <span class="todo">18 oder 21?</span></li>'
 
 
+def marke(s):
+    return f'<p class="marke">{s["marke"]}</p>' if s.get("marke") else ""
+
+
+def region(s):
+    return f'<p class="region">{s["region"]}</p>' if s["region"] else ""
+
+
+def standort_sprung():
+    links = "".join(f'<li><a href="#{slug}">{s["name"].split("-")[0]}</a></li>' for slug, s in STANDORTE.items())
+    return f'<nav class="jump h-a" aria-label="Zu einem Standort springen"><ul>{links}</ul></nav>'
+
+
 def adresse(s):
     zusatz = f'<br>{s["zusatz"]}' if s["zusatz"] else ""
     return f'{s["strasse"]}{zusatz}<br>{s["plz"]} {s["ort"]}'
@@ -122,13 +147,14 @@ def adresse(s):
 
 def standorte_detail():
     teile = []
-    for slug, s in STANDORTE.items():
+    for n, (slug, s) in enumerate(STANDORTE.items()):
         hinweis = f'<span class="todo">{s["hinweis"]}</span>' if s["hinweis"] else ""
-        teile.append(f"""      <article class="site-detail" id="{slug}" {offen(slug)}>
-        <div class="loc-img rv" role="img" aria-label="Platzhalter für ein Foto der Außenansicht in {s["name"]}"><span class="photo">Foto Außenansicht</span><span class="neon" aria-hidden="true">dream</span></div>
+        wechsel = " flip" if n % 2 else ""
+        teile.append(f"""      <article class="site-detail{wechsel}" id="{slug}" {offen(slug)}>
+        <div class="loc-img rv" role="img" aria-label="Platzhalter für ein Foto der Außenansicht in {s["name"]}"><span class="photo">Foto Außenansicht</span><span class="neon" aria-hidden="true">dream</span><span class="no" aria-hidden="true">{n + 1:02d}</span></div>
         <div class="site-card rv" id="zeiten-{slug}">
           <span class="status" aria-live="polite">Öffnungszeiten prüfen</span>
-          <h2>{s["name"]}</h2>
+          <div>{marke(s)}<h2>{s["name"]}</h2>{region(s)}</div>
           <address style="font-style:normal;color:var(--muted)">{adresse(s)}</address>{hinweis}
 {zeiten(slug)}
           <ul class="facts" aria-label="Hinweise zum Standort">
@@ -151,7 +177,7 @@ def standorte_uebersicht():
         teile.append(f"""        <article class="loc rv" {offen(slug)}>
           <div class="loc-body">
             <span class="status" aria-live="polite">Öffnungszeiten prüfen</span>
-            <h3>{s["name"]}</h3>
+            <h3>{s["name"]}</h3>{region(s)}
             <address>{adresse(s)}</address>
             <p class="hint">Täglich geöffnet, {bis}</p>
             <div class="loc-links">
@@ -253,6 +279,7 @@ def main():
         ersatz = {
             "{{STANDORTE_DETAIL}}": standorte_detail(),
             "{{STANDORTE_UEBERSICHT}}": standorte_uebersicht(),
+            "{{STANDORT_SPRUNG}}": standort_sprung(),
             "{{STANDORT_OPTIONEN}}": standort_optionen(),
             "{{STANDORTE_TELEFON}}": standorte_telefon(),
             "{{STANDORT_NAMEN}}": standort_namen(),

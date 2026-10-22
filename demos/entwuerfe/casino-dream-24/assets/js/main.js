@@ -27,7 +27,7 @@ document.querySelectorAll('[data-open]').forEach(el => {
     st.textContent = s.isOpen ? 'Jetzt geöffnet · bis ' + bis : 'Geschlossen · öffnet um ' + s.opens + ':00 Uhr';
     st.classList.toggle('open', s.isOpen);
   });
-  el.querySelector(`tr[data-d="${s.bizDay}"]`)?.classList.add('today');
+  el.querySelector(`tr[data-d~="${s.bizDay}"]`)?.classList.add('today');
   const big = el.querySelector('.now-big'), sub = el.querySelector('.now-sub');
   if (big) big.innerHTML = s.isOpen ? 'Jetzt <span>geöffnet</span>' : 'Ab <span>' + s.opens + ' Uhr</span>';
   if (sub) sub.textContent = s.isOpen ? 'Heute geöffnet bis ' + (s.close === 0 ? 'Mitternacht' : s.close + ':00 Uhr') + '.' : 'Heute wieder ab ' + s.opens + ':00 Uhr für Sie da.';

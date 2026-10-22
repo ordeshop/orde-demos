@@ -9,7 +9,7 @@ Datenschutz bleiben draußen.
 Ergebnis: entwuerfe/<name>/Entwurf-<name>.pdf  (wird nicht hochgeladen)
 
 Aufruf (im Repo-Ordner):
-    python3 entwuerfe/pdf-erzeugen.py dream-spielcenter
+    python3 entwuerfe/pdf-erzeugen.py casino-dream-24
 
 Voraussetzung wie bei vorschau-erzeugen.py: playwright und Pillow.
 Liegt Chromium schon irgendwo, den Pfad über PLAYWRIGHT_CHROMIUM setzen.

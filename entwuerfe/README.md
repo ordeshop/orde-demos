@@ -19,7 +19,7 @@ entwuerfe/pdf-erzeugen.py    macht aus einem Entwurf das PDF zum Weiterschicken
 ```
 
 `<name>` ist derselbe Slug wie das spätere Kunden-Repo: klein, Bindestriche,
-ä→ae, ö→oe, ü→ue, ß→ss. Aus „Dream Spielcenter“ wird `dream-spielcenter`.
+ä→ae, ö→oe, ü→ue, ß→ss. Aus „Casino Dream 24“ wird `casino-dream-24`.
 
 ## Umfang
 
@@ -30,7 +30,7 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
 ## Bauen
 
 1. Einen vorhandenen Entwurf als Gerüst kopieren, im Moment
-   `entwuerfe/dream-spielcenter/`. `build.py` setzt Kopf, Fuß und Menü einmal
+   `entwuerfe/casino-dream-24/`. `build.py` setzt Kopf, Fuß und Menü einmal
    für alle Seiten; Inhalte stehen in `seiten/`. Die Gestaltung wird aber neu
    gemacht: eigene Farben aus dem Logo, eigene Schriften, eigenes Layout.
    Zwei Entwürfe dürfen sich nicht ähneln.
@@ -48,6 +48,10 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
    holen. Nur übernehmen, was die offizielle Seite belegt; Abweichungen
    zwischen Quellen als Platzhalter markieren und in der README des Entwurfs
    mit Quelle festhalten.
+   Vorher prüfen, wohin die alte Domain weiterleitet (`curl -sI http://<domain>/`)
+   und ob es den Betrieb unter anderem Namen schon unter `entwuerfe/` gibt.
+   Ein Betrieb hat oft mehrere Domains und Namen (Beispiel: casino-dream24.de
+   leitet auf dream-spielcenter.de). Ein Kunde, ein Entwurf, ein Link.
 7. Angaben, die auf mehreren Seiten vorkommen (Standorte, Zeiten, Telefon),
    nur an **einer** Stelle in `build.py` pflegen.
 
