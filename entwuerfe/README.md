@@ -19,7 +19,7 @@ entwuerfe/pdf-erzeugen.py    macht aus einem Entwurf das PDF zum Weiterschicken
 ```
 
 `<name>` ist derselbe Slug wie das spätere Kunden-Repo: klein, Bindestriche,
-ä→ae, ö→oe, ü→ue, ß→ss. Aus „Casino Dream 24“ wird `casino-dream-24`.
+ä→ae, ö→oe, ü→ue, ß→ss. Aus „Spielcenter Dream 24“ wird `spielcenter-dream-24`.
 
 ## Umfang
 
@@ -30,7 +30,7 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
 ## Bauen
 
 1. Einen vorhandenen Entwurf als Gerüst kopieren, im Moment
-   `entwuerfe/casino-dream-24/`. `build.py` setzt Kopf, Fuß und Menü einmal
+   `entwuerfe/spielcenter-dream-24/`. `build.py` setzt Kopf, Fuß und Menü einmal
    für alle Seiten; Inhalte stehen in `seiten/`. Die Gestaltung wird aber neu
    gemacht: eigene Farben aus dem Logo, eigene Schriften, eigenes Layout.
    Zwei Entwürfe dürfen sich nicht ähneln.

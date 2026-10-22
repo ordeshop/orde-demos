@@ -1,12 +1,12 @@
-# Entwurf Casino Dream 24 / Dream Spielcenter
+# Entwurf Spielcenter Dream 24 / Dream Spielcenter
 
 Gestaltungsvorschlag für einen **echten Betrieb**: MSW Spiel + Freizeit GmbH,
 Spielhallen unter dem Namen „Dream“. Kontakt über Arturs Mutter (ihr Chef,
 Haus Kaufering). Noch kein Auftrag: kein Briefing, keine Anzahlung. Wird es
-einer, zieht das Projekt nach `ordeshop/orde-kunde-casino-dream-24` um und
+einer, zieht das Projekt nach `ordeshop/orde-kunde-spielcenter-dream-24` um und
 wird hier gelöscht.
 
-Vorschau-Link: https://ordeshop.github.io/orde-demos/casino-dream-24/
+Vorschau-Link: https://ordeshop.github.io/orde-demos/spielcenter-dream-24/
 Nirgends verlinkt, nicht in `BRANCHEN` der ORDÉ-Website, `noindex`. Kein
 Rückkehr-Balken, weil der Link an den Betreiber geht; stattdessen oben der
 Entwurfs-Hinweis.
@@ -15,13 +15,14 @@ Entwurfs-Hinweis.
 dream-spielcenter.de weiter (geprüft 22.10.2026). Der Entwurf entstand am
 20.10.2026 als `dream-spielcenter` und ist am 22.10.2026 auf den Slug
 `casino-dream-24` umgezogen, weil Artur den Betrieb unter diesem Namen
-anfragt. Der alte Link `/dream-spielcenter/` ist damit weg; er war noch nicht
-verschickt.
+anfragte, und noch am selben Tag auf Arturs Anweisung auf
+`spielcenter-dream-24`: „Spielcenter“ statt „Casino“, auch im Namen auf der
+Seite. Die alten Links sind damit weg; keiner war verschickt.
 
 ## Stand
 
 ```
-- [x] 1  Anfrage: DACH, Unternehmen (GmbH), persönlicher Kontakt, Slug casino-dream-24
+- [x] 1  Anfrage: DACH, Unternehmen (GmbH), persönlicher Kontakt, Slug spielcenter-dream-24
 - [ ] 1  Veit-Prüfung (Artur), Seitenzahl bestätigen (Annahme: wie alte Seite)
 - [x] 2  Entwurf gebaut und geprüft (8 Seiten), Link geöffnet, PDF erzeugt, Mail-Entwurf an Artur
 - [ ] 3  Angebot raus (mit AGB/Widerruf)
@@ -43,12 +44,12 @@ Spielerschutz, Kontakt, Impressum und Datenschutz (Platzhalter).
 
 ## Bauen
 
-    python3 entwuerfe/casino-dream-24/build.py          # Seiten nach demos/entwuerfe/casino-dream-24/
-    python3 entwuerfe/pdf-erzeugen.py casino-dream-24   # PDF hier im Ordner
+    python3 entwuerfe/spielcenter-dream-24/build.py          # Seiten nach demos/entwuerfe/spielcenter-dream-24/
+    python3 entwuerfe/pdf-erzeugen.py spielcenter-dream-24   # PDF hier im Ordner
 
 Inhalte nur in `seiten/` ändern, Kopf, Fuß und Standorte (`STANDORTE`) in
 `build.py`. Die HTML-Dateien im Demos-Ordner werden überschrieben.
-`Entwurf-casino-dream-24.pdf` sind Screenshots aller Seiten zum Weiterschicken.
+`Entwurf-spielcenter-dream-24.pdf` sind Screenshots aller Seiten zum Weiterschicken.
 
 ## Technik
 
@@ -84,8 +85,8 @@ eine Sicherheitswarnung – ein gutes Argument für den Relaunch.
 ## Offen (vom Betreiber)
 
 - Name und Domain der neuen Seite: „Dream Spielcenter“ (dream-spielcenter.de)
-  für alle Häuser, oder „Casino Dream 24“? Entwurf nutzt „Dream“, Kaufering
-  trägt „Casino Dream 24“
+  für alle Häuser, oder „Spielcenter Dream 24“? Entwurf nutzt „Dream“, Kaufering
+  trägt „Spielcenter Dream 24“ (Verzeichnisse nennen dort „Casino Dream 24“)
 - Ulm und Landsberg: eigene Standorte (dann Adresse, Telefon, Zeiten) oder
   Senden und Kaufering gemeint?
 - Original-Logo als Datei (jetzt SVG-Nachbau)

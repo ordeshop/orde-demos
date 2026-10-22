@@ -1,7 +1,7 @@
 """Baut die Seiten des Dream-Entwurfs aus Layout + Seiteninhalt.
 
-Aufruf:  python3 entwuerfe/casino-dream-24/build.py
-Quelle hier, fertige Seiten nach demos/entwuerfe/casino-dream-24/ (wird hochgeladen).
+Aufruf:  python3 entwuerfe/spielcenter-dream-24/build.py
+Quelle hier, fertige Seiten nach demos/entwuerfe/spielcenter-dream-24/ (wird hochgeladen).
 Jede Datei in seiten/ beginnt mit einer Kopfzeile:
   <!-- titel: … | beschreibung: … | nav: standorte -->
 Platzhalter im Inhalt: {{ZEITEN:<slug>}} (Öffnungszeiten-Tabelle),
@@ -9,14 +9,14 @@ Platzhalter im Inhalt: {{ZEITEN:<slug>}} (Öffnungszeiten-Tabelle),
 {{STANDORTE_UEBERSICHT}}, {{STANDORT_SPRUNG}}, {{STANDORT_OPTIONEN}}, {{STANDORTE_TELEFON}},
 {{STANDORT_NAMEN}}, {{ANZAHL}}, {{ZENTRALE_TEL}}, {{ZENTRALE_TEL_LINK}},
 {{ZENTRALE_MAIL}}, {{FIRMA}}. Alle Standortangaben stehen nur in STANDORTE.
-PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py casino-dream-24
+PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py spielcenter-dream-24
 """
 import pathlib
 import re
 
 HIER = pathlib.Path(__file__).resolve().parent
 SEITEN = HIER / "seiten"
-ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "casino-dream-24"
+ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "spielcenter-dream-24"
 
 # Standorte. Quelle: Standortseite dream-spielcenter.de/spielhallen (Stand
 # laut Suchindex etwa 2024) und Branchenverzeichnisse, abgeglichen 20.10.2026.
@@ -25,6 +25,7 @@ ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "casino-dream-24"
 # region: Großraum zur Orientierung. marke: Name des Hauses vor Ort, falls belegt.
 # Kaufering heißt laut Verzeichnis (werkenntdenbesten.de) und Domain
 # casino-dream24.de „Casino Dream 24“; die Domain leitet auf dream-spielcenter.de.
+# Auf der Seite auf Arturs Anweisung „Spielcenter“ statt „Casino“ (22.10.2026).
 STANDORTE = {
     "fuessen": {
         "name": "Füssen", "region": "im Allgäu", "strasse": "Kemptener Str. 129", "zusatz": "",
@@ -38,7 +39,7 @@ STANDORTE = {
     },
     "kaufering": {
         "name": "Kaufering", "region": "bei Landsberg am Lech", "strasse": "Viktor-Frankl-Str. 15", "zusatz": "",
-        "plz": "86916", "ort": "Kaufering", "tel": "08191 4299104", "alter": 21, "marke": "Casino Dream 24",
+        "plz": "86916", "ort": "Kaufering", "tel": "08191 4299104", "alter": 21, "marke": "Spielcenter Dream 24",
         "open": [9, 9, 9, 9, 9, 9, 11], "close": 3,
         "hinweis": "Zeiten prüfen: ein Verzeichnis nennt täglich 6 bis 3 Uhr",
     },
