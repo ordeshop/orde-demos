@@ -1,8 +1,8 @@
 # Entwurf Spielcenter Dream 24 / Dream Spielcenter
 
 Gestaltungsvorschlag für einen **echten Betrieb**: MSW Spiel + Freizeit GmbH,
-Spielhallen unter dem Namen „Dream“. Kontakt über Arturs Mutter (ihr Chef,
-Haus Kaufering). Noch kein Auftrag: kein Briefing, keine Anzahlung. Wird es
+Spielhallen unter dem Namen „Dream“. Persönlicher Kontakt (Einzelheiten nur
+bei Artur, nicht in dieses öffentliche Repo). Noch kein Auftrag: kein Briefing, keine Anzahlung. Wird es
 einer, zieht das Projekt nach `ordeshop/orde-kunde-spielcenter-dream-24` um und
 wird hier gelöscht.
 
@@ -23,7 +23,7 @@ Seite. Die alten Links sind damit weg; keiner war verschickt.
 
 ```
 - [x] 1  Anfrage: DACH, Unternehmen (GmbH), persönlicher Kontakt, Slug spielcenter-dream-24
-- [ ] 1  Veit-Prüfung (Artur), Seitenzahl bestätigen (Annahme: wie alte Seite)
+- [ ] 1  Prüfung Nebentätigkeit (Artur), Seitenzahl bestätigen (Annahme: wie alte Seite)
 - [x] 2  Entwurf gebaut und geprüft (8 Seiten), Link geöffnet, PDF erzeugt, Mail-Entwurf an Artur
 - [ ] 3  Angebot raus (mit AGB/Widerruf)
 - [ ] 4  Zusage, Auftragsbestätigung mit Briefing-Link

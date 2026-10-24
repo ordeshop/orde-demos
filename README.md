@@ -34,14 +34,20 @@ auf die `index.html`.
 **`https://ordeshop.github.io/orde-demos/<slug>/`** online, und nur dieser
 Ordner (`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push
 auf `main` dauert es ein bis zwei Minuten. Die Startseite zeigt bewusst keine
-Kundenliste, `robots.txt` sperrt Suchmaschinen aus. Eingerichtet in
+Kundenliste. Vor Suchmaschinen schützt allein `<meta name="robots"
+content="noindex">` in jeder Seite: Die `robots.txt` liegt unter
+`/orde-demos/` und nicht im Wurzelverzeichnis der Domain, Suchmaschinen
+lesen sie dort nicht. Öffentlich bleibt es trotzdem: Das Repo ist
+öffentlich, jeder Entwurf steht samt README in der Git-Historie. Deshalb
+in Entwürfe und READMEs nichts Privates schreiben (wer den Kontakt
+vermittelt hat, Arbeitgeber, Preise aus Gesprächen). Eingerichtet in
 Settings → Pages: Source „GitHub Actions“. Später möglich: eigene Adresse
 `vorschau.byorde.com` (CNAME bei Hostinger, Custom domain in den Pages-
 Einstellungen); dann alle Links in Doku und Skill umstellen.
 
 **Die sechs Beispielseiten** auf der eigenen Seite:
 
-Auf dem Server unter **`/demos/`**, also `ordeshop.net/demos/cafe/` und so
+Auf dem Server unter **`/demos/`**, also `byorde.com/demos/cafe/` und so
 weiter. Die ORDÉ-Website verlinkt dorthin und zeigt die Bilder aus
 `vorschau/` unter `demos/vorschau/`.
 
