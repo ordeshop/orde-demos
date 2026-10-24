@@ -9,7 +9,10 @@ name: Demos hochladen
 #
 # Vorher einrichten unter Settings -> Secrets and variables -> Actions:
 #   FTP_SERVER     Serveradresse von Hostinger
-#   FTP_USERNAME   FTP-Benutzername
+#   FTP_USERNAME   FTP-Benutzername der Domain, bei Hostinger u350662327.byorde.com
+#                  (nicht nur u350662327). Dieser Zugang startet schon in
+#                  public_html von byorde.com, deshalb steht unten ./demos/
+#                  und nicht ./public_html/demos/.
 #   FTP_PASSWORD   FTP-Passwort
 #
 # Solange die Secrets fehlen, wird das Hochladen mit einem Hinweis
@@ -50,7 +53,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./demos/
-          server-dir: ./public_html/demos/
+          server-dir: ./demos/
           dangerous-clean-slate: false
           exclude: |
             **/.git*
@@ -67,5 +70,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./vorschau/
-          server-dir: ./public_html/demos/vorschau/
+          server-dir: ./demos/vorschau/
           dangerous-clean-slate: false
