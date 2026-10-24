@@ -75,10 +75,10 @@ Vorschaubild fällt niemandem auf, bis ein Kunde sich wundert.
 ## Gestaltung
 
 Diese Demos sind das Schaufenster — sie müssen besser aussehen als die
-WordPress-Seiten der Mitbewerber. Für Änderungen die Skills aus dem Plugin
-`orde-design` benutzen (in `ordeshop/Claude-test` unter
-`plugins/orde-design/`), besonders `high-end-visual-design` und
-`design-taste-frontend`.
+WordPress-Seiten der Mitbewerber. Für Änderungen und neue Entwürfe gilt
+`ordeshop/Business-Handbuch/ORDE-STIL.md`: erst Gestaltungsplan, dann
+bauen, dann mit Screenshots prüfen. Dort steht auch, welche Skills aus dem
+Plugin `orde-design` gelesen werden.
 
 Die Demos sind zugleich Ausgangspunkt für echte Kundenprojekte: Passt eine
 zur Branche des Kunden, wird sie dort als Grundlage genommen und für den
@@ -90,14 +90,20 @@ Betrieb umgebaut — nicht kopiert.
 **`https://ordeshop.github.io/orde-demos/<slug>/`** online, und nur dieser
 Ordner (`.github/workflows/vorschau-veroeffentlichen.yml`). Nach jedem Push
 auf `main` dauert es ein bis zwei Minuten. Die Startseite zeigt bewusst keine
-Kundenliste, `robots.txt` sperrt Suchmaschinen aus. Eingerichtet in
+Kundenliste. Vor Suchmaschinen schützt allein `<meta name="robots"
+content="noindex">` in jeder Seite: Die `robots.txt` liegt unter
+`/orde-demos/` und nicht im Wurzelverzeichnis der Domain, Suchmaschinen
+lesen sie dort nicht. Öffentlich bleibt es trotzdem: Das Repo ist
+öffentlich, jeder Entwurf steht samt README in der Git-Historie. Deshalb
+in Entwürfe und READMEs nichts Privates schreiben (wer den Kontakt
+vermittelt hat, Arbeitgeber, Preise aus Gesprächen). Eingerichtet in
 Settings → Pages: Source „GitHub Actions“. Später möglich: eigene Adresse
 `vorschau.byorde.com` (CNAME bei Hostinger, Custom domain in den Pages-
 Einstellungen); dann alle Links in Doku und Skill umstellen.
 
 **Die sechs Beispielseiten** auf der eigenen Seite:
 
-Auf dem Server unter `/demos/`, also `ordeshop.net/demos/cafe/`. Eigener
+Auf dem Server unter `/demos/`, also `byorde.com/demos/cafe/`. Eigener
 FTP-Upload, getrennt von der Website. Beide schreiben in verschiedene Ordner
 und löschen nichts voneinander (`dangerous-clean-slate: false`).
 

@@ -12,7 +12,8 @@ entwuerfe/<name>/            Quelle: build.py, seiten/, README.md, PDF
                              (wird nicht hochgeladen)
 demos/entwuerfe/index.html   neutrale Startseite der Vorschau-Adresse (keine Kundenliste)
 demos/entwuerfe/404.html     Seite für falsche oder gelöschte Links
-demos/entwuerfe/robots.txt   sperrt Suchmaschinen aus
+demos/entwuerfe/robots.txt   wirkt nicht (liegt nicht im Wurzelverzeichnis der
+                             Domain); jede Seite braucht noindex
 demos/entwuerfe/<name>/      die fertigen Seiten mit assets/
                              → https://ordeshop.github.io/orde-demos/<name>/
 entwuerfe/pdf-erzeugen.py    macht aus einem Entwurf das PDF zum Weiterschicken
@@ -79,7 +80,9 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
   mit dem alten Bauskript löschen.
 - **Live-Gang:** `demos/entwuerfe/<name>/` löschen.
 - **Absage:** beide Ordner löschen. Der Entwurf zeigt einen echten Betrieb und
-  soll nicht dauerhaft öffentlich herumliegen.
+  soll nicht dauerhaft öffentlich herumliegen. In der Git-Historie dieses
+  öffentlichen Repos bleibt er trotzdem lesbar, deshalb nie Privates in
+  Entwürfe oder READMEs schreiben.
 
 ## Checkliste
 
