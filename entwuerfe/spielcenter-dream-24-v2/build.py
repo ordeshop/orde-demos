@@ -89,6 +89,8 @@ ICONS = {
     "pfeil": '<path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/>',
     "extern": '<path d="M17 7l-10 10"/><path d="M8 7l9 0l0 9"/>',
     "mail": '<path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"/><path d="M3 7l9 6l9 -6"/>',
+    "pause": '<path d="M6 6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -12"/><path d="M14 6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1l0 -12"/>',
+    "play": '<path d="M7 4v16l13 -8l-13 -8"/>',
 }
 
 # Symbole auf den Walzen des Automaten (Tabler Icons, MIT), mit feinerer Linie
@@ -120,12 +122,15 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
   </defs>
 </svg>"""
 
-# Intro der Startseite: Das Kopfskript entscheidet vor dem ersten Bild, ob es läuft (einmal
-# je Besuch, nicht bei „Bewegung reduzieren“). Notaus nach 3 s, falls main.js nicht lädt
-# (main.js startet das Intro ohnehin nur, wenn es in den ersten 2,5 s ankommt).
-INTRO_SKRIPT = ('<script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("dream-intro"))'
-                '{document.documentElement.classList.add("intro");window.dreamNotaus=setTimeout(function()'
-                '{document.documentElement.classList.remove("intro","intro-an")},3000)}}catch(e){}</script>')
+# Kopfskript der Startseite, vor dem ersten Bild: übernimmt „Bewegung anhalten“ aus einem früheren
+# Besuch und entscheidet, ob das Intro läuft (einmal je Besuch, nicht bei „Bewegung reduzieren“ oder
+# angehaltener Bewegung). Notaus nach 3 s, falls main.js nicht lädt (main.js startet das Intro ohnehin
+# nur, wenn es in den ersten 2,5 s ankommt).
+INTRO_SKRIPT = ('<script>try{var d=document.documentElement,aus=localStorage.getItem("dream-bewegung")==="aus";'
+                'if(aus)d.classList.add("bewegung-aus");'
+                'if(!aus&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("dream-intro"))'
+                '{d.classList.add("intro");window.dreamNotaus=setTimeout(function(){d.classList.remove("intro","intro-an")},3000)}'
+                '}catch(e){}</script>')
 
 
 def icon(name):
@@ -269,10 +274,11 @@ def automat():
                            for k, s in enumerate(zellen))
         # Die Zielzelle steht in der mittleren Reihe; das Fenster zeigt 2,6 Zellen, oben 0,8 angeschnitten
         lage = -(WALZEN_ZIEL - .8) / n * 100
-        walzen.append(f'<div class="walze"><div class="streifen" data-streifen data-n="{n}" data-ziel="{WALZEN_ZIEL}" '
+        walzen.append(f'<div class="walze" style="--j:{j}"><div class="streifen" data-streifen data-n="{n}" data-ziel="{WALZEN_ZIEL}" '
                       f'style="--ziel:{lage:.4f}%">{streifen}</div></div>')
-    lampen = "<i></i>" * LAMPEN
-    return (f'<div class="automat" data-automat aria-hidden="true"><span class="automat-streif"></span>'
+    lampen = "".join(f'<i style="--k:{k}"></i>' for k in range(LAMPEN))  # --k: Platz im Lauflicht
+    return (f'<div class="automat" data-automat aria-hidden="true" style="--lampen:{LAMPEN}">'
+            f'<span class="automat-streif"></span><span class="automat-blitz"></span>'
             f'<div class="automat-rahmen"><span class="lampen lampen-oben">{lampen}</span>'
             f'<div class="walzen" style="--n:{len(STANDORTE)}"><span class="gewinnlinie"></span>{"".join(walzen)}</div>'
             f'<span class="zeiger zeiger-l"></span><span class="zeiger zeiger-r"></span>'

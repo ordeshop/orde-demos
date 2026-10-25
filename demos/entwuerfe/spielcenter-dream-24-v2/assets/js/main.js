@@ -24,14 +24,18 @@ if (kopf) {
   fest();
   addEventListener('scroll', fest, { passive: true });
   if (automat && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => kopf.classList.toggle('logo-aus', e.isIntersecting), { rootMargin: '-84px 0px 0px 0px' }).observe(automat);
+    new IntersectionObserver(([e]) => {
+      kopf.classList.toggle('logo-aus', e.isIntersecting);
+      automat.classList.toggle('ruhe', !e.isIntersecting); // Lauflicht außer Sicht anhalten
+    }, { rootMargin: '-84px 0px 0px 0px' }).observe(automat);
   }
 }
 
 // Intro der Startseite: Das Kopfskript hat .intro gesetzt (einmal je Besuch, nicht bei
 // „Bewegung reduzieren“). Die Walzen drehen und bleiben von links nach rechts auf dem
-// Dream-Schild stehen, beim Treffer laufen die Lampen, dann gleitet der Automat an seinen
-// Platz. Tippen, eine Taste oder Scrollen beendet es sofort.
+// Dream-Schild stehen. Beim Treffer: Ruck, Lichtblitz, Funkenflug, rasendes Lauflicht (CSS
+// .intro-gewinn), dann gleitet der Automat an seinen Platz. Tippen, eine Taste oder Scrollen
+// beendet es sofort.
 const wurzel = document.documentElement;
 if (wurzel.classList.contains('intro')) {
   clearTimeout(window.dreamNotaus);
@@ -60,8 +64,8 @@ function intro() {
   });
   const stopp = 350 + 1000 + 280 * (laeufe.length - 1);
   const uhren = [
-    setTimeout(() => wurzel.classList.add('intro-gewinn'), stopp),
-    setTimeout(ende, stopp + 1150),
+    setTimeout(() => { wurzel.classList.add('intro-gewinn'); funkenflug(); }, stopp),
+    setTimeout(ende, stopp + 1700),
   ];
   const abbruch = ['pointerdown', 'keydown', 'wheel', 'touchstart'];
   abbruch.forEach(t => addEventListener(t, ende, { passive: true }));
@@ -71,10 +75,100 @@ function intro() {
     uhren.forEach(clearTimeout);
     abbruch.forEach(t => removeEventListener(t, ende));
     laeufe.forEach(a => a.finish());
-    wurzel.classList.remove('intro', 'intro-an');
+    wurzel.classList.remove('intro', 'intro-an', 'intro-gewinn');
     wurzel.classList.add('intro-aus');
-    setTimeout(() => wurzel.classList.remove('intro-aus', 'intro-gewinn'), 1900);
+    setTimeout(() => wurzel.classList.remove('intro-aus'), 1900);
   }
+}
+
+// Funkenflug beim Treffer: warme Funken und ein paar Sterne aus dem Logo fliegen aus der
+// Gewinnlinie und fallen (bewusst keine Münzen). Nach knapp zwei Sekunden ist die Leinwand weg.
+const STERN = 'M388 46l6 15 16 1-12 10 4 16-14-9-14 9 4-16-12-10 16-1z'; // wie #stern im Sprite, Mitte 388/67
+function funkenflug() {
+  const linie = automat.querySelector('.walzen').getBoundingClientRect();
+  const leinwand = document.createElement('canvas');
+  leinwand.className = 'funkenflug';
+  leinwand.setAttribute('aria-hidden', 'true');
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  leinwand.width = innerWidth * dpr;
+  leinwand.height = innerHeight * dpr;
+  document.body.append(leinwand);
+  const ctx = leinwand.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.lineCap = 'round';
+  const stern = new Path2D(STERN);
+  const farben = ['255,246,223', '255,214,120', '255,201,40', '246,115,31'];
+  const mitte = linie.top + linie.height / 2;
+  const teile = Array.from({ length: innerWidth < 600 ? 110 : 190 }, (_, i) => {
+    const winkel = -Math.PI / 2 + (Math.random() - .5) * Math.PI * 1.3; // meist nach oben, weit gefächert
+    const tempo = 280 + Math.random() * 760;
+    return {
+      x: linie.left + Math.random() * linie.width, y: mitte + (Math.random() - .5) * linie.height * .25,
+      vx: Math.cos(winkel) * tempo, vy: Math.sin(winkel) * tempo,
+      dauer: .8 + Math.random(), r: .8 + Math.random() * 1.8, farbe: farben[Math.random() * farben.length | 0],
+      stern: i < 14 ? 7 + Math.random() * 9 : 0, dreh: (Math.random() - .5) * 12, w: Math.random() * 6,
+    };
+  });
+  let zeit = 0;
+  let vorher = performance.now();
+  requestAnimationFrame(function bild(jetzt) {
+    const dt = Math.max(0, Math.min(.04, (jetzt - vorher) / 1000));
+    vorher = jetzt;
+    zeit += dt;
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    let aktiv = 0;
+    for (const t of teile) {
+      if (zeit > t.dauer) continue;
+      aktiv++;
+      const x0 = t.x - t.vx * dt * 1.5, y0 = t.y - t.vy * dt * 1.5;
+      t.vx *= .985;
+      t.vy = t.vy * .985 + 1100 * dt;
+      t.x += t.vx * dt;
+      t.y += t.vy * dt;
+      const a = 1 - zeit / t.dauer;
+      if (t.stern) {
+        t.w += t.dreh * dt;
+        ctx.save();
+        ctx.translate(t.x, t.y);
+        ctx.rotate(t.w);
+        ctx.scale(t.stern / 44, t.stern / 44);
+        ctx.translate(-388, -67);
+        ctx.lineWidth = 2.6;
+        ctx.strokeStyle = `rgba(255,214,120,${a})`;
+        ctx.stroke(stern);
+        ctx.restore();
+      } else {
+        for (const [breite, deckung] of [[t.r * 3.2, a * .35], [t.r, a]]) { // weicher Schein, dann der helle Kern
+          ctx.strokeStyle = `rgba(${t.farbe},${deckung})`;
+          ctx.lineWidth = breite;
+          ctx.beginPath();
+          ctx.moveTo(x0, y0);
+          ctx.lineTo(t.x, t.y);
+          ctx.stroke();
+        }
+      }
+    }
+    if (aktiv) requestAnimationFrame(bild);
+    else leinwand.remove();
+  });
+}
+
+// „Bewegung anhalten“ in der Live-Zeile: hält Lauflicht, Schein und Glanz an (WCAG 2.2.2).
+// Die Wahl bleibt im Browser; das Kopfskript übernimmt sie beim nächsten Besuch vor dem ersten Bild.
+const bewegung = document.querySelector('[data-bewegung]');
+if (bewegung) {
+  const zeigen = () => {
+    const aus = wurzel.classList.contains('bewegung-aus');
+    bewegung.querySelector('span').textContent = aus ? 'Bewegung fortsetzen' : 'Bewegung anhalten';
+    bewegung.querySelector('use').setAttribute('href', aus ? '#i-play' : '#i-pause');
+  };
+  zeigen();
+  bewegung.addEventListener('click', () => {
+    const aus = wurzel.classList.toggle('bewegung-aus');
+    try { localStorage.setItem('dream-bewegung', aus ? 'aus' : 'an'); } catch (e) { /* dann gilt die Wahl bis zum Neuladen */ }
+    zeigen();
+  });
 }
 
 // Uhrzeit in Deutschland, egal in welcher Zeitzone das Gerät steht. tag: 0 = Montag

@@ -35,6 +35,10 @@ in `build.py` sind dieselben.
   Geprüft: 360/390/1024/1440 px, Intro in Echtzeit aufgenommen (Handy und Bildschirm),
   Abbruch per Klick und Taste, „Bewegung reduzieren“, ohne JavaScript, ohne main.js,
   zweiter Aufruf ohne Intro, axe-core vor und nach dem Intro ohne Befund.
+- 25.10.2026: Treffer im Intro kräftiger (Ruck, Lichtblitz, Funkenflug, aufspringende
+  Schilder, rasendes Lauflicht) und Dauerbewegung auf der Bühne (Lauflicht, Schein, Glanz),
+  beides Arturs Wunsch. Neu: „Bewegung anhalten“ in der Live-Zeile. Geprüft wie oben, dazu
+  Anhalten, Fortsetzen und Neuladen mit angehaltener Bewegung.
 
 ## Bauen
 
@@ -100,8 +104,9 @@ auf „Standorte“ als Zeitplan aller Häuser untereinander mit einem gemeinsam
 Strich und der Uhrzeit. Ohne JavaScript zeigen die Balken die Zeiten von Montag.
 (Vorher 24-Stunden-Zifferblätter; auf Arturs Wunsch vom 25.10.2026 ersetzt.)
 
-**Bewegung:** ein Moment beim Laden, das Intro mit dem Spielautomaten (siehe
-„Bühne: der Automat“). Bei „Bewegung reduzieren“ steht sofort die fertige Bühne da.
+**Bewegung:** das Intro mit dem Spielautomaten beim Laden, danach ein kreisendes
+Lauflicht auf der Bühne (siehe „Bühne: der Automat“), anhaltbar. Bei „Bewegung
+reduzieren“ steht sofort die fertige, ruhige Bühne da.
 
 **Was die Seite bewusst nicht macht:**
 - kein Casino-Look (Chips, Karten, Jackpot, Goldregen, Münzen, Geldbeträge, „Gewinne“):
@@ -165,15 +170,25 @@ ein Spielautomat gerade gewonnen hat und dann flüssig in die Bühne übergeht.
   schattiert, darüber Glas. Oben und unten eine Reihe Lampen, an den Seiten die Zeiger
   der Gewinnlinie, dahinter der Lichtstreif der bisherigen Bühne.
 - **Intro:** Der Raum ist dunkel, nur der Automat leuchtet, die Walzen drehen. Sie
-  bleiben von links nach rechts mit einem kleinen Ruck auf dem Dream-Schild stehen. Beim
-  Treffer laufen die Lampen, die Schilder blitzen, der Lichtstreif zieht auf, der Raum
-  wird hell. Dann gleitet der Automat an seinen Platz, Kopf, Überschrift und Knöpfe
-  blenden ein. Gut 4 Sekunden.
-- **Regeln:** einmal je Besuch (`sessionStorage`), Tippen, Taste oder Scrollen beendet es
-  sofort, bei „Bewegung reduzieren“ und ohne JavaScript steht die fertige Bühne da. Lädt
-  `main.js` nicht binnen 2,5 s, entfällt das Intro (Notaus im Kopfskript nach 3 s). Die
-  Lampen blinken nur im Treffer-Moment, danach leuchten sie ruhig. Kein Ton.
-- **Was bewusst fehlt:** Geld, Beträge, Münzen, Wörter wie „Gewinn“ oder „Jackpot“.
+  bleiben von links nach rechts mit einem kleinen Ruck auf dem Dream-Schild stehen.
+  **Treffer** (auf Arturs Wunsch kräftig): Der Automat ruckt, das Walzenfenster blitzt
+  einmal auf, hinter dem Rahmen geht ein Lichtblitz auf, aus der Gewinnlinie fliegen
+  Funken und ein paar Sterne aus dem Logo (Canvas, knapp 2 s), die Schilder springen
+  nacheinander auf, das Lauflicht rast, ein Glanz zieht zweimal über das Glas, der
+  Lichtstreif schießt auf, der Raum wird hell. Dann gleitet der Automat an seinen Platz,
+  Kopf, Überschrift und Knöpfe blenden ein. Etwa 4,5 Sekunden.
+- **Danach bleibt die Bühne in Bewegung** (Arturs Wunsch): Das Lauflicht kreist (oben nach
+  rechts, unten nach links), die fünf Schilder glimmen in einer Welle, alle 7 Sekunden
+  zieht ein Glanz über das Glas. Das ist bewusst eine Ausnahme von „keine blinkenden
+  Punkte“ in `ORDE-STIL.md`: Es ist das Lauflicht eines Automaten, eine weiche Welle, kein
+  Flackern.
+- **Regeln:** Das Intro läuft einmal je Besuch (`sessionStorage`); Tippen, Taste oder
+  Scrollen beendet es sofort. Die Dauerbewegung hält „Bewegung anhalten“ in der Live-Zeile
+  an (WCAG 2.2.2; die Wahl bleibt im Browser, dann auch ohne Intro), außer Sicht pausiert
+  sie. Bei „Bewegung reduzieren“ und ohne JavaScript steht die fertige, ruhige Bühne da.
+  Lädt `main.js` nicht binnen 2,5 s, entfällt das Intro (Notaus im Kopfskript nach 3 s).
+  Große Flächen blitzen nur einmal je Treffer (WCAG 2.3.1). Kein Ton.
+- **Was bewusst fehlt:** Geld, Beträge, Münzen (auch nicht im Funkenflug), Wörter wie „Gewinn“ oder „Jackpot“.
   Werbung für Glücksspiel darf keine Gewinne versprechen oder verharmlosen (§ 5 GlüStV
   2021); der Treffer ist deshalb nur die Marke. **Vor dem Livegang lässt der Betreiber
   das Intro rechtlich prüfen.**
