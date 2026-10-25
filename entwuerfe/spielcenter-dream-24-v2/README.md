@@ -33,21 +33,24 @@ Inhalte in `seiten/`, Kopf, Fuß, Zifferblätter und Standorte (`STANDORTE`) in 
 Gäste schauen meist abends am Handy nach: Welches Dream ist in meiner Nähe, hat
 es gerade offen, wie komme ich hin? Daneben Bewerber und der Spielerschutz.
 
-**Richtung (Arturs Vorgabe):** dunkel und edel. Das ist eigentlich einer der
-Standardlooks aus `ORDE-STIL.md`, hier aber ausdrücklich gewünscht. Damit es
-nicht der Durchschnitt „schwarz plus eine grelle Farbe“ wird: warmes Dunkel in
-mehreren Stufen statt Schwarz, Licht als Verlauf aus dem Leuchtschild statt
-einer Signalfarbe, Messing statt Neon, Rot nur noch im Logo.
+**Richtung (Arturs Vorgabe):** dunkel und edel, mit den **Farben der Originalseite**
+(Fassung 1, Arturs Wunsch vom 25.10.2026, nachdem eine Messing-Variante gezeigt war).
+Dunkel mit greller Akzentfarbe ist eigentlich einer der Standardlooks aus
+`ORDE-STIL.md`, hier aber ausdrücklich gewünscht und durch das Logo des Betriebs
+begründet. Edel wird es über Schrift, Luft, feine Linien und Licht statt über
+laute Flächen: Der Marken-Verlauf steht nur auf dem hervorgehobenen Wort der
+Überschrift, auf den Zifferblatt-Bögen und auf dem Hauptknopf.
 
 | Name | Hex | Wofür |
 |---|---|---|
-| Nacht | `#110A0A` | Grund, rotstichiges Fast-Schwarz |
-| Samt | `#1B1012` | ruhigere Flächen (Jobs, Spielerschutz) |
-| Mahagoni | `#2A181B` | Bildplätze, Zeilen beim Darüberfahren |
-| Messing | `#D9A65A` | Linien, Zifferblatt, Knöpfe (8,9 : 1 auf Nacht) |
-| Elfenbein | `#F3E9DF` | Text |
-| Rauchtext | `#BBA89E` | Nebentext (8,3 : 1) |
-| Glut | `#FF9A3C` | nur als Lichtschein (Leuchtschild, Lampen) |
+| Schwarz | `#050505` | Grund |
+| Kohle | `#0E0E0F` | ruhigere Flächen (Drinnen, Spielerschutz, Fuß) |
+| Stahl | `#18181B` | Bildplätze |
+| Rot → Orange → Gelb | `#E3171B` → `#F6731F` → `#FFC928` | Marken-Verlauf wie im Logo: hervorgehobene Wörter (nur große Schrift), Zifferblatt-Bögen; Hauptknopf Orange → Gelb mit schwarzer Schrift (7,4 : 1) |
+| Orange | `#F6731F` | Links, Linien, Icons (7,2 : 1) |
+| Gelb | `#FFC928` | Fokus, „heute“, Platzhalter |
+| Grün | `#38D27A` / Text `#7BE3A2` | „Jetzt geöffnet“, wie in Fassung 1 |
+| Text / Grau | `#E9E7E4` / `#A4A19C` | Text und Nebentext (7,9 : 1) |
 
 **Schriften** (lokal als `.woff2`, OFL): **Bodoni Moda** (variabel mit optischer
 Größe) für Überschriften, kursiv für Hervorhebung; **Jost** (geometrisch, Futura-Art)
@@ -72,7 +75,7 @@ Zifferblatt, das Angebot mit großem Bildplatz, Jobs, Spielerschutz, Fuß.
       Spielen hat bei uns Grenzen.
 
 **Das eine Merkmal: Öffnungszeiten als 24-Stunden-Zifferblatt.** Mitternacht
-oben, ein Messingbogen zeigt die heutigen Öffnungsstunden, ein Zeiger die
+oben, ein farbiger Bogen (Marken-Verlauf) zeigt die heutigen Öffnungsstunden, ein Zeiger die
 aktuelle Uhrzeit in Deutschland, in der Mitte steht die Uhrzeit. Liegt der Zeiger
 im Bogen, ist offen. Weil die Häuser bis 3 Uhr nachts offen haben, läuft der
 Bogen über Mitternacht. Groß bei jedem Haus auf der Seite „Standorte“, klein in
@@ -87,7 +90,7 @@ Raum mit warmem Licht. Bei „Bewegung reduzieren“ ist es sofort hell.
 **Was die Seite bewusst nicht macht:**
 - kein Casino-Look (Chips, Karten, Jackpot, Goldregen, „Gewinne“): Werbung für
   Spielhallen ist nach Glücksspielstaatsvertrag eng begrenzt
-- kein Rot als Fläche, kein Neon, keine Strahlen wie in Fassung 1
+- kein Rot als Fläche, kein Neon, keine Strahlen und kein Laufband wie in Fassung 1
 - keine Labels über Überschriften, keine Icon-Karten, keine nummerierten
   Abschnitte (außer dem echten Ablauf der Bewerbung), keine Einblende-Animationen
 - keine erfundenen Zahlen, Fotos oder Bewertungen; Fotos bleiben sichtbare Platzhalter
@@ -96,14 +99,13 @@ Raum mit warmem Licht. Bei „Bewegung reduzieren“ ist es sofort hell.
 „Cinematic Dark“ auf ausdrücklichen Wunsch. Gelesen: `ferrari` (Fast-Schwarz,
 Markenfarbe nur als Signal, viel Luft), `bugatti` (Zurückhaltung, große Typo,
 Linien statt Kästen), `1win` (Casino: laute Farben nur im Inhalt, nicht im
-Rahmen). Farben und Schriften kommen vom Betrieb und vom Material Messing, nicht
-von diesen Marken.
+Rahmen). Farben kommen aus der Originalseite und dem Logo, nicht von diesen Marken.
 
 **Gegenprüfung:** Der Standard der Branche ist schwarz mit Gold und Chips oder
 Neon. Hier gibt es keine Spielsymbole, das Licht kommt aus dem echten Schild des
 Betriebs, und das Zifferblatt zeigt die echten Zeiten. Ähnlichkeit zu den
 ORDÉ-Demos: FORGE ist dunkel, aber kalt und hart; diese Seite ist warm, mit
-Kontrastschrift und Messing.
+Kontrastschrift und dem Verlauf aus dem Dream-Logo.
 
 ## Technik
 

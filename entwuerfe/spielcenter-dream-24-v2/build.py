@@ -76,9 +76,9 @@ NAV = [
 
 # Unscharfe Lichtpunkte auf der Bühne: x %, y %, Durchmesser px, Farbe, Deckkraft
 BOKEH = [
-    (61, 22, 96, "255,150,60", .30), (70, 72, 58, "255,186,90", .34), (88, 28, 124, "255,96,50", .22),
-    (94, 66, 74, "255,150,60", .28), (64, 88, 42, "255,96,50", .36), (82, 15, 44, "255,186,90", .34),
-    (56, 48, 30, "255,186,90", .40), (97, 42, 50, "255,150,60", .26), (78, 93, 88, "255,96,50", .18),
+    (61, 22, 96, "246,115,31", .30), (70, 72, 58, "255,201,40", .34), (88, 28, 124, "227,23,27", .22),
+    (94, 66, 74, "246,115,31", .28), (64, 88, 42, "227,23,27", .36), (82, 15, 44, "255,201,40", .34),
+    (56, 48, 30, "255,201,40", .40), (97, 42, 50, "246,115,31", .26), (78, 93, 88, "227,23,27", .18),
     (73, 40, 9, "255,236,205", .9), (86, 55, 11, "255,236,205", .85), (58, 76, 8, "255,236,205", .9),
     (92, 85, 7, "255,236,205", .8), (66, 10, 8, "255,236,205", .75),
 ]
@@ -98,6 +98,9 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
     <radialGradient id="lg" cx="50%" cy="55%" r="60%">
       <stop offset="0" stop-color="#ffd23a"/><stop offset=".45" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e3171b"/>
     </radialGradient>
+    <linearGradient id="markeverlauf" gradientUnits="userSpaceOnUse" x1="0" y1="200" x2="200" y2="0">
+      <stop offset="0" stop-color="#e3171b"/><stop offset=".55" stop-color="#f6731f"/><stop offset="1" stop-color="#ffc928"/>
+    </linearGradient>
     <symbol id="logo" viewBox="0 0 480 230">
       <ellipse cx="240" cy="115" rx="232" ry="107" fill="#e3171b" stroke="#fff" stroke-width="7"/>
       <ellipse cx="240" cy="115" rx="218" ry="94" fill="url(#lg)"/>
@@ -171,7 +174,7 @@ def heute_text(s):
 
 
 # ---------- Zifferblatt ----------
-# 24 Stunden, Mitternacht oben, im Uhrzeigersinn. Der Messingbogen zeigt die
+# 24 Stunden, Mitternacht oben, im Uhrzeigersinn. Der farbige Bogen zeigt die
 # heutigen Öffnungsstunden; main.js setzt Bogen, Marke „jetzt“ und Uhrzeit live.
 
 def punkt(h, r):
@@ -346,7 +349,7 @@ def layout(name, titel, beschreibung, inhalt):
 <title>{voll_titel}</title>
 <meta name="description" content="{beschreibung}">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#110A0A">
+<meta name="theme-color" content="#050505">
 <meta name="color-scheme" content="dark">
 <link rel="preload" href="assets/fonts/bodoni-moda-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/style.css">
