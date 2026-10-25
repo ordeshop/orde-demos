@@ -25,7 +25,7 @@ in `build.py` sind dieselben.
     python3 entwuerfe/spielcenter-dream-24-v2/build.py          # Seiten nach demos/entwuerfe/spielcenter-dream-24-v2/
     python3 entwuerfe/pdf-erzeugen.py spielcenter-dream-24-v2   # PDF hier im Ordner
 
-Inhalte in `seiten/`, Kopf, Fuß, Zifferblätter und Standorte (`STANDORTE`) in `build.py`.
+Inhalte in `seiten/`, Kopf, Fuß, Zeitstrahl und Standorte (`STANDORTE`) in `build.py`.
 
 ## Gestaltungsplan
 
@@ -39,14 +39,14 @@ Dunkel mit greller Akzentfarbe ist eigentlich einer der Standardlooks aus
 `ORDE-STIL.md`, hier aber ausdrücklich gewünscht und durch das Logo des Betriebs
 begründet. Edel wird es über Schrift, Luft, feine Linien und Licht statt über
 laute Flächen: Der Marken-Verlauf steht nur auf dem hervorgehobenen Wort der
-Überschrift, auf den Zifferblatt-Bögen und auf dem Hauptknopf.
+Überschrift, auf den Balken im Zeitstrahl und auf dem Hauptknopf.
 
 | Name | Hex | Wofür |
 |---|---|---|
 | Schwarz | `#050505` | Grund |
 | Kohle | `#0E0E0F` | ruhigere Flächen (Drinnen, Spielerschutz, Fuß) |
 | Stahl | `#18181B` | Bildplätze |
-| Rot → Orange → Gelb | `#E3171B` → `#F6731F` → `#FFC928` | Marken-Verlauf wie im Logo: hervorgehobene Wörter (nur große Schrift), Zifferblatt-Bögen; Hauptknopf Orange → Gelb mit schwarzer Schrift (7,4 : 1) |
+| Rot → Orange → Gelb | `#E3171B` → `#F6731F` → `#FFC928` | Marken-Verlauf wie im Logo: hervorgehobene Wörter (nur große Schrift), Balken im Zeitstrahl; Hauptknopf Orange → Gelb mit schwarzer Schrift (7,4 : 1) |
 | Orange | `#F6731F` | Links, Linien, Icons (7,2 : 1) |
 | Gelb | `#FFC928` | Fokus, „heute“, Platzhalter |
 | Grün | `#38D27A` / Text `#7BE3A2` | „Jetzt geöffnet“, wie in Fassung 1 |
@@ -60,7 +60,7 @@ für Text, Menü und Zahlen; **Lobster** nur im Logo-Nachbau.
 und ist die Lichtquelle des Raums: Es wirft warmes Licht auf die Wand, dahinter
 unscharfe Lichtpunkte wie von Geräten, darüber feines Korn. Links die
 Überschrift in Bodoni. Danach die fünf Häuser als Zeilen mit kleinem
-Zifferblatt, das Angebot mit großem Bildplatz, Jobs, Spielerschutz, Fuß.
+Zeitstrahl, das Angebot mit großem Bildplatz, Jobs, Spielerschutz, Fuß.
 
     ┌────────────────────────── Nacht ──────────────────────────┐
     │ dream                Standorte Angebot Jobs Schutz Kontakt │
@@ -69,20 +69,19 @@ Zifferblatt, das Angebot mit großem Bildplatz, Jobs, Spielerschutz, Fuß.
     │ Von Wiesbaden bis Füssen.                    ○    ·        │
     │ [Standorte und Zeiten]  Jobs                               │
     └────────────────────────────────────────────────────────────┘
-      Fünf Häuser       ◔ Kaufering   offen bis 3 Uhr   Route
+      Fünf Häuser       Kaufering  ▬▬▬▬▬|▬  offen bis 3 Uhr   Route
       Drinnen im Dream  (Bildplatz + Text)
       Arbeiten, wenn andere ausgehen.
       Spielen hat bei uns Grenzen.
 
-**Das eine Merkmal: Öffnungszeiten als 24-Stunden-Zifferblatt.** Mitternacht
-oben, ein farbiger Bogen (Marken-Verlauf) zeigt die heutigen Öffnungsstunden, ein Zeiger die
-aktuelle Uhrzeit in Deutschland, in der Mitte steht die Uhrzeit. Liegt der Zeiger
-im Bogen, ist offen. Weil die Häuser bis 3 Uhr nachts offen haben, läuft der
-Bogen über Mitternacht. Groß bei jedem Haus auf der Seite „Standorte“, klein in
-jeder Zeile der Startseite. Oben auf „Standorte“ eine große Uhr mit einem Ring je
-Haus und einem Zeiger: Wo er einen Bogen kreuzt, ist offen. Die Namen stehen an
-Hinweislinien rechts, durch die Stunden, in denen alle zu haben. Ohne JavaScript
-zeigen die Blätter die Zeiten von Montag bis Samstag.
+**Das eine Merkmal: Öffnungszeiten als Zeitstrahl.** Ein Tag läuft von 6 Uhr
+morgens bis 6 Uhr am nächsten Morgen, so bleibt „9 bis 3 Uhr nachts“ ein
+durchgehender Balken im Marken-Verlauf. Ein weißer Strich zeigt die Uhrzeit
+jetzt in Deutschland; steht er im Balken, ist offen (geschlossene Häuser:
+gedimmter Balken). Klein in jeder Zeile der Startseite und bei jedem Haus, oben
+auf „Standorte“ als Zeitplan aller Häuser untereinander mit einem gemeinsamen
+Strich und der Uhrzeit. Ohne JavaScript zeigen die Balken die Zeiten von Montag.
+(Vorher 24-Stunden-Zifferblätter; auf Arturs Wunsch vom 25.10.2026 ersetzt.)
 
 **Bewegung:** ein Moment beim Laden. Das Schild geht an, dann füllt sich der
 Raum mit warmem Licht. Bei „Bewegung reduzieren“ ist es sofort hell.
@@ -103,12 +102,12 @@ Rahmen). Farben kommen aus der Originalseite und dem Logo, nicht von diesen Mark
 
 **Gegenprüfung:** Der Standard der Branche ist schwarz mit Gold und Chips oder
 Neon. Hier gibt es keine Spielsymbole, das Licht kommt aus dem echten Schild des
-Betriebs, und das Zifferblatt zeigt die echten Zeiten. Ähnlichkeit zu den
+Betriebs, und der Zeitstrahl zeigt die echten Zeiten. Ähnlichkeit zu den
 ORDÉ-Demos: FORGE ist dunkel, aber kalt und hart; diese Seite ist warm, mit
 Kontrastschrift und dem Verlauf aus dem Dream-Logo.
 
 ## Technik
 
-Statisches HTML und CSS, ein kleines `main.js` (Menü, Live-Status, Zifferblätter,
+Statisches HTML und CSS, ein kleines `main.js` (Menü, Live-Status, Zeitstrahl,
 Formular-Attrappe). Kein Framework, kein CDN. Icons: Tabler (MIT) als Inline-SVG.
 Lizenzen unter `demos/entwuerfe/spielcenter-dream-24-v2/assets/fonts/LIZENZEN.txt`.

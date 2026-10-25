@@ -6,9 +6,9 @@ Jede Datei in seiten/ beginnt mit einer Kopfzeile:
   <!-- titel: … | beschreibung: … | nav: standorte -->
 Platzhalter im Inhalt:
   {{LICHT}}              Lichtschein und unscharfe Lichtpunkte für die Bühne
-  {{UHR}}                große Uhr mit einem Ring je Haus (Standorte)
-  {{ZEILEN}}             alle Häuser als Zeilen mit kleinem Zifferblatt
-  {{STANDORTE_DETAIL}}   alle Häuser ausführlich mit großem Zifferblatt
+  {{ZEITPLAN}}           alle Häuser als Zeitstrahl untereinander (Standorte)
+  {{ZEILEN}}             alle Häuser als Zeilen mit kleinem Zeitstrahl
+  {{STANDORTE_DETAIL}}   alle Häuser ausführlich mit Zeitstrahl und Tabelle
   {{STANDORT_SPRUNG}}    Sprungmarken zu den Häusern
   {{STANDORT_OPTIONEN}}, {{STANDORTE_TELEFON}}, {{STANDORT_NAMEN}},
   {{ANZAHL}}, {{ZAHLWORT}} (Fünf), {{ZAHLWORT_KLEIN}} (fünf),
@@ -98,9 +98,6 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
     <radialGradient id="lg" cx="50%" cy="55%" r="60%">
       <stop offset="0" stop-color="#ffd23a"/><stop offset=".45" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e3171b"/>
     </radialGradient>
-    <linearGradient id="markeverlauf" gradientUnits="userSpaceOnUse" x1="0" y1="200" x2="200" y2="0">
-      <stop offset="0" stop-color="#e3171b"/><stop offset=".55" stop-color="#f6731f"/><stop offset="1" stop-color="#ffc928"/>
-    </linearGradient>
     <symbol id="logo" viewBox="0 0 480 230">
       <ellipse cx="240" cy="115" rx="232" ry="107" fill="#e3171b" stroke="#fff" stroke-width="7"/>
       <ellipse cx="240" cy="115" rx="218" ry="94" fill="url(#lg)"/>
@@ -173,72 +170,45 @@ def heute_text(s):
     return f"{uhr_kurz(s['open'][0])} bis {uhr_kurz(s['close'])} Uhr"
 
 
-# ---------- Zifferblatt ----------
-# 24 Stunden, Mitternacht oben, im Uhrzeigersinn. Der farbige Bogen zeigt die
-# heutigen Öffnungsstunden; main.js setzt Bogen, Marke „jetzt“ und Uhrzeit live.
+# ---------- Zeitstrahl ----------
+# Ein Tag läuft von 6 Uhr morgens bis 6 Uhr am nächsten Morgen, so bleiben
+# Zeiten über Mitternacht ein durchgehender Balken. main.js setzt Balken und
+# Strich „jetzt“ live; ohne JavaScript zeigt der Balken die Zeiten von Montag.
 
-def punkt(h, r):
-    w = math.radians(h / 24 * 360)
-    return 100 + r * math.sin(w), 100 - r * math.cos(w)
+TAG_BEGINN = 6
 
 
-def bogen(auf, zu, r=84):
+def balken_stil(auf, zu):
     ende = 24 if zu == 0 else 24 + zu
-    x1, y1 = punkt(auf, r)
-    x2, y2 = punkt(ende, r)
-    gross = 1 if ende - auf > 12 else 0
-    return f"M{x1:.2f} {y1:.2f}A{r} {r} 0 {gross} 1 {x2:.2f} {y2:.2f}"
+    links = (auf - TAG_BEGINN) / 24 * 100
+    breite = (ende - auf) / 24 * 100
+    return f"left:{links:.2f}%;width:{breite:.2f}%"
 
 
-def zifferblatt(s, gross=True):
-    auf, zu = s["open"][0], s["close"]
-    teile = [f'<circle class="blatt-spur" cx="100" cy="100" r="84"/>',
-             f'<path class="blatt-bogen" d="{bogen(auf, zu)}" data-bogen/>']
-    if gross:
-        for h in range(24):
-            lang = h % 6 == 0
-            x1, y1 = punkt(h, 96 if lang else 98)
-            x2, y2 = punkt(h, 104 if lang else 102)
-            teile.append(f'<line class="blatt-strich{" lang" if lang else ""}" x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}"/>')
-        for h, text in ((0, "24"), (6, "6"), (12, "12"), (18, "18")):
-            x, y = punkt(h, 66)
-            teile.append(f'<text class="blatt-zahl" x="{x:.2f}" y="{y + 4:.2f}" text-anchor="middle">{text}</text>')
-        teile.append('<text class="blatt-zeit" x="100" y="104" text-anchor="middle" data-uhrzeit></text>')
-        teile.append(f'<text class="blatt-unter" x="100" y="126" text-anchor="middle" data-blatt-text>{uhr_kurz(auf)} – {uhr_kurz(zu)} Uhr</text>')
-    teile.append(f'<circle class="blatt-jetzt" cx="100" cy="16" r="{7 if gross else 12}" data-jetzt/>')
-    klasse = "blatt" if gross else "blatt blatt-klein"
-    beschriftung = f"Zifferblatt mit den Öffnungszeiten in {s['name']}"
-    viewbox = "-8 -8 216 216" if gross else "8 8 184 184"
-    return (f'<svg class="{klasse}" viewBox="{viewbox}" role="img" aria-label="{beschriftung}">'
-            + "".join(teile) + "</svg>")
+ACHSE = [(0, "6"), (25, "12"), (50, "18"), (75, "24"), (100, "6")]
 
 
-def uhr_alle():
-    """Große Uhr: ein Ring je Haus (außen das erste), ein Zeiger für die Uhrzeit jetzt."""
-    teile = []
-    for h in range(24):
-        lang = h % 6 == 0
-        x1, y1 = punkt(h, 99 if lang else 101)
-        x2, y2 = punkt(h, 106 if lang else 104)
-        teile.append(f'<line class="blatt-strich{" lang" if lang else ""}" x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}"/>')
-    for h, text in ((6, "6"), (12, "12"), (18, "18")):
-        x, y = punkt(h, 114)
-        teile.append(f'<text class="blatt-zahl" x="{x:.2f}" y="{y + 4:.2f}" text-anchor="middle">{text}</text>')
-    teile.append('<text class="blatt-zahl" x="100" y="-10" text-anchor="middle">24</text>')
-    for i, (slug, s) in enumerate(STANDORTE.items()):
-        r = 92 - i * 14
-        # Hinweislinie bei 3:36 Uhr nach rechts: dort sind alle anderen Ringe geschlossen
-        lx, ly = punkt(3.6, r)
-        ny = 30 + i * 13  # Namen in gleichen Abständen untereinander
-        teile.append(f'<g class="ring" {offen(s)} data-r="{r}">'
-                     f'<circle class="blatt-spur" cx="100" cy="100" r="{r}"/>'
-                     f'<path class="blatt-bogen" d="{bogen(s["open"][0], s["close"], r)}" data-bogen/>'
-                     f'<polyline class="ring-linie" points="{lx:.2f},{ly:.2f} 212,{ly:.2f} 224,{ny} 230,{ny}"/>'
-                     f'<text class="ring-name" x="235" y="{ny + 3}">{s["name"].split("-")[0]}</text></g>')
-    teile.append('<line class="uhr-zeiger" x1="100" y1="100" x2="100" y2="2" data-zeiger/>')
-    teile.append('<circle class="uhr-mitte" cx="100" cy="100" r="3.5"/>')
-    teile.append('<text class="uhr-zeit" x="100" y="128" text-anchor="middle" data-uhrzeit></text>')
-    return (f'<figure class="uhr" aria-hidden="true"><svg viewBox="-24 -24 320 250">{"".join(teile)}</svg></figure>')
+def achse(klasse):
+    marken = "".join(f'<span style="left:{x}%">{text}</span>' for x, text in ACHSE)
+    return f'<div class="{klasse}" aria-hidden="true">{marken}</div>'
+
+
+def zeitband(s, mit_achse=False):
+    band = (f'<div class="zeitband" aria-hidden="true">'
+            f'<span class="zeitband-balken" style="{balken_stil(s["open"][0], s["close"])}" data-balken></span>'
+            f'<span class="zeitband-jetzt" data-jetzt></span></div>')
+    return band + (achse("zeitband-achse") if mit_achse else "")
+
+
+def zeitplan():
+    """Alle Häuser untereinander, ein gemeinsamer Strich für die Uhrzeit jetzt."""
+    zeilen = "".join(
+        f'<div class="zeitplan-zeile" {offen(s)}><span class="zeitplan-name">{s["name"].split("-")[0]}</span>{zeitband(s)}</div>'
+        for s in STANDORTE.values())
+    return (f'<figure class="zeitplan" aria-hidden="true">'
+            f'<div class="zeitplan-flaeche">{zeilen}'
+            f'<div class="zeitplan-jetzt" data-plan-jetzt><span data-uhrzeit></span></div></div>'
+            f'{achse("zeitplan-achse")}</figure>')
 
 
 # ---------- Bühne ----------
@@ -256,13 +226,15 @@ def zeilen():
     teile = []
     for slug, s in STANDORTE.items():
         teile.append(f"""        <li class="zeile" {offen(s)}>
-          {zifferblatt(s, gross=False)}
           <div class="zeile-ort">
             <h3><a href="standorte.html#{slug}">{s["name"]}</a></h3>
             <p>{s["region"]}</p>
           </div>
           <address>{adresse(s)}</address>
-          <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>{heute_text(s)}</span></p>
+          <div class="zeile-zeit">
+            {zeitband(s)}
+            <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>{heute_text(s)}</span></p>
+          </div>
           <div class="wege">
             <a class="weg" href="{maps_link(s)}" target="_blank" rel="noopener">{icon("route")}Route<span class="sr"> nach {s["name"]} (öffnet Google Maps)</span></a>
             <a class="weg" href="{tel_link(s["tel"])}">{icon("phone")}Anrufen<span class="sr"> in {s["name"]}: {s["tel"]}</span></a>
@@ -292,11 +264,11 @@ def standorte_detail():
         hinweis = f'<p>{todo(s["hinweis"])}</p>' if s["hinweis"] else ""
         unterzeile = " · ".join(t for t in (s.get("marke"), s["region"]) if t)
         teile.append(f"""      <article class="detail" id="{slug}" {offen(s)}>
-        <div class="detail-blatt">{zifferblatt(s)}</div>
         <div class="detail-kopf">
           <h2>{s["name"]}</h2>
           <p class="detail-unter">{unterzeile}</p>
           <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>{heute_text(s)}</span></p>
+          <div class="detail-band">{zeitband(s, mit_achse=True)}</div>
         </div>
         <div class="detail-zeiten">
           {zeiten_tabelle(s)}
@@ -407,7 +379,7 @@ def main():
     anzahl = len(STANDORTE)
     ersatz = {
         "{{LICHT}}": licht,
-        "{{UHR}}": uhr_alle,
+        "{{ZEITPLAN}}": zeitplan,
         "{{ZEILEN}}": zeilen,
         "{{STANDORTE_DETAIL}}": standorte_detail,
         "{{STANDORT_SPRUNG}}": standort_sprung,

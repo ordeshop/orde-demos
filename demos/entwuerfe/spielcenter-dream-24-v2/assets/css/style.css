@@ -44,7 +44,7 @@ h1, h2, h3, p, ul, ol, dl, dd { margin: 0; }
 ul[role="list"], ol { list-style: none; padding: 0; }
 a { color: var(--orange); text-underline-offset: .22em; text-decoration-thickness: 1px; }
 /* Optische Größe fest auf 30: kräftigere Haarstriche als der Display-Schnitt, auf Dunkel besser lesbar */
-h1, h2, h3, .blatt-zeit, .bildplatz span, .jobzeilen .job-titel, .regeln dt, .hotline-nr, .faq summary, .kanal, .schritte li::before, .kopf .menu a { font-variation-settings: "opsz" 30; }
+h1, h2, h3, .bildplatz span, .jobzeilen .job-titel, .regeln dt, .hotline-nr, .faq summary, .kanal, .schritte li::before, .kopf .menu a { font-variation-settings: "opsz" 30; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 450; text-wrap: balance; letter-spacing: -.01em; }
 /* Marken-Verlauf wie in Fassung 1 auf dem hervorgehobenen Wort (nur große Schrift) */
 h1 em, h2 em { font-style: italic; padding-right: .08em; background: var(--marke); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -69,7 +69,7 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 .todo { display: inline-block; border: 1px dashed rgba(255, 201, 40, .6); color: var(--gelb); font: 600 .8125rem/1.35 var(--sans); font-style: normal; letter-spacing: .02em; text-transform: none; padding: 1px 8px; vertical-align: .1em; }
 
 /* Kleine Großbuchstaben mit Sperrung: nur für Knöpfe, Menü und Wege, nie über Überschriften */
-.btn, .menu a, .weg, .link-weg, .krumen, .sprung a, .blatt-unter { text-transform: uppercase; letter-spacing: .15em; }
+.btn, .menu a, .weg, .link-weg, .krumen, .sprung a { text-transform: uppercase; letter-spacing: .15em; }
 
 /* ---------- Knöpfe und Links ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 30px; border: 1px solid transparent; border-radius: 2px; font: 500 .8125rem/1 var(--sans); text-decoration: none; cursor: pointer; transition: background-color .25s var(--ease), border-color .25s, color .25s; touch-action: manipulation; }
@@ -143,38 +143,37 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 }
 @keyframes schein-an { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
 
-/* ---------- Zifferblatt ---------- */
-.blatt { width: 100%; height: auto; overflow: visible; }
-.blatt-spur { fill: none; stroke: rgba(255, 255, 255, .09); stroke-width: 8; }
-.blatt-bogen { fill: none; stroke: url(#markeverlauf); stroke-width: 8; transition: filter .4s; }
-[data-state="offen"] .blatt-bogen { filter: drop-shadow(0 0 5px rgba(246, 115, 31, .55)); }
-.blatt-strich { stroke: rgba(255, 255, 255, .25); stroke-width: 1; }
-.blatt-strich.lang { stroke: var(--orange); stroke-width: 1.5; }
-.blatt-zahl { fill: var(--grau); font: 500 11px var(--sans); }
-.blatt-zeit { fill: var(--text); font: 400 30px var(--sans); font-weight: 300; letter-spacing: .02em; font-variant-numeric: lining-nums tabular-nums; }
-.blatt-unter { fill: var(--grau); font: 500 9px var(--sans); }
-.blatt-jetzt { fill: #FFF4E6; stroke: var(--schwarz); stroke-width: 3; opacity: 0; transition: opacity .3s; }
-.blatt.lebt .blatt-jetzt { opacity: 1; }
-[data-state="offen"] .blatt-jetzt { filter: drop-shadow(0 0 6px rgba(255, 210, 140, .95)); }
-.blatt-klein { width: 64px; flex: none; }
-.blatt-klein .blatt-spur, .blatt-klein .blatt-bogen { stroke-width: 15; }
-.blatt-klein .blatt-jetzt { stroke-width: 5; }
-
 .bokeh .fern { filter: none; background: rgba(var(--farbe), var(--deck)); box-shadow: 0 0 10px 3px rgba(255, 170, 80, .55), 0 0 26px 8px rgba(255, 120, 50, .22); }
 
-/* Uhr aller Häuser (Standorte) */
-.uhr { margin: 8px 0 0; width: min(100%, 520px); }
-.uhr svg { width: 100%; height: auto; overflow: visible; }
-.uhr .blatt-spur, .uhr .blatt-bogen { stroke-width: 5; }
-.ring-linie { fill: none; stroke: rgba(255, 255, 255, .28); stroke-width: .6; }
-.ring[data-state="offen"] .ring-linie { stroke: rgba(246, 115, 31, .7); }
-.uhr .ring[data-state="offen"] .blatt-bogen { filter: drop-shadow(0 0 4px rgba(246, 115, 31, .55)); }
-.ring-name { fill: var(--grau); font: 500 7px var(--sans); letter-spacing: .12em; text-transform: uppercase; }
-.ring[data-state="offen"] .ring-name { fill: var(--text); }
-.uhr-zeiger { stroke: #FFF4E6; stroke-width: 1.4; stroke-linecap: round; opacity: 0; filter: drop-shadow(0 0 3px rgba(255, 210, 140, .9)); }
-.uhr.lebt .uhr-zeiger { opacity: 1; }
-.uhr-mitte { fill: #FFF4E6; }
-.uhr-zeit { fill: var(--text); font: 300 15px var(--sans); letter-spacing: .04em; font-variant-numeric: lining-nums tabular-nums; }
+/* ---------- Zeitstrahl ---------- */
+/* Ein Tag von 6 bis 6 Uhr: der Balken sind die Öffnungszeiten, der weiße Strich die Uhrzeit jetzt */
+.zeitband { position: relative; height: 8px; border-radius: 999px; background: rgba(255, 255, 255, .08); }
+.zeitband-balken { position: absolute; top: 0; bottom: 0; border-radius: inherit; background: var(--marke); opacity: .5; transition: opacity .3s, box-shadow .3s; }
+[data-state="offen"] .zeitband-balken { opacity: 1; box-shadow: 0 0 14px rgba(246, 115, 31, .45); }
+.zeitband-jetzt { position: absolute; top: -7px; bottom: -7px; width: 2px; margin-left: -1px; border-radius: 1px; background: #fff; box-shadow: 0 0 8px rgba(255, 255, 255, .7); opacity: 0; }
+.zeitband.lebt .zeitband-jetzt { opacity: 1; }
+.zeitband-achse, .zeitplan-achse { position: relative; height: 18px; margin-top: 12px; font: 500 .75rem/1 var(--sans); color: var(--grau-2); font-variant-numeric: lining-nums; }
+.zeitband-achse span, .zeitplan-achse span { position: absolute; top: 0; transform: translateX(-50%); }
+.zeitband-achse span:first-child, .zeitplan-achse span:first-child { transform: none; }
+.zeitband-achse span:last-child, .zeitplan-achse span:last-child { transform: translateX(-100%); }
+
+/* Zeitplan aller Häuser (Standorte) */
+.zeitplan { --namen: 118px; width: 100%; max-width: 620px; margin: 8px 0 0; }
+.zeitplan-flaeche { position: relative; padding: 26px 0 4px; }
+/* Stundenraster alle drei Stunden */
+.zeitplan-flaeche::before { content: ""; position: absolute; top: 18px; bottom: 0; left: var(--namen); right: 0; border-right: 1px solid rgba(255, 255, 255, .08);
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .08) 0 1px, transparent 1px 12.5%); }
+.zeitplan-zeile { position: relative; display: grid; grid-template-columns: var(--namen) minmax(0, 1fr); align-items: center; min-height: 48px; }
+.zeitplan-name { font: 500 .75rem/1.2 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--grau); }
+.zeitplan-zeile[data-state="offen"] .zeitplan-name { color: var(--text); }
+.zeitplan .zeitband { height: 10px; }
+.zeitplan .zeitband-jetzt { display: none; }
+.zeitplan-jetzt { position: absolute; top: 0; bottom: 0; left: var(--namen); right: 0; pointer-events: none; opacity: 0; }
+.zeitplan-jetzt.lebt { opacity: 1; }
+.zeitplan-jetzt::before { content: ""; position: absolute; top: 20px; bottom: 0; left: var(--x, 0%); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 10px rgba(255, 255, 255, .6); }
+/* Das Schildchen bleibt am Rand innerhalb der Fläche, der Strich selbst nicht */
+.zeitplan-jetzt span { position: absolute; top: 0; left: clamp(1.75rem, var(--x, 0%), calc(100% - 1.75rem)); transform: translateX(-50%); padding: 3px 9px; border-radius: 999px; background: #fff; color: #000; font: 600 .75rem/1.1 var(--sans); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.zeitplan-achse { margin-left: var(--namen); }
 
 /* ---------- Abschnitte ---------- */
 .abschnitt { padding: var(--abstand) 0; }
@@ -185,9 +184,8 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 
 /* Häuser als Zeilen */
 .zeilen { border-top: 1px solid var(--linie); }
-.zeile { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px 24px; padding: 28px 0; border-bottom: 1px solid var(--linie-leise); align-items: center; }
-.zeile > :not(.blatt) { grid-column: 2; }
-.zeile .blatt { grid-row: 1 / span 4; align-self: start; }
+.zeile { display: grid; gap: 14px 32px; padding: 28px 0; border-bottom: 1px solid var(--linie-leise); align-items: center; }
+.zeile-zeit { display: grid; gap: 14px; }
 .zeile-ort h3 { font-size: clamp(1.75rem, 1.3rem + 1.3vw, 2.4rem); line-height: 1.05; }
 .zeile-ort h3 a { color: var(--text); text-decoration: none; transition: color .2s; }
 .zeile-ort h3 a:hover { color: var(--orange); }
@@ -247,9 +245,9 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 .sprung a:hover { border-color: var(--orange); color: var(--orange); }
 .detail { display: grid; gap: 28px 56px; padding: 64px 0; border-bottom: 1px solid var(--linie-leise); scroll-margin-top: 16px; }
 .detail:first-child { padding-top: 0; }
-.detail-blatt { width: min(260px, 72vw); }
 .detail h2 { font-size: clamp(2.4rem, 1.7rem + 2vw, 3.4rem); line-height: 1.02; }
 .detail .status { margin-top: 20px; }
+.detail-band { margin-top: 26px; max-width: 520px; }
 .zeiten { width: 100%; border-collapse: collapse; }
 .zeiten caption { caption-side: top; text-align: left; color: var(--grau); font-size: .875rem; padding-bottom: 12px; }
 .zeiten th, .zeiten td { padding: 13px 0; border-bottom: 1px solid var(--linie-leise); }
@@ -374,7 +372,7 @@ table { font-variant-numeric: tabular-nums lining-nums; }
   .bokeh .gross { display: none; }
   .buehne-start .licht-schein { background: radial-gradient(ellipse 80% 40% at 50% 84%, rgba(255, 140, 60, .26), rgba(255, 110, 40, .08) 50%, transparent 75%), radial-gradient(ellipse 70% 60% at 8% 100%, rgba(120, 18, 28, .3), transparent 70%); }
   .buehne-start .schild { justify-self: center; width: min(78%, 340px); margin: 36px 0 0; }
-  .ring-name { font-size: 9.5px; letter-spacing: .06em; }
+  .zeitplan { --namen: 96px; }
 }
 @media (max-width: 420px) {
   .btn { padding: 0 22px; }
@@ -384,11 +382,10 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 /* ---------- ab Tablet ---------- */
 @media (min-width: 760px) {
   .abschnitt-kopf { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; }
-  .zeile { grid-template-columns: 64px minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 16px 32px; }
-  .zeile > :not(.blatt) { grid-column: auto; }
-  .zeile .blatt { grid-row: auto; align-self: center; }
-  .detail { grid-template-columns: 220px minmax(0, 1fr); }
-  .detail-blatt { grid-row: 1 / span 3; width: 100%; }
+  .zeile { grid-template-columns: minmax(0, 1.15fr) minmax(0, .9fr) minmax(0, 1.25fr) auto; gap: 16px 40px; }
+  .detail { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .detail-zeiten { grid-column: 2; grid-row: 1 / span 2; }
+  .detail-kopf, .detail-info { grid-column: 1; }
   .stellen li { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto; align-items: center; }
   .stellen li h3 { grid-row: 1 / span 2; }
   .stellen li .btn { grid-column: 3; grid-row: 1 / span 2; }
@@ -406,7 +403,7 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 @media (min-width: 1000px) {
   .buehne-in { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 48px; }
   .schild { order: 2; width: 100%; max-width: 540px; justify-self: end; margin: 0; }
-  .buehne-uhr .uhr { justify-self: end; width: 100%; max-width: 560px; margin: 0; }
+  .buehne-plan .zeitplan { justify-self: end; margin: 0; }
   .drinnen { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
   .drinnen .bildplatz { grid-column: 1 / -1; aspect-ratio: 21 / 9; margin-bottom: 24px; }
   .band-in { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
@@ -414,10 +411,7 @@ table { font-variant-numeric: tabular-nums lining-nums; }
   .schutz .hotline { grid-column: 1 / -1; margin-top: 32px; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
   .schutz .hotline p { grid-row: 1 / span 2; }
   .schutz .hotline .link-weg { grid-column: 2; }
-  .detail { grid-template-columns: 240px minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
-  .detail-blatt { grid-row: 1 / span 2; }
-  .detail-zeiten { grid-column: 3; grid-row: 1 / span 2; }
-  .detail-kopf, .detail-info { grid-column: 2; }
+  .detail { gap: 28px 96px; }
   .paar { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .paar-dreh .bildplatz { order: 2; }
   .paar-ohne-bild { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
