@@ -35,7 +35,8 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
    für alle Seiten; Inhalte stehen in `seiten/`. Die Gestaltung wird aber neu
    gemacht: eigene Farben aus dem Logo, eigene Schriften, eigenes Layout.
    Zwei Entwürfe dürfen sich nicht ähneln.
-2. Gestaltung mit den Skills aus `orde-design` und der Demo der Branche als
+2. Gestaltung nach `Business-Handbuch/ORDE-STIL.md` mit den Werkzeugen aus
+   `Business-Handbuch/werkzeuge/website/` und der Demo der Branche als
    Ausgangspunkt, wie bei einem echten Auftrag.
 3. Schriften und Bibliotheken **lokal** unter `assets/` (keine Google Fonts,
    keine CDNs, DSGVO).

@@ -77,8 +77,8 @@ Vorschaubild fällt niemandem auf, bis ein Kunde sich wundert.
 Diese Demos sind das Schaufenster — sie müssen besser aussehen als die
 WordPress-Seiten der Mitbewerber. Für Änderungen und neue Entwürfe gilt
 `ordeshop/Business-Handbuch/ORDE-STIL.md`: erst Gestaltungsplan, dann
-bauen, dann mit Screenshots prüfen. Dort steht auch, welche Skills aus dem
-Plugin `orde-design` gelesen werden.
+bauen, dann mit Screenshots prüfen. Dort steht auch, welche Werkzeuge aus
+`Business-Handbuch/werkzeuge/website/` gelesen werden.
 
 Die Demos sind zugleich Ausgangspunkt für echte Kundenprojekte: Passt eine
 zur Branche des Kunden, wird sie dort als Grundlage genommen und für den
