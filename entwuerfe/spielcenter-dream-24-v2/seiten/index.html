@@ -1,33 +1,34 @@
 <!-- titel: Start | beschreibung: Dream Spielcenter: Spielhallen in Füssen, Heidenheim, Kaufering, Senden und Wiesbaden. Adressen, Öffnungszeiten mit Live-Status, Jobs und Spielerschutz. | nav: index -->
   <section class="buehne buehne-start" aria-labelledby="h1">
+    {{LICHT}}
     <div class="wrap buehne-in">
       <div class="buehne-text">
-        <h1 id="h1"><span class="breit">{{ZAHLWORT}}mal Dream.</span> <span class="schmal">Von Wiesbaden bis Füssen.</span></h1>
+        <h1 id="h1">{{ZAHLWORT}}mal <em>Dream.</em> <span class="unter">Von Wiesbaden bis Füssen.</span></h1>
         <p class="lead">Spielhallen mit einer großen Auswahl an Geldgewinnspiel- und Unterhaltungsgeräten. Täglich geöffnet, die meisten bis 3 Uhr nachts. Zutritt nur für Erwachsene, mit Ausweis.</p>
         <div class="aktionen">
-          <a class="btn btn-weiss" href="standorte.html">{{ICON:pin}}Alle Adressen und Zeiten</a>
-          <a class="link-hell" href="jobs.html">Jobs im Dream</a>
+          <a class="btn btn-messing" href="standorte.html">Standorte und Zeiten</a>
+          <a class="btn btn-kontur" href="jobs.html">Jobs im Dream</a>
         </div>
       </div>
-      {{SCHAUFENSTER}}
+      <div class="schild" aria-hidden="true"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></div>
     </div>
   </section>
 
   <section class="abschnitt" aria-labelledby="h-haeuser">
     <div class="wrap">
       <div class="abschnitt-kopf">
-        <h2 id="h-haeuser">Welches Dream liegt bei Ihnen?</h2>
-        <p>Alle {{ZAHLWORT_KLEIN}} Häuser mit Adresse und den Zeiten von heute. Ob gerade offen ist, steht direkt daneben.</p>
+        <h2 id="h-haeuser">{{ZAHLWORT}} Häuser</h2>
+        <p>Der Messingbogen zeigt, von wann bis wann heute geöffnet ist, der helle Punkt die Uhrzeit jetzt. Liegt der Punkt im Bogen, ist offen.</p>
       </div>
       {{ZEILEN}}
     </div>
   </section>
 
-  <section class="abschnitt abschnitt-rauch" aria-labelledby="h-drinnen">
+  <section class="abschnitt abschnitt-samt" aria-labelledby="h-drinnen">
     <div class="wrap drinnen">
-      <div class="bildplatz" role="img" aria-label="Platzhalter für ein Foto vom Innenraum"><span>Foto Innenraum<small>kommt vom Betreiber</small></span></div>
+      <div class="bildplatz bildplatz-breit" role="img" aria-label="Platzhalter für ein Foto vom Innenraum"><span>Foto Innenraum<small>kommt vom Betreiber</small></span></div>
+      <h2 id="h-drinnen">Drinnen im <em>Dream</em></h2>
       <div class="drinnen-text">
-        <h2 id="h-drinnen">Drinnen im Dream</h2>
         <p>Viele verschiedene Geräte, gepflegte Räume und Personal, das während der ganzen Öffnungszeit vor Ort ist.</p>
         <ul class="punkte" role="list">
           <li>Geldgewinnspielgeräte mit vielen verschiedenen Spielen</li>
@@ -40,12 +41,12 @@
     </div>
   </section>
 
-  <section class="band" aria-labelledby="h-jobs">
+  <section class="abschnitt" aria-labelledby="h-jobs">
     <div class="wrap band-in">
       <div class="band-text">
-        <h2 id="h-jobs"><span class="breit">Arbeiten,</span> <span class="schmal">wenn andere ausgehen.</span></h2>
+        <h2 id="h-jobs">Arbeiten, <em>wenn andere ausgehen.</em></h2>
         <p>Wir suchen Leute für Service und Leitung in unseren Häusern: abends, nachts und am Wochenende, mit Einarbeitung vor Ort. <span class="todo">Stellen sind Beispiele</span></p>
-        <a class="btn btn-weiss" href="jobs.html">Offene Stellen ansehen</a>
+        <a class="btn btn-kontur" href="jobs.html">Offene Stellen ansehen</a>
       </div>
       <ul class="jobzeilen" role="list" aria-label="Offene Stellen (Beispiele)">
         <li><a href="jobs.html#servicekraft"><span class="job-titel">Servicekraft (m/w/d)</span><span>Vollzeit oder Teilzeit</span>{{ICON:pfeil}}</a></li>
@@ -55,9 +56,9 @@
     </div>
   </section>
 
-  <section class="abschnitt" aria-labelledby="h-schutz">
+  <section class="abschnitt abschnitt-samt" aria-labelledby="h-schutz">
     <div class="wrap schutz">
-      <h2 id="h-schutz">Spielen hat bei uns Grenzen.</h2>
+      <h2 id="h-schutz">Spielen hat bei uns <em>Grenzen.</em></h2>
       <dl class="regeln">
         <div><dt>Ab 18, an den meisten Standorten ab 21</dt><dd>Wir kontrollieren am Eingang. Bitte bringen Sie einen gültigen Lichtbildausweis mit.</dd></div>
         <div><dt>Abgleich mit der Sperrdatei OASIS</dt><dd>Vor dem Spiel prüfen wir jeden Gast gegen das bundesweite Sperrsystem. Eine Selbstsperre können Sie bei uns beantragen.</dd></div>

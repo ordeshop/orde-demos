@@ -1,9 +1,14 @@
 <!-- titel: Standorte & Öffnungszeiten | beschreibung: Dream Spielcenter in Füssen, Heidenheim, Kaufering, Senden und Wiesbaden: Adressen, Öffnungszeiten mit Live-Status und Route. | nav: standorte -->
-  <section class="buehne buehne-strasse" aria-labelledby="h1">
-    <div class="wrap">
+  <section class="buehne" aria-labelledby="h1">
+    {{LICHT}}
+    <div class="wrap buehne-in buehne-uhr">
+      <div class="buehne-text">
       <nav class="krumen" aria-label="Brotkrumen"><a href="index.html">Start</a><span aria-hidden="true"> / </span><span aria-current="page">Standorte</span></nav>
-      <h1 id="h1"><span class="breit">{{ZAHLWORT}} Häuser.</span> <span class="schmal">Wo das Neon leuchtet, ist gerade offen.</span></h1>
-      {{STRASSE}}
+      <h1 id="h1">{{ZAHLWORT}} <em>Häuser.</em> <span class="unter">Adresse, Zeiten und der Weg dorthin.</span></h1>
+      <p class="lead">Die Uhr zeigt alle Häuser auf einmal, ein Ring je Haus, Mitternacht oben. Der Messingbogen sind die heutigen Öffnungsstunden. Wo der Zeiger einen Bogen kreuzt, ist gerade offen.</p>
+      {{STANDORT_SPRUNG}}
+      </div>
+      {{UHR}}
     </div>
   </section>
 
@@ -13,7 +18,7 @@
     </div>
   </section>
 
-  <section class="abschnitt abschnitt-rauch abschnitt-knapp" aria-label="Hinweis zum Zutritt">
+  <section class="abschnitt abschnitt-samt abschnitt-knapp" aria-label="Hinweis zum Zutritt">
     <div class="wrap hinweis">
       <p><strong>Ausweis nicht vergessen.</strong> Zutritt ab 18, an den meisten Standorten ab 21.</p>
       <a class="link-weg" href="spielerschutz.html">Warum wir kontrollieren{{ICON:pfeil}}</a>

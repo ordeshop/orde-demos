@@ -1,4 +1,4 @@
-# Entwurf Spielcenter Dream 24 – Fassung 2 („Licht an“)
+# Entwurf Spielcenter Dream 24 – Fassung 2 („Nachtfassung“)
 
 **Kopie** von `entwuerfe/spielcenter-dream-24/` vom 25.10.2026, neu gestaltet.
 Die erste Fassung bleibt unverändert liegen (Link
@@ -11,109 +11,102 @@ in `build.py` sind dieselben.
 
 ## Stand
 
-- 25.10.2026: Fassung 2 gebaut und geprüft (8 Seiten, 360/390/1440 px, Bewegung
-  reduziert, axe-core ohne Befund, Tastatur), PDF `Entwurf-spielcenter-dream-24-v2.pdf`.
-  Noch an niemanden verschickt. Artur entscheidet, welche Fassung der Betreiber sieht;
-  die andere wird dann gelöscht (ein Kunde, ein Link).
+- 25.10.2026: erster Umbau „Licht an“ (rote Fassade, Glastür mit Neon) von Artur
+  abgelehnt: zu viel Rot, Tür-Idee passt nicht, Gesamteindruck stimmt nicht.
+  Gewünscht: **dunkel und edel**, Nachtstimmung, warmes Licht, echte Atmosphäre,
+  hochwertiger als Fassung 1, aber nicht grell. Der Umbau steht in der Git-Historie.
+- 25.10.2026: Nachtfassung gebaut und geprüft (8 Seiten, 360/390/1440 px, Bewegung
+  reduziert, axe-core ohne Befund, Tastatur, Zeitlogik mit festen Uhrzeiten), PDF erzeugt.
+  Noch an niemanden verschickt. Artur entscheidet,
+  welche Fassung der Betreiber sieht; die andere wird dann gelöscht (ein Kunde, ein Link).
 
 ## Bauen
 
     python3 entwuerfe/spielcenter-dream-24-v2/build.py          # Seiten nach demos/entwuerfe/spielcenter-dream-24-v2/
     python3 entwuerfe/pdf-erzeugen.py spielcenter-dream-24-v2   # PDF hier im Ordner
 
-Inhalte in `seiten/`, Kopf, Fuß, Türen und Standorte (`STANDORTE`) in `build.py`.
-
-## Warum neu
-
-Die erste Fassung traf einen der drei KI-Standardlooks aus `ORDE-STIL.md`
-(fast schwarz mit greller Akzentfarbe), hatte über jeder Überschrift ein
-kleines Label, als zweite Sektion vier gleiche Icon-Karten, Leerformeln
-(„Willkommen im Dream“, „Mehr als nur ein Spiel“) und auf jeder Sektion
-dieselbe Einblende-Animation.
+Inhalte in `seiten/`, Kopf, Fuß, Zifferblätter und Standorte (`STANDORTE`) in `build.py`.
 
 ## Gestaltungsplan
 
-**Worum es geht:** fünf Spielhallen zwischen Wiesbaden und Füssen, lange
-offen. Gäste schauen meist abends am Handy nach: Welches Dream ist in meiner
-Nähe, hat es gerade offen, wie komme ich hin? Daneben Bewerber und der
-Spielerschutz, der rechtlich sichtbar sein muss.
+**Worum es geht:** fünf Spielhallen zwischen Wiesbaden und Füssen, lange offen.
+Gäste schauen meist abends am Handy nach: Welches Dream ist in meiner Nähe, hat
+es gerade offen, wie komme ich hin? Daneben Bewerber und der Spielerschutz.
 
-**Farben** (aus dem Logo, also aus der Leuchtreklame des Betriebs):
+**Richtung (Arturs Vorgabe):** dunkel und edel. Das ist eigentlich einer der
+Standardlooks aus `ORDE-STIL.md`, hier aber ausdrücklich gewünscht. Damit es
+nicht der Durchschnitt „schwarz plus eine grelle Farbe“ wird: warmes Dunkel in
+mehreren Stufen statt Schwarz, Licht als Verlauf aus dem Leuchtschild statt
+einer Signalfarbe, Messing statt Neon, Rot nur noch im Logo.
 
 | Name | Hex | Wofür |
 |---|---|---|
-| Fassade | `#D2121A` | ganze Flächen: Kopf jeder Seite, Jobs-Band. Weiß darauf 5,5 : 1 |
-| Rot Text | `#C8101A` | Knöpfe und Links auf Weiß (5,9 : 1) |
-| Tinte | `#2A0F12` | Text, Fuß (rotstichiges Schwarz statt #000) |
-| Rauch | `#F6F0EE` | ruhige Zwischenfläche, Zeilen beim Darüberfahren |
-| Glas | `#1B1518` | nur die Glastür |
-| Glut / Sonne | `#FF8A1E` / `#FFD23A` | nur Leuchtschild, Neonschein und gelbe Platzhalter |
+| Nacht | `#110A0A` | Grund, rotstichiges Fast-Schwarz |
+| Samt | `#1B1012` | ruhigere Flächen (Jobs, Spielerschutz) |
+| Mahagoni | `#2A181B` | Bildplätze, Zeilen beim Darüberfahren |
+| Messing | `#D9A65A` | Linien, Zifferblatt, Knöpfe (8,9 : 1 auf Nacht) |
+| Elfenbein | `#F3E9DF` | Text |
+| Rauchtext | `#BBA89E` | Nebentext (8,3 : 1) |
+| Glut | `#FF9A3C` | nur als Lichtschein (Leuchtschild, Lampen) |
 
-**Schriften** (lokal als `.woff2`, alle OFL):
-- **Anybody** (variabel, Breite 50–150 %): Überschriften. Das Spiel mit der
-  Breite ist die Typo-Idee: „Fünfmal Dream.“ extra breit wie Automaten-
-  Schriftzüge, „Von Wiesbaden bis Füssen.“ schmal wie Klebebuchstaben auf
-  Glas. Schmal auch für die Folienschrift auf den Türen.
-- **Hanken Grotesk** (variabel): Fließtext.
-- **Tilt Neon**: nur das Neon-Wort „offen“.
-- **Lobster**: nur im Logo-Nachbau.
+**Schriften** (lokal als `.woff2`, OFL): **Bodoni Moda** (variabel mit optischer
+Größe) für Überschriften, kursiv für Hervorhebung; **Jost** (geometrisch, Futura-Art)
+für Text, Menü und Zahlen; **Lobster** nur im Logo-Nachbau.
 
-**Layout:** Der Kopf jeder Seite ist die rote Fassade, darunter beginnt der
-weiße „Gehweg“. Auf der Startseite steht in der Fassade links die Überschrift,
-rechts die Eingangstür eines Hauses. Danach alle Häuser als Zeilen (keine
-Karten), das Angebot mit großem Bildplatz, ein rotes Jobs-Band, der
-Spielerschutz mit der Hotline groß, Fuß in Tinte.
+**Layout:** Kopf liegt über einer dunklen Bühne. Rechts hängt das Dream-Schild
+und ist die Lichtquelle des Raums: Es wirft warmes Licht auf die Wand, dahinter
+unscharfe Lichtpunkte wie von Geräten, darüber feines Korn. Links die
+Überschrift in Bodoni. Danach die fünf Häuser als Zeilen mit kleinem
+Zifferblatt, das Angebot mit großem Bildplatz, Jobs, Spielerschutz, Fuß.
 
-    ┌──────────── rote Fassade ─────────────────────────────┐
-    │ dream-Schild      Standorte Angebot Jobs Schutz Kontakt│
-    │                                    ( Ort wählen )      │
-    │ FÜNFMAL DREAM.                     ┌──────────┐        │
-    │ Von Wiesbaden bis Füssen.          │  ~offen~ │        │
-    │ Text · [Alle Adressen und Zeiten]  │  Zeiten  │        │
-    └────────────────────────────────────┴──────────┴────────┘
-      Welches Dream liegt bei Ihnen?   (fünf Zeilen, Live-Status)
-      Drinnen im Dream                  (Bildplatz + Text)
-    ▓▓▓ Arbeiten, wenn andere ausgehen. (rotes Band) ▓▓▓▓▓▓▓▓▓▓
-      Spielen hat bei uns Grenzen.      (Regeln + Hotline)
+    ┌────────────────────────── Nacht ──────────────────────────┐
+    │ dream                Standorte Angebot Jobs Schutz Kontakt │
+    │                                         (( dream ))  Licht │
+    │ Fünfmal Dream.                       ·   ○        ·        │
+    │ Von Wiesbaden bis Füssen.                    ○    ·        │
+    │ [Standorte und Zeiten]  Jobs                               │
+    └────────────────────────────────────────────────────────────┘
+      Fünf Häuser       ◔ Kaufering   offen bis 3 Uhr   Route
+      Drinnen im Dream  (Bildplatz + Text)
+      Arbeiten, wenn andere ausgehen.
+      Spielen hat bei uns Grenzen.
 
-**Das eine Merkmal: die Eingangstür mit echtem Neon-Schild.** Jedes Haus
-wird als seine Glastür gezeigt: Neon „offen“, Öffnungszeiten als
-Klebebuchstaben, Altersgrenze, Pflichthinweis, Adresse auf dem Sockelblech.
-Das Neon leuchtet nur, wenn das Haus nach deutscher Zeit wirklich geöffnet
-hat; sonst bleibt die Röhre dunkel und darunter steht, wann es wieder
-aufmacht. Beim Laden zündet die Röhre wie echtes Neon (einziger
-Bewegungsmoment). Auf der Startseite wählt man das Haus, auf der Seite
-„Standorte“ stehen am Desktop alle fünf Türen nebeneinander wie eine
-Straße. Funktioniert ohne JavaScript (Auswahl per CSS `:has()`).
+**Das eine Merkmal: Öffnungszeiten als 24-Stunden-Zifferblatt.** Mitternacht
+oben, ein Messingbogen zeigt die heutigen Öffnungsstunden, ein Zeiger die
+aktuelle Uhrzeit in Deutschland, in der Mitte steht die Uhrzeit. Liegt der Zeiger
+im Bogen, ist offen. Weil die Häuser bis 3 Uhr nachts offen haben, läuft der
+Bogen über Mitternacht. Groß bei jedem Haus auf der Seite „Standorte“, klein in
+jeder Zeile der Startseite. Oben auf „Standorte“ eine große Uhr mit einem Ring je
+Haus und einem Zeiger: Wo er einen Bogen kreuzt, ist offen. Die Namen stehen an
+Hinweislinien rechts, durch die Stunden, in denen alle zu haben. Ohne JavaScript
+zeigen die Blätter die Zeiten von Montag bis Samstag.
+
+**Bewegung:** ein Moment beim Laden. Das Schild geht an, dann füllt sich der
+Raum mit warmem Licht. Bei „Bewegung reduzieren“ ist es sofort hell.
 
 **Was die Seite bewusst nicht macht:**
-- kein Casino-Look (Chips, Karten, Jackpot, Goldregen, „Gewinne“): Werbung
-  für Spielhallen ist nach Glücksspielstaatsvertrag eng begrenzt, und die
-  Seite soll informieren, nicht anheizen
+- kein Casino-Look (Chips, Karten, Jackpot, Goldregen, „Gewinne“): Werbung für
+  Spielhallen ist nach Glücksspielstaatsvertrag eng begrenzt
+- kein Rot als Fläche, kein Neon, keine Strahlen wie in Fassung 1
 - keine Labels über Überschriften, keine Icon-Karten, keine nummerierten
-  Abschnitte (außer dem echten Ablauf der Bewerbung)
-- keine Einblende-Animationen, kein GSAP mehr (Seite deutlich leichter)
+  Abschnitte (außer dem echten Ablauf der Bewerbung), keine Einblende-Animationen
 - keine erfundenen Zahlen, Fotos oder Bewertungen; Fotos bleiben sichtbare Platzhalter
 
-**Referenzen** (`awesome-claude-design`, `awesome-design-md`): Stilfamilie
-„Playful Color“ in ernster Ausführung, ausdrücklich nicht „Cinematic Dark“.
-Gelesen: `airbnb` (eine einzige Markenfarbe auf Weiß, 48-px-Knöpfe, 8 px
-Radius), `wise` (schwere Display-Schrift, ein interaktives Element im Kopf
-als Kern der Seite, bei Wise der Rechner, hier die Tür), `1win` (Casino:
-übernommen nur die Disziplin, dass die lauten Farben im Inhalt stecken, hier
-im Leuchtschild, nicht im Rahmen). Farben und Schriften kommen vom Betrieb,
-nicht von diesen Marken.
+**Referenzen** (`awesome-claude-design`, `awesome-design-md`): Familie
+„Cinematic Dark“ auf ausdrücklichen Wunsch. Gelesen: `ferrari` (Fast-Schwarz,
+Markenfarbe nur als Signal, viel Luft), `bugatti` (Zurückhaltung, große Typo,
+Linien statt Kästen), `1win` (Casino: laute Farben nur im Inhalt, nicht im
+Rahmen). Farben und Schriften kommen vom Betrieb und vom Material Messing, nicht
+von diesen Marken.
 
-**Gegenprüfung:** Würde eine andere Spielhalle dasselbe bekommen? Die Tür
-vielleicht, aber nicht in Dream-Rot, mit diesem Schild, diesen Zeiten und
-dieser Straße aus fünf Häusern. Der Standardentwurf der Branche ist schwarz
-mit Gold oder Neon. Ähnlichkeit zu den ORDÉ-Demos (MØRK, Studio Nové, FORGE,
-KOMLA, Praxis, Elektro): keine rote Vollfläche, keine Tür-Idee, keine
-Breitenachse.
+**Gegenprüfung:** Der Standard der Branche ist schwarz mit Gold und Chips oder
+Neon. Hier gibt es keine Spielsymbole, das Licht kommt aus dem echten Schild des
+Betriebs, und das Zifferblatt zeigt die echten Zeiten. Ähnlichkeit zu den
+ORDÉ-Demos: FORGE ist dunkel, aber kalt und hart; diese Seite ist warm, mit
+Kontrastschrift und Messing.
 
 ## Technik
 
-Statisches HTML und CSS, ein kleines `main.js` (Menü, Live-Status, Neon,
-gemerkte Hausauswahl, Formular-Attrappe). Kein Framework, kein CDN. Icons:
-sechs Tabler-Icons (MIT) als Inline-SVG. Schriften aus Fontsource (OFL).
+Statisches HTML und CSS, ein kleines `main.js` (Menü, Live-Status, Zifferblätter,
+Formular-Attrappe). Kein Framework, kein CDN. Icons: Tabler (MIT) als Inline-SVG.
 Lizenzen unter `demos/entwuerfe/spielcenter-dream-24-v2/assets/fonts/LIZENZEN.txt`.
