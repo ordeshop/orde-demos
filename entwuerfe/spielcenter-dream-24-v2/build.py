@@ -7,6 +7,11 @@ Jede Datei in seiten/ beginnt mit einer Kopfzeile:
 Platzhalter im Inhalt:
   {{LICHT}}              Lichthof und Funken für die Bühne
   {{AUTOMAT}}            Spielautomat der Startseite: fünf Walzen, Intro in main.js
+  {{AUTOMAT_KLEIN}}      kleiner Automat mit drei Walzen, steht still (Angebot)
+  {{ANZEIGE}} … {{/ANZEIGE}}  Anzeigetafel im Stil des Automaten; {{ANZEIGE:ruhig}} ohne Lauflicht
+  {{FINDER}}             Knopf „Nächstes Dream finden“
+  {{HAEUSER_JETZT}}      Tafel „Die Häuser jetzt“ mit allen Häusern (Kontakt)
+  {{HAEUSER_DATEN}}      unsichtbare Häuserliste für die Live-Zeile (Jobs)
   {{ZIER}}               der Stern aus dem Logo zwischen zwei Linien
   {{FOTO:hoch|quer|breit:Bildidee}}  Fotoplatz mit Bildidee und Format
   {{ZEITPLAN}}           alle Häuser als Zeitstrahl untereinander (Standorte)
@@ -32,6 +37,7 @@ ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "spielcenter-dream-24-v2"
 # open: Öffnungsstunde Mo..So (Feiertage wie Sonntag), close: Schluss am
 # Folgetag um diese Stunde (0 = Mitternacht). alter: None = unbekannt.
 # region: Großraum zur Orientierung. marke: Name des Hauses vor Ort, falls belegt.
+# geo: Breite, Länge aus OpenStreetMap (Nominatim) zur Adresse, 25.10.2026 (für „Nächstes Dream“).
 # Reihenfolge von Norden nach Süden, passend zu „Von Wiesbaden bis Füssen“.
 STANDORTE = {
     "wiesbaden": {
@@ -39,27 +45,28 @@ STANDORTE = {
         "plz": "65203", "ort": "Wiesbaden", "tel": "0611 608382", "alter": 21,
         "open": [10, 10, 10, 10, 10, 10, 12], "close": 4,
         "hinweis": "Adresse prüfen: manche Verzeichnisse nennen Äppelallee 27a",
+        "geo": (50.04788, 8.23878),  # nur die Straße gefunden
     },
     "heidenheim": {
         "name": "Heidenheim-Schnaitheim", "region": "an der Brenz", "strasse": "Riedstr. 3", "zusatz": "",
         "plz": "89520", "ort": "Heidenheim an der Brenz", "tel": "07321 609343", "alter": 18,
-        "open": [6, 6, 6, 6, 6, 7, 8], "close": 0, "hinweis": "",
+        "open": [6, 6, 6, 6, 6, 7, 8], "close": 0, "hinweis": "", "geo": (48.71460, 10.16133),
     },
     "senden": {
         "name": "Senden", "region": "bei Ulm", "strasse": "Berliner Str. 9", "zusatz": "im Iller-Center",
         "plz": "89250", "ort": "Senden", "tel": "07307 32320", "alter": 21,
-        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
+        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "", "geo": (48.33084, 10.03914),
     },
     "kaufering": {
         "name": "Kaufering", "region": "bei Landsberg am Lech", "strasse": "Viktor-Frankl-Str. 15", "zusatz": "",
         "plz": "86916", "ort": "Kaufering", "tel": "08191 4299104", "alter": 21, "marke": "Spielcenter Dream 24",
         "open": [9, 9, 9, 9, 9, 9, 11], "close": 3,
-        "hinweis": "Zeiten prüfen: ein Verzeichnis nennt täglich 6 bis 3 Uhr",
+        "hinweis": "Zeiten prüfen: ein Verzeichnis nennt täglich 6 bis 3 Uhr", "geo": (48.08014, 10.85458),
     },
     "fuessen": {
         "name": "Füssen", "region": "im Allgäu", "strasse": "Kemptener Str. 129", "zusatz": "",
         "plz": "87629", "ort": "Füssen", "tel": "08362 926299", "alter": None,
-        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
+        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "", "geo": (47.56845, 10.66793),
     },
 }
 ZENTRALE = {
@@ -173,6 +180,10 @@ def offen(s):
     return f'data-open="{",".join(map(str, s["open"]))}" data-close="{s["close"]}"'
 
 
+def geo(s):
+    return f'data-geo="{s["geo"][0]},{s["geo"][1]}"'
+
+
 def todo(text):
     return f'<span class="todo">{text}</span>'
 
@@ -276,13 +287,64 @@ def automat():
         lage = -(WALZEN_ZIEL - .8) / n * 100
         walzen.append(f'<div class="walze" style="--j:{j}"><div class="streifen" data-streifen data-n="{n}" data-ziel="{WALZEN_ZIEL}" '
                       f'style="--ziel:{lage:.4f}%">{streifen}</div></div>')
-    lampen = "".join(f'<i style="--k:{k}"></i>' for k in range(LAMPEN))  # --k: Platz im Lauflicht
     return (f'<div class="automat" data-automat aria-hidden="true" style="--lampen:{LAMPEN}">'
             f'<span class="automat-streif"></span><span class="automat-blitz"></span>'
-            f'<div class="automat-rahmen"><span class="lampen lampen-oben">{lampen}</span>'
+            f'<div class="automat-rahmen">{lampen("oben")}'
             f'<div class="walzen" style="--n:{len(STANDORTE)}"><span class="gewinnlinie"></span>{"".join(walzen)}</div>'
             f'<span class="zeiger zeiger-l"></span><span class="zeiger zeiger-r"></span>'
-            f'<span class="lampen lampen-unten">{lampen}</span></div></div>')
+            f'{lampen("unten")}</div></div>')
+
+
+def lampen(reihe):
+    """Eine Reihe Lampen; --k ist der Platz im Lauflicht."""
+    return f'<span class="lampen lampen-{reihe}">' + "".join(f'<i style="--k:{k}"></i>' for k in range(LAMPEN)) + "</span>"
+
+
+# Kleiner Automat für „Angebot“: drei Walzen, steht still. Auf der Linie 7 · Dream · Glocke, also kein Treffer.
+KLEIN_WALZEN = [["krone", "sieben", "kirsche"], ["stern", "dream", "glocke"], ["kirsche", "glocke", "sieben"]]
+
+
+def automat_klein():
+    lage = -(1 - .8) / 3 * 100  # mittlere von drei Zellen auf der Linie, wie beim großen Automaten
+    walzen = "".join(f'<div class="walze"><div class="streifen" style="--ziel:{lage:.4f}%">'
+                     + "".join(f'<span class="zelle">{symbol(s)}</span>' for s in zellen) + "</div></div>"
+                     for zellen in KLEIN_WALZEN)
+    return (f'<div class="automat automat-klein buehne-anzeige" aria-hidden="true" style="--lampen:{LAMPEN}">'
+            f'<div class="automat-rahmen">{lampen("oben")}'
+            f'<div class="walzen" style="--n:{len(KLEIN_WALZEN)}"><span class="gewinnlinie"></span>{walzen}</div>'
+            f'<span class="zeiger zeiger-l"></span><span class="zeiger zeiger-r"></span>{lampen("unten")}</div></div>')
+
+
+def anzeige_anfang(art=""):
+    """Anzeigetafel im Stil des Automaten (Rahmen, Goldkante, Lampen) für die Bühne der Unterseiten.
+    Inhalt zwischen {{ANZEIGE}} und {{/ANZEIGE}}; {{ANZEIGE:ruhig}} ohne Lauflicht."""
+    klasse = " ".join(filter(None, ["anzeige", "buehne-anzeige", art]))
+    return f'<div class="{klasse}" style="--lampen:{LAMPEN}">{lampen("oben")}<div class="anzeige-in">'
+
+
+def anzeige_ende():
+    return f'</div>{lampen("unten")}</div>'
+
+
+def finder():
+    """Knopf „Nächstes Dream finden“; main.js zeigt ihn nur, wenn der Browser orten kann."""
+    return (f'<div class="finder" data-finder hidden>'
+            f'<button class="btn btn-kontur" type="button" data-finder-knopf>{icon("pin")}<span>Nächstes Dream finden</span></button>'
+            f'<p class="finder-hinweis">Ihr Standort bleibt auf Ihrem Gerät.</p>'
+            f'<div class="finder-ergebnis" data-finder-ergebnis aria-live="polite"></div></div>')
+
+
+def haeuser_jetzt():
+    """Tafel „Die Häuser jetzt“ (Kontakt): main.js setzt den Live-Status, ohne JavaScript stehen die Zeiten von Montag da."""
+    zeilen = "".join(f'<li {offen(s)}><span class="tafel-name">{s["name"].split("-")[0]}</span>'
+                     f'<span class="status"><span class="lampe" aria-hidden="true"></span><span data-status>{heute_text(s)}</span></span></li>'
+                     for s in STANDORTE.values())
+    return f'<ul class="tafel" role="list">{zeilen}</ul>'
+
+
+def haeuser_daten():
+    """Unsichtbare Häuserliste für die Live-Zeile auf Seiten ohne Häuser (Jobs)."""
+    return "<ul hidden>" + "".join(f'<li data-name="{s["name"].split("-")[0]}" {offen(s)}></li>' for s in STANDORTE.values()) + "</ul>"
 
 
 def zier():
@@ -306,10 +368,11 @@ def zeilen():
     teile = []
     for slug, s in STANDORTE.items():
         kurz = s["name"].split("-")[0]
-        teile.append(f"""        <li class="zeile" data-name="{kurz}" {offen(s)}>
+        teile.append(f"""        <li class="zeile" data-name="{kurz}" {offen(s)} {geo(s)}>
           <div class="zeile-ort">
             <h3><a href="standorte.html#{slug}">{s["name"]}</a></h3>
             <p>{s["region"]}</p>
+            <p class="entfernung" data-entfernung hidden></p>
           </div>
           <div class="zeile-zeit">
             {zeitband(s)}
@@ -344,10 +407,11 @@ def standorte_detail():
     for slug, s in STANDORTE.items():
         hinweis = f'<p>{todo(s["hinweis"])}</p>' if s["hinweis"] else ""
         unterzeile = " · ".join(t for t in (s.get("marke"), s["region"]) if t)
-        teile.append(f"""      <article class="detail" id="{slug}" {offen(s)}>
+        teile.append(f"""      <article class="detail" id="{slug}" {offen(s)} {geo(s)}>
         <div class="detail-kopf">
           <h2>{s["name"]}</h2>
           <p class="detail-unter">{unterzeile}</p>
+          <p class="entfernung" data-entfernung hidden></p>
           <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>{heute_text(s)}</span></p>
           <div class="detail-band">{zeitband(s, mit_achse=True)}</div>
         </div>
@@ -483,6 +547,12 @@ def main():
     ersatz = {
         "{{LICHT}}": licht,
         "{{AUTOMAT}}": automat,
+        "{{AUTOMAT_KLEIN}}": automat_klein,
+        "{{ANZEIGE}}": anzeige_anfang,
+        "{{/ANZEIGE}}": anzeige_ende,
+        "{{FINDER}}": finder,
+        "{{HAEUSER_JETZT}}": haeuser_jetzt,
+        "{{HAEUSER_DATEN}}": haeuser_daten,
         "{{ZIER}}": zier,
         "{{ZEITPLAN}}": zeitplan,
         "{{ZEILEN}}": zeilen,
@@ -509,6 +579,7 @@ def main():
         for alt, neu in ersatz.items():
             if alt in inhalt:
                 inhalt = inhalt.replace(alt, neu())
+        inhalt = re.sub(r"\{\{ANZEIGE:(\w+)\}\}", lambda m: anzeige_anfang(m.group(1)), inhalt)
         inhalt = re.sub(r"\{\{ICON:(\w+)\}\}", lambda m: icon(m.group(1)), inhalt)
         inhalt = re.sub(r"\{\{FOTO:(hoch|quer|breit):([^}]+)\}\}", lambda m: foto(m.group(1), m.group(2)), inhalt)
         rest = re.findall(r"\{\{[^}]+\}\}", inhalt)

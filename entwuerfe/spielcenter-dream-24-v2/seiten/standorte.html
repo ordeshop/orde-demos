@@ -1,14 +1,15 @@
 <!-- titel: Standorte & Öffnungszeiten | beschreibung: Dream Spielcenter in Füssen, Heidenheim, Kaufering, Senden und Wiesbaden: Adressen, Öffnungszeiten mit Live-Status und Route. | nav: standorte -->
   <section class="buehne" aria-labelledby="h1">
     {{LICHT}}
-    <div class="wrap buehne-in buehne-plan">
+    <div class="wrap buehne-in">
       <div class="buehne-text">
       <nav class="krumen" aria-label="Brotkrumen"><a href="index.html">Start</a><span aria-hidden="true"> / </span><span aria-current="page">Standorte</span></nav>
       <h1 id="h1">{{ZAHLWORT}} <em>Häuser.</em> <span class="unter">Adresse, Zeiten und der Weg dorthin.</span></h1>
       <p class="lead">Alle Häuser auf einen Blick, von 6 Uhr morgens bis 6 Uhr am nächsten Morgen. Die Balken sind die heutigen Öffnungszeiten. Wo der weiße Strich einen Balken kreuzt, ist gerade offen.</p>
       {{STANDORT_SPRUNG}}
+      {{FINDER}}
       </div>
-      {{ZEITPLAN}}
+      {{ANZEIGE}}{{ZEITPLAN}}{{/ANZEIGE}}
     </div>
   </section>
 

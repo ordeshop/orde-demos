@@ -12,7 +12,7 @@
 <link rel="preload" href="assets/fonts/spectral-500-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/lobster.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/style.css?v=d4014656">
+<link rel="stylesheet" href="assets/css/style.css?v=a9251f9f">
 <script>try{var d=document.documentElement,aus=localStorage.getItem("dream-bewegung")==="aus";if(aus)d.classList.add("bewegung-aus");if(!aus&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("dream-intro")){d.classList.add("intro");window.dreamNotaus=setTimeout(function(){d.classList.remove("intro","intro-an")},3000)}}catch(e){}</script>
 </head>
 <body data-seite="index">
@@ -79,15 +79,19 @@
 
   <section class="abschnitt" id="haeuser" aria-labelledby="h-haeuser">
     <div class="wrap">
-      <div class="abschnitt-kopf">
+      <div class="abschnitt-kopf oben">
         <h2 id="h-haeuser">Fünf <em>Häuser.</em></h2>
-        <p>Von Norden nach Süden. Der Balken zeigt die heutigen Öffnungszeiten, von 6 Uhr morgens bis 6 Uhr am nächsten Morgen. Der weiße Strich ist die Uhrzeit jetzt: Steht er im Balken, ist offen.</p>
+        <div>
+          <p>Von Norden nach Süden. Der Balken zeigt die heutigen Öffnungszeiten, von 6 Uhr morgens bis 6 Uhr am nächsten Morgen. Der weiße Strich ist die Uhrzeit jetzt: Steht er im Balken, ist offen.</p>
+          <div class="finder" data-finder hidden><button class="btn btn-kontur" type="button" data-finder-knopf><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><span>Nächstes Dream finden</span></button><p class="finder-hinweis">Ihr Standort bleibt auf Ihrem Gerät.</p><div class="finder-ergebnis" data-finder-ergebnis aria-live="polite"></div></div>
+        </div>
       </div>
       <ul class="zeilen" role="list">
-        <li class="zeile" data-name="Wiesbaden" data-open="10,10,10,10,10,10,12" data-close="4">
+        <li class="zeile" data-name="Wiesbaden" data-open="10,10,10,10,10,10,12" data-close="4" data-geo="50.04788,8.23878">
           <div class="zeile-ort">
             <h3><a href="standorte.html#wiesbaden">Wiesbaden-Biebrich</a></h3>
             <p>am Rhein</p>
+            <p class="entfernung" data-entfernung hidden></p>
           </div>
           <div class="zeile-zeit">
             <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:16.67%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
@@ -99,10 +103,11 @@
             <a class="weg" href="tel:+49611608382"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Wiesbaden-Biebrich: 0611 608382</span></a>
           </div>
         </li>
-        <li class="zeile" data-name="Heidenheim" data-open="6,6,6,6,6,7,8" data-close="0">
+        <li class="zeile" data-name="Heidenheim" data-open="6,6,6,6,6,7,8" data-close="0" data-geo="48.7146,10.16133">
           <div class="zeile-ort">
             <h3><a href="standorte.html#heidenheim">Heidenheim-Schnaitheim</a></h3>
             <p>an der Brenz</p>
+            <p class="entfernung" data-entfernung hidden></p>
           </div>
           <div class="zeile-zeit">
             <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:0.00%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
@@ -114,10 +119,11 @@
             <a class="weg" href="tel:+497321609343"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Heidenheim-Schnaitheim: 07321 609343</span></a>
           </div>
         </li>
-        <li class="zeile" data-name="Senden" data-open="9,9,9,9,9,9,11" data-close="3">
+        <li class="zeile" data-name="Senden" data-open="9,9,9,9,9,9,11" data-close="3" data-geo="48.33084,10.03914">
           <div class="zeile-ort">
             <h3><a href="standorte.html#senden">Senden</a></h3>
             <p>bei Ulm</p>
+            <p class="entfernung" data-entfernung hidden></p>
           </div>
           <div class="zeile-zeit">
             <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
@@ -129,10 +135,11 @@
             <a class="weg" href="tel:+49730732320"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Senden: 07307 32320</span></a>
           </div>
         </li>
-        <li class="zeile" data-name="Kaufering" data-open="9,9,9,9,9,9,11" data-close="3">
+        <li class="zeile" data-name="Kaufering" data-open="9,9,9,9,9,9,11" data-close="3" data-geo="48.08014,10.85458">
           <div class="zeile-ort">
             <h3><a href="standorte.html#kaufering">Kaufering</a></h3>
             <p>bei Landsberg am Lech</p>
+            <p class="entfernung" data-entfernung hidden></p>
           </div>
           <div class="zeile-zeit">
             <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
@@ -144,10 +151,11 @@
             <a class="weg" href="tel:+4981914299104"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Kaufering: 08191 4299104</span></a>
           </div>
         </li>
-        <li class="zeile" data-name="Füssen" data-open="9,9,9,9,9,9,11" data-close="3">
+        <li class="zeile" data-name="Füssen" data-open="9,9,9,9,9,9,11" data-close="3" data-geo="47.56845,10.66793">
           <div class="zeile-ort">
             <h3><a href="standorte.html#fuessen">Füssen</a></h3>
             <p>im Allgäu</p>
+            <p class="entfernung" data-entfernung hidden></p>
           </div>
           <div class="zeile-zeit">
             <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
@@ -253,6 +261,6 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js?v=9ed7275d" defer></script>
+<script src="assets/js/main.js?v=62bc168a" defer></script>
 </body>
 </html>

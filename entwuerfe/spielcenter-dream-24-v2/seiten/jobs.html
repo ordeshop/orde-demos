@@ -1,10 +1,17 @@
 <!-- titel: Jobs | beschreibung: Jobs im Dream Spielcenter: Servicekraft, Aushilfe und Filialleitung in Füssen, Heidenheim, Kaufering, Senden und Wiesbaden. | nav: jobs -->
   <section class="buehne" aria-labelledby="h1">
     {{LICHT}}
-    <div class="wrap">
+    <div class="wrap buehne-in">
+      <div class="buehne-text">
       <nav class="krumen" aria-label="Brotkrumen"><a href="index.html">Start</a><span aria-hidden="true"> / </span><span aria-current="page">Jobs</span></nav>
       <h1 id="h1">Arbeiten, <span class="unter">wenn andere ausgehen.</span></h1>
       <p class="lead">Du bist gern Gastgeber, behältst auch spät abends den Überblick und gehst offen auf Menschen zu? Dann passt du ins Dream.</p>
+      </div>
+      {{ANZEIGE}}
+        <div class="anzeige-uhr" data-uhr-block hidden><p class="anzeige-titel">Uhrzeit jetzt</p><p class="anzeige-gross" data-uhr></p></div>
+        <p class="anzeige-text"><span class="lampe" aria-hidden="true" data-concierge-lampe></span><span data-concierge>Täglich geöffnet, die meisten Häuser bis 3 Uhr nachts.</span></p>
+      {{/ANZEIGE}}
+      {{HAEUSER_DATEN}}
     </div>
   </section>
 

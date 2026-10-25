@@ -94,7 +94,7 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 .btn-marke::after { content: ""; position: absolute; top: 0; bottom: 0; left: -70%; width: 45%; transform: skewX(-20deg); background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent); transition: left .9s var(--ease); }
 .btn-marke:hover::after { left: 125%; }
 .btn-marke:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 18px 40px -14px rgba(246, 115, 31, .85); }
-.btn-kontur { border-color: rgba(255, 255, 255, .3); color: var(--text); }
+.btn-kontur { border-color: rgba(255, 255, 255, .3); background: transparent; color: var(--text); }
 .btn-kontur:hover { border-color: var(--orange); background: rgba(246, 115, 31, .08); }
 .link-weg { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--orange); font: 500 .75rem/1.3 var(--sans); letter-spacing: .2em; text-decoration: none; }
 .link-weg .i { transition: transform .4s var(--ease); }
@@ -129,6 +129,7 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 /* ---------- Bühne ---------- */
 .buehne { position: relative; z-index: 0; padding: clamp(40px, 6vw, 88px) 0 clamp(80px, 10vw, 136px); border-bottom: 1px solid var(--linie-leise); }
 .buehne > .wrap { position: relative; z-index: 2; }
+.buehne-in { display: grid; gap: 44px; }
 .licht { position: absolute; z-index: 0; inset: -170px 0 0; overflow: hidden; pointer-events: none; }
 .licht-schein { position: absolute; inset: 0;
   background:
@@ -167,11 +168,11 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 /* Lichtpfütze unter dem Automaten */
 .automat::after { content: ""; position: absolute; z-index: 0; left: 10%; right: 10%; top: 97%; height: 56px; pointer-events: none;
   background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(246, 115, 31, .34), transparent 70%); filter: blur(10px); }
-.automat-rahmen { --rand-y: clamp(20px, 2.6vw, 30px); position: relative; z-index: 1; padding: var(--rand-y) clamp(14px, 2vw, 24px); border-radius: clamp(18px, 2.4vw, 28px);
+.automat-rahmen, .anzeige { --rand-y: clamp(20px, 2.6vw, 30px); position: relative; z-index: 1; padding: var(--rand-y) clamp(14px, 2vw, 24px); border-radius: clamp(18px, 2.4vw, 28px);
   background: linear-gradient(180deg, #222226 0%, #0e0e10 44%, #0b0b0d 56%, #18181b 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), inset 0 -1px 0 rgba(0, 0, 0, .6), 0 36px 70px -30px #000, 0 0 90px -16px rgba(246, 115, 31, .42); }
 /* Goldkante */
-.automat-rahmen::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+.automat-rahmen::before, .anzeige::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
   background: linear-gradient(140deg, rgba(255, 222, 150, .8), rgba(246, 115, 31, .25) 26%, rgba(255, 201, 40, .08) 52%, rgba(255, 222, 150, .65));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; }
@@ -219,10 +220,10 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 
 /* ---------- Bewegung auf der Bühne (Arturs Wunsch): Lauflicht, Schein und Glanz laufen ständig ----------
    „Bewegung anhalten“ in der Live-Zeile (WCAG 2.2.2), außer Sicht pausiert, bei „Bewegung reduzieren“ aus */
-.lampen i { animation: lauf 3.2s linear infinite; animation-delay: calc((var(--lampen) - 1 - var(--k)) * -3.2s / var(--lampen)); }
-.lampen-unten i { animation-delay: calc(var(--k) * -3.2s / var(--lampen)); }
-.treffer::before { animation: glimmen 3.2s ease-in-out infinite; animation-delay: calc((var(--n) - 1 - var(--j)) * -.32s); }
-.walzen::before { animation: glanz 7s var(--ease) 1.5s infinite; }
+.buehne-start .lampen i { animation: lauf 3.2s linear infinite; animation-delay: calc((var(--lampen) - 1 - var(--k)) * -3.2s / var(--lampen)); }
+.buehne-start .lampen-unten i { animation-delay: calc(var(--k) * -3.2s / var(--lampen)); }
+.buehne-start .treffer::before { animation: glimmen 3.2s ease-in-out infinite; animation-delay: calc((var(--n) - 1 - var(--j)) * -.32s); }
+.buehne-start .walzen::before { animation: glanz 7s var(--ease) 1.5s infinite; }
 .bewegung-aus .lampen i, .bewegung-aus .treffer::before, .bewegung-aus .walzen::before,
 .automat.ruhe .lampen i, .automat.ruhe .treffer::before, .automat.ruhe .walzen::before { animation-play-state: paused; }
 @keyframes lauf { 0% { opacity: 1; transform: scale(1.35); } 10% { opacity: .95; transform: scale(1.1); } 36%, 100% { opacity: .4; transform: none; } }
@@ -236,6 +237,48 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 .bewegung { padding: 0; border: 0; background: none; color: var(--grau); cursor: pointer; }
 .bewegung:hover { color: var(--text); }
 .bewegung:hover .i { transform: none; }
+
+/* ---------- Anzeigetafeln der Unterseiten: Rahmen wie der Automat, darin echte Information ---------- */
+[hidden] { display: none !important; }
+.buehne-anzeige { width: min(100%, 560px); }
+.anzeige { padding: var(--rand-y) clamp(14px, 2vw, 24px); }
+.anzeige-in { display: grid; justify-items: center; gap: 12px; padding: clamp(22px, 3vw, 34px) clamp(14px, 2vw, 26px); border-radius: clamp(10px, 1.4vw, 16px); text-align: center; background: #050506;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07), inset 0 14px 22px -6px rgba(0, 0, 0, .8), inset 0 -14px 22px -6px rgba(0, 0, 0, .8); }
+.anzeige-titel { font: 500 .6875rem/1.2 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--gelb); }
+.anzeige-gross { font: 400 clamp(2.3rem, 1.5rem + 2.6vw, 3.5rem)/1 var(--serif); font-variation-settings: "opsz" 30; font-variant-numeric: lining-nums tabular-nums; color: var(--text); text-decoration: none; white-space: nowrap; }
+a.anzeige-gross:hover { color: var(--gelb); }
+.anzeige-text { max-width: 24em; color: var(--grau); font-size: .9375rem; line-height: 1.55; }
+.anzeige-text .lampe { display: inline-block; margin-right: 10px; vertical-align: .08em; }
+.anzeige-uhr { display: grid; justify-items: center; gap: 10px; }
+.anzeige .zeitplan { margin: 0; text-align: left; }
+.automat-klein { width: min(100%, 440px); margin: 0; }
+/* „Die Häuser jetzt“ (Kontakt) */
+.tafel { width: 100%; text-align: left; }
+.tafel li { display: flex; justify-content: space-between; align-items: center; gap: 8px 18px; flex-wrap: wrap; padding: 10px 2px; border-bottom: 1px solid rgba(255, 255, 255, .07); }
+.tafel li:last-child { border-bottom: 0; }
+.tafel-name { font: 400 1.2rem/1.2 var(--serif); font-variation-settings: "opsz" 14; color: var(--text); }
+.tafel .status { gap: 10px; font-size: .8125rem; }
+/* Lauflicht der Unterseiten: einmal rundherum beim Laden (unter 3 s), dann ruhig */
+.anzeige .lampen i, .automat-klein .lampen i { animation: aufleuchten .5s ease-out both; animation-delay: calc(var(--k) * 60ms); }
+.anzeige .lampen-unten i, .automat-klein .lampen-unten i { animation-delay: calc((var(--lampen) * 2 - 1 - var(--k)) * 60ms); }
+.anzeige.ruhig .lampen i { animation: none; }
+@keyframes aufleuchten { 0% { opacity: .3; transform: none; } 45% { opacity: 1; transform: scale(1.4); } 100% { opacity: 1; transform: none; } }
+
+/* ---------- Nächstes Dream finden ---------- */
+.finder { display: grid; justify-items: start; gap: 10px; margin-top: 28px; }
+.finder .finder-hinweis { font-size: .8125rem; color: var(--grau-2); }
+.finder-ergebnis:empty { display: none; }
+.finder-karte { display: grid; gap: 6px; width: min(100%, 420px); margin-top: 6px; padding: 20px 22px; border: 1px solid var(--gold-linie); border-radius: 2px;
+  background: linear-gradient(160deg, rgba(255, 201, 40, .07), rgba(255, 201, 40, 0) 60%), var(--kohle); }
+.finder-karte .finder-label { font: 500 .6875rem/1.2 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--gelb); }
+.finder-karte .finder-name { font: 400 clamp(1.6rem, 1.3rem + 1vw, 2.1rem)/1.1 var(--serif); font-variation-settings: "opsz" 30; color: var(--text); }
+.finder-karte .finder-weite { color: var(--grau); font-size: .9375rem; }
+.finder-karte .wege { margin-top: 2px; }
+.finder .finder-fehler { max-width: 30em; color: var(--grau); font-size: .9375rem; }
+.zeile-ort .entfernung, .detail-kopf .entfernung { margin-top: 6px; font: 500 .6875rem/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--grau); }
+.naechstes .entfernung { color: var(--gelb) !important; }
+.zeile.naechstes::before { opacity: 1; background: radial-gradient(ellipse 50% 140% at 18% 50%, rgba(255, 201, 40, .11), transparent 70%); }
+.zeile.naechstes h3 a, .detail.naechstes h2 { color: var(--gelb); }
 
 /* ---------- Intro der Startseite ----------
    Das Kopfskript setzt .intro (einmal je Besuch, nicht bei „Bewegung reduzieren“), main.js führt Regie:
@@ -568,6 +611,7 @@ html.intro { overflow: hidden; scrollbar-gutter: stable; }
 /* ---------- ab Tablet ---------- */
 @media (min-width: 760px) {
   .abschnitt-kopf { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; }
+  .abschnitt-kopf.oben { align-items: start; }
   .zeile { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.15fr) minmax(0, .85fr) auto; gap: 16px 44px; }
   .detail { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .detail-zeiten { grid-column: 2; grid-row: 1 / span 2; }
@@ -590,7 +634,7 @@ html.intro { overflow: hidden; scrollbar-gutter: stable; }
 @media (min-width: 1000px) {
   .buehne-in { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 56px; align-items: center; }
   .buehne-start .buehne-in { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .buehne-plan .zeitplan { justify-self: end; margin: 0; }
+  .buehne-anzeige { justify-self: end; }
   .drinnen { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 32px; }
   .drinnen > .rahmen-hoch { grid-column: 1 / span 5; grid-row: 1 / span 2; align-self: start; }
   .drinnen-text { grid-column: 7 / span 6; grid-row: 1; align-self: end; }
@@ -607,7 +651,7 @@ html.intro { overflow: hidden; scrollbar-gutter: stable; }
 
 @media (prefers-reduced-motion: reduce) {
   .btn-marke::after { display: none; }
-  .lampen i, .treffer::before, .walzen::before { animation: none; }
+  .lampen i, .treffer::before, .walzen::before { animation: none !important; }
   .bewegung { display: none; }
 }
 

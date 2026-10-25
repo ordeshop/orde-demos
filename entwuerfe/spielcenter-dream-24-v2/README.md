@@ -39,6 +39,11 @@ in `build.py` sind dieselben.
   Schilder, rasendes Lauflicht) und Dauerbewegung auf der Bühne (Lauflicht, Schein, Glanz),
   beides Arturs Wunsch. Neu: „Bewegung anhalten“ in der Live-Zeile. Geprüft wie oben, dazu
   Anhalten, Fortsetzen und Neuladen mit angehaltener Bewegung.
+- 25.10.2026: „Nächstes Dream finden“ (Startseite, Standorte) und Anzeigetafeln auf den
+  Unterseiten, Arturs Auswahl aus der Vorschlagsliste (siehe „Nächstes Dream und
+  Anzeigetafeln“). Geprüft: Finder mit drei Orten (München → Kaufering ca. 54 km, Ulm →
+  Senden 8,2 km, Frankfurt → Wiesbaden 32 km) und ohne Freigabe, alle Seiten bei
+  360/390/1440 px, axe-core ohne Befund, „Bewegung reduzieren“ ohne Lauflicht.
 
 ## Bauen
 
@@ -194,6 +199,28 @@ ein Spielautomat gerade gewonnen hat und dann flüssig in die Bühne übergeht.
   das Intro rechtlich prüfen.**
 - Der Stern zwischen Überschrift und Text entfällt auf der Bühne (Sterne stehen jetzt
   auf den Walzen).
+
+## Nächstes Dream und Anzeigetafeln (25.10.2026)
+
+Arturs Auswahl aus der Vorschlagsliste: „Nächstes Dream finden“ und „Unterseiten aufwerten“.
+
+- **Nächstes Dream finden:** ein Knopf auf der Startseite (bei den Häusern) und auf
+  „Standorte“. Nach Freigabe des Standorts rechnet der Browser die Luftlinie zu allen
+  Häusern aus und zeigt das nächste mit Entfernung, Live-Status, Route und Anrufen; an
+  jedem Haus steht die Entfernung, das nächste ist hervorgehoben. Der Standort verlässt
+  das Gerät nicht und wird nicht gespeichert. Ohne Freigabe ein freundlicher Hinweis,
+  ohne Ortung im Browser kein Knopf. Koordinaten der Häuser: OpenStreetMap (Nominatim)
+  zu den Adressen, 25.10.2026; Wiesbaden ohne Hausnummer gefunden (Straße genügt).
+- **Unterseiten:** Rechts auf der Bühne jeder Unterseite steht eine Anzeigetafel im
+  Stil des Automaten (Rahmen, Goldkante, Lampen) mit echter Information statt Deko:
+  Standorte den Zeitplan aller Häuser, Angebot einen kleinen Automaten mit drei Walzen
+  (7 · Dream · Glocke, steht still, kein Treffer), Jobs die Uhrzeit jetzt und welche
+  Häuser gerade offen sind, Kontakt „Die Häuser jetzt“ mit allen fünf Häusern,
+  Spielerschutz die Hilfe-Nummer (ruhig, ohne Lauflicht). Impressum und Datenschutz
+  bleiben schlicht.
+- **Lauflicht auf Unterseiten:** läuft beim Laden einmal um (unter 3 Sekunden), dann
+  leuchten die Lampen ruhig. Dauerbewegung gibt es nur auf der Startseite (dort mit
+  „Bewegung anhalten“).
 
 ## Technik
 

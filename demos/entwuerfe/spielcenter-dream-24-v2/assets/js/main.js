@@ -228,15 +228,19 @@ function aktualisieren() {
     strich.querySelector('[data-uhrzeit]').textContent = z.uhr;
     strich.classList.add('lebt');
   });
+  document.querySelectorAll('[data-uhr]').forEach(uhr => { // Uhr auf der Jobs-Bühne
+    uhr.textContent = z.uhr;
+    uhr.closest('[data-uhr-block]')?.removeAttribute('hidden');
+  });
 }
 
-// Live-Zeile auf der Bühne: welche Häuser gerade geöffnet sind
+// Live-Zeile auf der Bühne (Startseite, Jobs): welche Häuser gerade geöffnet sind
 const ZAHLWORTE = { 2: 'zwei', 3: 'drei', 4: 'vier', 5: 'fünf', 6: 'sechs', 7: 'sieben', 8: 'acht' };
 const aufzaehlen = namen => namen.length < 2 ? namen.join('') : namen.slice(0, -1).join(', ') + ' und ' + namen[namen.length - 1];
 function concierge(z) {
   const text = document.querySelector('[data-concierge]');
   if (!text) return;
-  const haeuser = [...document.querySelectorAll('.zeile[data-name]')];
+  const haeuser = [...document.querySelectorAll('[data-name][data-open]')];
   const offen = haeuser.filter(h => h.dataset.state === 'offen').map(h => h.dataset.name);
   document.querySelector('[data-concierge-lampe]')?.classList.toggle('an', offen.length > 0);
   if (offen.length === haeuser.length) {
@@ -253,6 +257,60 @@ function concierge(z) {
 
 aktualisieren();
 setInterval(aktualisieren, 30000);
+
+// Nächstes Dream finden: Der Browser fragt nach dem Standort und rechnet die Luftlinie zu den
+// Häusern aus. Der Standort verlässt das Gerät nicht und wird nicht gespeichert.
+const haeuserMitOrt = [...document.querySelectorAll('[data-geo]')];
+document.querySelectorAll('[data-finder]').forEach(finder => {
+  if (!('geolocation' in navigator) || !haeuserMitOrt.length) return;
+  finder.hidden = false;
+  const knopf = finder.querySelector('[data-finder-knopf]');
+  const beschriftung = knopf.querySelector('span');
+  const ergebnis = finder.querySelector('[data-finder-ergebnis]');
+  const fertig = () => { knopf.disabled = false; beschriftung.textContent = 'Nächstes Dream finden'; };
+  knopf.addEventListener('click', () => {
+    knopf.disabled = true;
+    beschriftung.textContent = 'Standort wird bestimmt …';
+    navigator.geolocation.getCurrentPosition(ort => {
+      fertig();
+      ergebnis.replaceChildren(naechstesHaus([ort.coords.latitude, ort.coords.longitude]));
+    }, fehler => {
+      fertig();
+      ergebnis.replaceChildren(absatz('finder-fehler', fehler.code === fehler.PERMISSION_DENIED
+        ? 'Ohne Freigabe des Standorts geht es leider nicht. Alle Häuser stehen hier von Norden nach Süden.'
+        : 'Der Standort ließ sich gerade nicht bestimmen. Bitte noch einmal versuchen.'));
+    }, { timeout: 12000, maximumAge: 300000 });
+  });
+});
+
+// Luftlinie in Kilometern (Haversine), lesbar gerundet
+function luftlinie([b1, l1], [b2, l2]) {
+  const r = Math.PI / 180;
+  const h = Math.sin((b2 - b1) * r / 2) ** 2 + Math.cos(b1 * r) * Math.cos(b2 * r) * Math.sin((l2 - l1) * r / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
+const kmText = d => (d < 1 ? 'unter 1' : 'ca. ' + (d < 10 ? d.toFixed(1).replace('.', ',') : Math.round(d))) + ' km Luftlinie';
+const absatz = (klasse, text) => Object.assign(document.createElement('p'), { className: klasse, textContent: text });
+
+// Entfernung an jedes Haus schreiben, das nächste hervorheben und als Karte mit Status und Wegen zurückgeben
+function naechstesHaus(ich) {
+  const liste = haeuserMitOrt.map(el => ({ el, d: luftlinie(ich, el.dataset.geo.split(',').map(Number)) })).sort((a, b) => a.d - b.d);
+  liste.forEach(({ el, d }, i) => {
+    el.classList.toggle('naechstes', i === 0);
+    const weite = el.querySelector('[data-entfernung]');
+    if (weite) {
+      weite.textContent = (i === 0 ? 'Am nächsten · ' : '') + kmText(d);
+      weite.hidden = false;
+    }
+  });
+  const { el, d } = liste[0];
+  const karte = document.createElement('div');
+  karte.className = 'finder-karte';
+  Object.assign(karte.dataset, { open: el.dataset.open, close: el.dataset.close, state: el.dataset.state || '' }); // aktualisieren() hält den Status aktuell
+  karte.append(absatz('finder-label', 'Am nächsten'), absatz('finder-name', el.querySelector('h2, h3').textContent.trim()),
+    absatz('finder-weite', kmText(d)), el.querySelector('.status').cloneNode(true), el.querySelector('.wege').cloneNode(true));
+  return karte;
+}
 
 // Formulare sind im Entwurf Attrappen: prüfen, aber nichts verschicken
 document.querySelectorAll('form[data-demo]').forEach(form => {
