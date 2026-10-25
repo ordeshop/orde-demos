@@ -30,6 +30,11 @@ in `build.py` sind dieselben.
   sie bis 17 px gut lesbar bleibt und „Fünfmal Dream.“ am Handy einzeilig bleibt. Ersatz,
   falls gewünscht: Brygada 1918 (wärmer) oder Unna (leichter). Geprüft: 360/390/1440 px,
   axe-core ohne Befund, keine vom Browser schräggestellte Bodoni mehr.
+- 25.10.2026: Bühne neu als **Spielautomat mit Intro** (Arturs Wunsch: mehr Wow, mehr
+  Spielcenter, ein Automat, der gerade gewonnen hat), siehe „Bühne: der Automat“.
+  Geprüft: 360/390/1024/1440 px, Intro in Echtzeit aufgenommen (Handy und Bildschirm),
+  Abbruch per Klick und Taste, „Bewegung reduzieren“, ohne JavaScript, ohne main.js,
+  zweiter Aufruf ohne Intro, axe-core vor und nach dem Intro ohne Befund.
 
 ## Bauen
 
@@ -95,12 +100,13 @@ auf „Standorte“ als Zeitplan aller Häuser untereinander mit einem gemeinsam
 Strich und der Uhrzeit. Ohne JavaScript zeigen die Balken die Zeiten von Montag.
 (Vorher 24-Stunden-Zifferblätter; auf Arturs Wunsch vom 25.10.2026 ersetzt.)
 
-**Bewegung:** ein Moment beim Laden. Das Schild geht an, dann füllt sich der
-Raum mit warmem Licht. Bei „Bewegung reduzieren“ ist es sofort hell.
+**Bewegung:** ein Moment beim Laden, das Intro mit dem Spielautomaten (siehe
+„Bühne: der Automat“). Bei „Bewegung reduzieren“ steht sofort die fertige Bühne da.
 
 **Was die Seite bewusst nicht macht:**
-- kein Casino-Look (Chips, Karten, Jackpot, Goldregen, „Gewinne“): Werbung für
-  Spielhallen ist nach Glücksspielstaatsvertrag eng begrenzt
+- kein Casino-Look (Chips, Karten, Jackpot, Goldregen, Münzen, Geldbeträge, „Gewinne“):
+  Werbung für Spielhallen ist nach Glücksspielstaatsvertrag eng begrenzt. Der
+  Spielautomat auf der Bühne zeigt als Treffer nur das Dream-Schild.
 - kein Rot als Fläche, kein Neon, keine Strahlen und kein Laufband wie in Fassung 1
 - keine Labels über Überschriften, keine Icon-Karten, keine nummerierten
   Abschnitte (außer dem echten Ablauf der Bewerbung), keine Einblende-Animationen
@@ -146,6 +152,33 @@ sie Grandhotels und Spielbanken bei Nacht zeigen.
   der Navigation wächst aus der Mitte, ruhigere Platzhalter-Markierung, Favicon.
 - Bewegung bleibt bei einem Moment: Beim Laden geht das Schild an, der Lichtstreif zieht
   auf, der Raum wird hell.
+
+## Bühne: der Automat (25.10.2026)
+
+Arturs Wunsch: Die Bühne braucht mehr Wow und mehr Spielcenter, dazu ein Intro, in dem
+ein Spielautomat gerade gewonnen hat und dann flüssig in die Bühne übergeht.
+
+- **Idee:** Statt des Schilds steht ein Walzenfenster auf der Bühne. **Fünf Walzen, fünf
+  Häuser:** Auf der Gewinnlinie steht fünfmal das Dream-Schild, darunter die Überschrift
+  „Fünfmal Dream.“. Über und unter der Linie sieht man angeschnitten die Nachbarsymbole
+  (7, Glocke, Kirschen, Stern aus dem Logo, Krone) in Gold, die Walzen sind gewölbt
+  schattiert, darüber Glas. Oben und unten eine Reihe Lampen, an den Seiten die Zeiger
+  der Gewinnlinie, dahinter der Lichtstreif der bisherigen Bühne.
+- **Intro:** Der Raum ist dunkel, nur der Automat leuchtet, die Walzen drehen. Sie
+  bleiben von links nach rechts mit einem kleinen Ruck auf dem Dream-Schild stehen. Beim
+  Treffer laufen die Lampen, die Schilder blitzen, der Lichtstreif zieht auf, der Raum
+  wird hell. Dann gleitet der Automat an seinen Platz, Kopf, Überschrift und Knöpfe
+  blenden ein. Gut 4 Sekunden.
+- **Regeln:** einmal je Besuch (`sessionStorage`), Tippen, Taste oder Scrollen beendet es
+  sofort, bei „Bewegung reduzieren“ und ohne JavaScript steht die fertige Bühne da. Lädt
+  `main.js` nicht binnen 2,5 s, entfällt das Intro (Notaus im Kopfskript nach 3 s). Die
+  Lampen blinken nur im Treffer-Moment, danach leuchten sie ruhig. Kein Ton.
+- **Was bewusst fehlt:** Geld, Beträge, Münzen, Wörter wie „Gewinn“ oder „Jackpot“.
+  Werbung für Glücksspiel darf keine Gewinne versprechen oder verharmlosen (§ 5 GlüStV
+  2021); der Treffer ist deshalb nur die Marke. **Vor dem Livegang lässt der Betreiber
+  das Intro rechtlich prüfen.**
+- Der Stern zwischen Überschrift und Text entfällt auf der Bühne (Sterne stehen jetzt
+  auf den Walzen).
 
 ## Technik
 

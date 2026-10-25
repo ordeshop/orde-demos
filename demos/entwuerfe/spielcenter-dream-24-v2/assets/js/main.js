@@ -16,15 +16,64 @@ if (burger && menu) {
 }
 
 // Kopf: wird beim Scrollen mattes Glas. Auf der Startseite erscheint das Logo darin
-// erst, wenn das große Schild aus dem Bild ist (sonst stünde es doppelt da).
+// erst, wenn der Automat aus dem Bild ist (dort steht das Schild schon fünfmal).
 const kopf = document.querySelector('[data-kopf]');
+const automat = document.querySelector('[data-automat]');
 if (kopf) {
   const fest = () => kopf.classList.toggle('fest', window.scrollY > 8);
   fest();
   addEventListener('scroll', fest, { passive: true });
-  const schild = document.querySelector('.buehne-start .schild');
-  if (schild && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => kopf.classList.toggle('logo-aus', e.isIntersecting), { rootMargin: '-84px 0px 0px 0px' }).observe(schild);
+  if (automat && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => kopf.classList.toggle('logo-aus', e.isIntersecting), { rootMargin: '-84px 0px 0px 0px' }).observe(automat);
+  }
+}
+
+// Intro der Startseite: Das Kopfskript hat .intro gesetzt (einmal je Besuch, nicht bei
+// „Bewegung reduzieren“). Die Walzen drehen und bleiben von links nach rechts auf dem
+// Dream-Schild stehen, beim Treffer laufen die Lampen, dann gleitet der Automat an seinen
+// Platz. Tippen, eine Taste oder Scrollen beendet es sofort.
+const wurzel = document.documentElement;
+if (wurzel.classList.contains('intro')) {
+  clearTimeout(window.dreamNotaus);
+  try { sessionStorage.setItem('dream-intro', '1'); } catch (e) { /* ohne Speicher kommt das Intro eben jedes Mal */ }
+  // Kein Intro, wenn die Seite im Hintergrund lädt, schon gescrollt ist oder zu lange gebraucht hat
+  if (!automat || document.hidden || window.scrollY > 0 || performance.now() > 2500) wurzel.classList.remove('intro');
+  else intro();
+}
+
+function intro() {
+  const r = automat.getBoundingClientRect();
+  automat.style.setProperty('--intro-y', Math.round(innerHeight / 2 - (r.top + r.height / 2)) + 'px');
+  automat.style.setProperty('--intro-s', Math.min(1.15, innerWidth * .94 / r.width).toFixed(3));
+  requestAnimationFrame(() => wurzel.classList.toggle('intro-an', wurzel.classList.contains('intro')));
+
+  // Jede Walze läuft nach unten und bleibt mit einem kleinen Ruck auf der Zielzelle stehen
+  const laeufe = [...automat.querySelectorAll('[data-streifen]')].map((streifen, j) => {
+    const n = +streifen.dataset.n;
+    const ziel = +streifen.dataset.ziel;
+    const lage = k => `translateY(${(-(k - .8) / n * 100).toFixed(3)}%)`; // wie in build.py: oben 0,8 Zellen angeschnitten
+    return streifen.animate([
+      { transform: lage(ziel + 14 + 4 * j), filter: 'blur(3px)' },
+      { transform: lage(ziel - .12), filter: 'blur(0px)', offset: .92, easing: 'cubic-bezier(.3, .7, .4, 1)' },
+      { transform: lage(ziel), filter: 'blur(0px)' },
+    ], { duration: 1000 + 280 * j, delay: 350, fill: 'both' });
+  });
+  const stopp = 350 + 1000 + 280 * (laeufe.length - 1);
+  const uhren = [
+    setTimeout(() => wurzel.classList.add('intro-gewinn'), stopp),
+    setTimeout(ende, stopp + 1150),
+  ];
+  const abbruch = ['pointerdown', 'keydown', 'wheel', 'touchstart'];
+  abbruch.forEach(t => addEventListener(t, ende, { passive: true }));
+
+  function ende() {
+    if (!wurzel.classList.contains('intro')) return;
+    uhren.forEach(clearTimeout);
+    abbruch.forEach(t => removeEventListener(t, ende));
+    laeufe.forEach(a => a.finish());
+    wurzel.classList.remove('intro', 'intro-an');
+    wurzel.classList.add('intro-aus');
+    setTimeout(() => wurzel.classList.remove('intro-aus', 'intro-gewinn'), 1900);
   }
 }
 

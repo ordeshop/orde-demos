@@ -157,39 +157,96 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 .buehne-start .buehne-in { display: grid; gap: 0; justify-items: center; align-content: center; text-align: center; padding-bottom: clamp(48px, 6vw, 80px); }
 .buehne-start h1 { position: relative; z-index: 2; }
 .buehne-start h1 .unter { margin-top: 1.25em; font: 500 .8125rem/1.5 var(--sans); letter-spacing: .34em; text-transform: uppercase; }
-.buehne-start .zier { margin-top: 34px; }
 .buehne-start .lead { margin: 28px auto 0; }
 .buehne-start .aktionen { justify-content: center; }
 /* Feiner Rahmen um die Bühne, wie bei einer Einladungskarte */
 .buehne-start::after { content: ""; position: absolute; z-index: 1; inset: 0 clamp(12px, 2vw, 28px) clamp(12px, 2vw, 28px); border: 1px solid rgba(255, 201, 40, .12); border-top: 0; pointer-events: none; }
 
-/* Das Schild: Emblem mit Lichthof, Lichtstreif und Spiegelung auf schwarzem Glas */
-.schild { position: relative; width: clamp(210px, 23vw, 330px); margin-bottom: clamp(30px, 4vw, 52px); }
-.schild-logo { position: relative; z-index: 2; width: 100%; height: auto; aspect-ratio: 480 / 230; filter: drop-shadow(0 0 22px rgba(255, 150, 60, .55)) drop-shadow(0 0 72px rgba(246, 115, 31, .32)); }
-.schild-spiegel { position: absolute; z-index: 0; left: 0; top: 100%; width: 100%; height: auto; aspect-ratio: 480 / 230; margin-top: 5px; opacity: .16; transform: scaleY(-1); filter: blur(2.5px);
-  -webkit-mask-image: linear-gradient(to top, #000, transparent 58%); mask-image: linear-gradient(to top, #000, transparent 58%); }
-.schild-streif { position: absolute; z-index: 1; left: 50%; top: 50%; width: min(1180px, 94vw); height: 1px; transform: translate(-50%, -50%);
+/* Der Automat: fünf Walzen, fünf Häuser, auf der Gewinnlinie fünfmal das Dream-Schild */
+.automat { position: relative; z-index: 2; width: min(680px, 100%); margin-bottom: clamp(34px, 4.4vw, 54px); }
+/* Lichtpfütze unter dem Automaten */
+.automat::after { content: ""; position: absolute; z-index: 0; left: 10%; right: 10%; top: 97%; height: 56px; pointer-events: none;
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(246, 115, 31, .34), transparent 70%); filter: blur(10px); }
+.automat-rahmen { --rand-y: clamp(20px, 2.6vw, 30px); position: relative; z-index: 1; padding: var(--rand-y) clamp(14px, 2vw, 24px); border-radius: clamp(18px, 2.4vw, 28px);
+  background: linear-gradient(180deg, #222226 0%, #0e0e10 44%, #0b0b0d 56%, #18181b 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), inset 0 -1px 0 rgba(0, 0, 0, .6), 0 36px 70px -30px #000, 0 0 90px -16px rgba(246, 115, 31, .42); }
+/* Goldkante */
+.automat-rahmen::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(140deg, rgba(255, 222, 150, .8), rgba(246, 115, 31, .25) 26%, rgba(255, 201, 40, .08) 52%, rgba(255, 222, 150, .65));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; }
+/* Lampen oben und unten; beim Treffer laufen sie abwechselnd */
+.lampen { position: absolute; left: clamp(22px, 3.4vw, 40px); right: clamp(22px, 3.4vw, 40px); display: flex; justify-content: space-between; align-items: center; height: 6px; }
+.lampen-oben { top: calc(var(--rand-y) / 2 - 3px); }
+.lampen-unten { bottom: calc(var(--rand-y) / 2 - 3px); }
+.lampen i { width: clamp(4px, .42vw, 6px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff, #FFD98A 45%, var(--orange)); box-shadow: 0 0 6px 1px rgba(255, 170, 80, .7); }
+/* Walzenfenster unter Glas */
+.walzen { container-type: inline-size; position: relative; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 3px; overflow: hidden; border-radius: clamp(10px, 1.4vw, 16px); background: #020203; }
+.walzen::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(174deg, rgba(255, 255, 255, .1) 0%, rgba(255, 255, 255, .025) 30%, transparent 31%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), inset 0 14px 22px -6px rgba(0, 0, 0, .8), inset 0 -14px 22px -6px rgba(0, 0, 0, .8); }
+.walze { --zelle: calc((100cqw - (var(--n) - 1) * 3px) / var(--n) * .72); position: relative; z-index: 1; height: calc(var(--zelle) * 2.6); overflow: hidden;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .012), rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .012)); }
+/* Wölbung der Walze: oben und unten dunkler */
+.walze::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, #020203 0%, rgba(2, 2, 3, .55) 12%, rgba(2, 2, 3, .15) 28%, transparent 36%, transparent 64%, rgba(2, 2, 3, .15) 72%, rgba(2, 2, 3, .55) 88%, #020203 100%); }
+.streifen { display: grid; grid-auto-rows: var(--zelle); transform: translateY(var(--ziel)); }
+.zelle { display: grid; place-items: center; }
+.sym-dream { width: 88%; height: auto; aspect-ratio: 480 / 230; }
+.treffer .sym-dream { filter: drop-shadow(0 0 10px rgba(255, 140, 50, .5)); }
+.sym-sieben { font: 500 calc(var(--zelle) * .7)/1 var(--serif); font-variation-settings: "opsz" 36; background: var(--marke); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sym-linie { width: 44%; height: auto; color: rgba(255, 201, 40, .8); }
+/* Gewinnlinie hinter den Symbolen, Zeiger links und rechts */
+.gewinnlinie { position: absolute; z-index: 0; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, rgba(255, 201, 40, .2), rgba(255, 201, 40, .7) 50%, rgba(255, 201, 40, .2)); box-shadow: 0 0 10px 1px rgba(255, 160, 60, .55); }
+.zeiger { position: absolute; top: 50%; width: 7px; height: 12px; margin-top: -6px; background: linear-gradient(var(--gelb), var(--orange)); filter: drop-shadow(0 0 4px rgba(255, 160, 60, .8)); }
+.zeiger-l { left: clamp(4px, .7vw, 9px); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.zeiger-r { right: clamp(4px, .7vw, 9px); clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+/* Lichtstreif durch die Gewinnlinie, wie ein anamorphotisches Objektiv */
+.automat-streif { position: absolute; z-index: 0; left: 50%; top: 50%; width: min(1180px, 94vw); height: 1px; transform: translate(-50%, -50%);
   background: linear-gradient(90deg, transparent, rgba(255, 170, 90, .14) 18%, rgba(255, 222, 176, .9) 50%, rgba(255, 170, 90, .14) 82%, transparent);
   box-shadow: 0 0 8px rgba(255, 160, 80, .45); }
-.schild-streif::after { content: ""; position: absolute; left: 22%; right: 22%; top: -7px; height: 15px; background: radial-gradient(ellipse at center, rgba(255, 150, 60, .32), transparent 70%); filter: blur(4px); }
+.automat-streif::after { content: ""; position: absolute; left: 22%; right: 22%; top: -7px; height: 15px; background: radial-gradient(ellipse at center, rgba(255, 150, 60, .32), transparent 70%); filter: blur(4px); }
 
 /* Live-Zeile am Fuß der Bühne */
 .concierge { position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 28px; padding: 20px 0 clamp(30px, 3vw, 40px); border-top: 1px solid; border-image: linear-gradient(90deg, transparent, var(--gold-linie), transparent) 1; color: var(--grau); font-size: .9375rem; text-align: center; }
 .concierge p { max-width: 40em; }
 .concierge .lampe { display: inline-block; margin-right: 12px; vertical-align: .08em; }
 
-/* Das Licht geht an: der einzige Bewegungsmoment */
-@media (prefers-reduced-motion: no-preference) {
-  .buehne-start .schild { animation: schild-an 1.2s steps(1, end) .2s both; }
-  .buehne-start .schild-streif { animation: streif-an 1.7s var(--ease) 1.05s both; }
-  .buehne-start .licht-schein { animation: schein-an 2s var(--ease) .8s both; }
-  .buehne-start .funken { animation: schein-an 2.2s var(--ease) 1.4s both; }
-}
-@keyframes schild-an {
-  0% { opacity: .2; } 12% { opacity: .85; } 16% { opacity: .3; } 26% { opacity: 1; } 30% { opacity: .55; } 40% { opacity: 1; } 100% { opacity: 1; }
+/* ---------- Intro der Startseite, der einzige Bewegungsmoment ----------
+   Das Kopfskript setzt .intro (einmal je Besuch, nicht bei „Bewegung reduzieren“), main.js führt Regie:
+   .intro-an Automat sichtbar, Walzen drehen · .intro-gewinn Treffer · .intro-aus Übergang zur Bühne */
+html.intro { overflow: hidden; scrollbar-gutter: stable; }
+.intro .entwurf, .intro .kopf { opacity: 0; transform: translateY(-14px); pointer-events: none; }
+.intro .buehne-start h1, .intro .buehne-start .lead, .intro .buehne-start .aktionen, .intro .concierge { opacity: 0; transform: translateY(18px); }
+.intro .buehne-start::after, .intro .licht-schein, .intro .funken, .intro .automat-streif { opacity: 0; }
+.intro .automat { opacity: 0; transform: translateY(var(--intro-y, 0px)) scale(var(--intro-s, 1)); }
+.intro.intro-an .automat { opacity: 1; transition: opacity .7s var(--ease); }
+.intro .lampen i { opacity: .2; box-shadow: none; }
+.intro .gewinnlinie, .intro .zeiger { opacity: .25; }
+/* Treffer: Lampen laufen, Schilder blitzen, der Lichtstreif zieht auf, der Raum wird hell */
+.intro-gewinn .lampen i { opacity: 1; box-shadow: 0 0 6px 1px rgba(255, 170, 80, .7); animation: lampe-a .3s steps(1, end) 4; }
+.intro-gewinn .lampen i:nth-child(even) { animation-name: lampe-b; }
+.intro-gewinn .gewinnlinie, .intro-gewinn .zeiger { opacity: 1; transition: opacity .25s; }
+.intro-gewinn .treffer .sym-dream { animation: treffer 1s steps(1, end) both; }
+.intro-gewinn .automat-streif { opacity: 1; animation: streif-an 1.3s var(--ease) both; }
+.intro-gewinn .licht-schein, .intro-gewinn .funken { opacity: 1; transition: opacity 1.6s var(--ease); }
+/* Übergang: Der Automat gleitet an seinen Platz, der Rest blendet nacheinander ein */
+.intro-aus .automat { transition: transform 1.2s var(--ease); }
+.intro-aus .entwurf, .intro-aus .kopf, .intro-aus .buehne-start h1, .intro-aus .buehne-start .lead, .intro-aus .buehne-start .aktionen, .intro-aus .concierge, .intro-aus .buehne-start::after {
+  transition: opacity 1s var(--ease) var(--v, .2s), transform 1s var(--ease) var(--v, .2s); }
+.intro-aus .buehne-start h1 { --v: .25s; }
+.intro-aus .buehne-start .lead { --v: .4s; }
+.intro-aus .buehne-start .aktionen { --v: .5s; }
+.intro-aus .entwurf, .intro-aus .kopf { --v: .6s; }
+.intro-aus .concierge { --v: .75s; }
+@keyframes lampe-a { 0% { opacity: 1; } 50% { opacity: .15; } }
+@keyframes lampe-b { 0% { opacity: .15; } 50% { opacity: 1; } }
+@keyframes treffer {
+  0%, 40% { filter: brightness(1.45) drop-shadow(0 0 18px rgba(255, 196, 100, .95)); }
+  20%, 60% { filter: drop-shadow(0 0 10px rgba(255, 140, 50, .5)); }
+  80%, 100% { filter: brightness(1.15) drop-shadow(0 0 14px rgba(255, 160, 70, .7)); }
 }
 @keyframes streif-an { from { opacity: 0; transform: translate(-50%, -50%) scaleX(0); } to { opacity: 1; transform: translate(-50%, -50%) scaleX(1); } }
-@keyframes schein-an { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
 
 /* ---------- Zeitstrahl ---------- */
 /* Ein Tag von 6 bis 6 Uhr: der Balken sind die Öffnungszeiten, der weiße Strich die Uhrzeit jetzt */
@@ -459,7 +516,7 @@ table { font-variant-numeric: tabular-nums lining-nums; }
   .logo svg { width: 88px; }
   .buehne-start { min-height: max(600px, calc(100svh - 110px)); }
   .buehne-start::after { display: none; }
-  .schild-streif { width: 96vw; }
+  .automat-streif { width: 96vw; }
   .zeitplan { --namen: 100px; }
 }
 @media (max-width: 759px) {

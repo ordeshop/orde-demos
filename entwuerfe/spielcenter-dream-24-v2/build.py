@@ -6,6 +6,7 @@ Jede Datei in seiten/ beginnt mit einer Kopfzeile:
   <!-- titel: … | beschreibung: … | nav: standorte -->
 Platzhalter im Inhalt:
   {{LICHT}}              Lichthof und Funken für die Bühne
+  {{AUTOMAT}}            Spielautomat der Startseite: fünf Walzen, Intro in main.js
   {{ZIER}}               der Stern aus dem Logo zwischen zwei Linien
   {{FOTO:hoch|quer|breit:Bildidee}}  Fotoplatz mit Bildidee und Format
   {{ZEITPLAN}}           alle Häuser als Zeitstrahl untereinander (Standorte)
@@ -77,8 +78,8 @@ NAV = [
     ("kontakt", "Kontakt"),
 ]
 
-# Winzige Funken um das Schild: x %, y %, Durchmesser px
-FUNKEN = [(33, 20, 3), (40, 31, 2), (61, 16, 3), (66, 29, 2), (57, 37, 2), (29, 33, 2), (71, 21, 3)]
+# Winzige Funken links und rechts vom Automaten: x %, y %, Durchmesser px
+FUNKEN = [(13, 19, 2), (19, 33, 3), (23, 13, 2), (16, 45, 2), (79, 16, 3), (84, 31, 2), (88, 22, 2), (81, 44, 3)]
 
 # Tabler Icons (MIT), Outline, Strichstärke 2
 ICONS = {
@@ -88,6 +89,13 @@ ICONS = {
     "pfeil": '<path d="M5 12l14 0"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/>',
     "extern": '<path d="M17 7l-10 10"/><path d="M8 7l9 0l0 9"/>',
     "mail": '<path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"/><path d="M3 7l9 6l9 -6"/>',
+}
+
+# Symbole auf den Walzen des Automaten (Tabler Icons, MIT), mit feinerer Linie
+WALZEN_ICONS = {
+    "glocke": '<path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/>',
+    "kirsche": '<path d="M4 16.5a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0"/><path d="M14 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M9 13c.366 -2 1.866 -3.873 4.5 -5.6"/><path d="M17 15c-1.333 -2.333 -2.333 -5.333 -1 -9"/><path d="M5 6c3.667 -2.667 7.333 -2.667 11 0c-3.667 2.667 -7.333 2.667 -11 0"/>',
+    "krone": '<path d="M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4l4 -6"/>',
 }
 
 SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -105,9 +113,19 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 """ + "\n".join(
     f'    <symbol id="i-{n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
     f'stroke-linecap="round" stroke-linejoin="round">{p}</symbol>' for n, p in ICONS.items()
+) + "\n" + "\n".join(
+    f'    <symbol id="w-{n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" '
+    f'stroke-linecap="round" stroke-linejoin="round">{p}</symbol>' for n, p in WALZEN_ICONS.items()
 ) + """
   </defs>
 </svg>"""
+
+# Intro der Startseite: Das Kopfskript entscheidet vor dem ersten Bild, ob es läuft (einmal
+# je Besuch, nicht bei „Bewegung reduzieren“). Notaus nach 3 s, falls main.js nicht lädt
+# (main.js startet das Intro ohnehin nur, wenn es in den ersten 2,5 s ankommt).
+INTRO_SKRIPT = ('<script>try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("dream-intro"))'
+                '{document.documentElement.classList.add("intro");window.dreamNotaus=setTimeout(function()'
+                '{document.documentElement.classList.remove("intro","intro-an")},3000)}}catch(e){}</script>')
 
 
 def icon(name):
@@ -214,6 +232,51 @@ def zeitplan():
 def licht():
     funken = "".join(f'<span style="left:{x}%;top:{y}%;--d:{d}px"></span>' for x, y, d in FUNKEN)
     return f'<div class="licht" aria-hidden="true"><div class="licht-schein"></div><div class="funken">{funken}</div></div>'
+
+
+# Automat: fünf Walzen, fünf Häuser. Jede Walze bleibt auf dem Dream-Schild stehen, daneben
+# die klassischen Symbole, je Walze in eigener Reihenfolge (sonst sehen die Nachbarn über und
+# unter der Linie nach Muster aus). Ohne JS steht der Endzustand da; main.js lässt die Walzen
+# beim ersten Besuch drehen.
+WALZEN_FOLGEN = [
+    ["sieben", "glocke", "kirsche", "stern", "krone"],
+    ["kirsche", "krone", "sieben", "glocke", "stern"],
+    ["stern", "sieben", "krone", "kirsche", "glocke"],
+    ["glocke", "stern", "kirsche", "krone", "sieben"],
+    ["krone", "stern", "glocke", "sieben", "kirsche"],
+]
+WALZEN_RUNDEN = 8   # so oft wiederholt sich die Symbolfolge auf jedem Streifen (Anlauf fürs Drehen)
+WALZEN_ZIEL = 6     # Zelle mit dem Dream-Schild, die am Ende auf der Gewinnlinie steht
+LAMPEN = 24         # Lampen je Reihe
+
+
+def symbol(name):
+    if name == "dream":
+        return '<svg class="sym sym-dream" viewBox="0 0 480 230"><use href="#logo"/></svg>'
+    if name == "sieben":
+        return '<span class="sym sym-sieben">7</span>'
+    if name == "stern":
+        return '<svg class="sym sym-linie" viewBox="0 0 48 46"><use href="#stern"/></svg>'
+    return f'<svg class="sym sym-linie" viewBox="0 0 24 24"><use href="#w-{name}"/></svg>'
+
+
+def automat():
+    walzen = []
+    for j in range(len(STANDORTE)):
+        zellen = (["dream"] + WALZEN_FOLGEN[j % len(WALZEN_FOLGEN)]) * WALZEN_RUNDEN
+        n = len(zellen)
+        streifen = "".join(f'<span class="zelle{" treffer" if k == WALZEN_ZIEL else ""}">{symbol(s)}</span>'
+                           for k, s in enumerate(zellen))
+        # Die Zielzelle steht in der mittleren Reihe; das Fenster zeigt 2,6 Zellen, oben 0,8 angeschnitten
+        lage = -(WALZEN_ZIEL - .8) / n * 100
+        walzen.append(f'<div class="walze"><div class="streifen" data-streifen data-n="{n}" data-ziel="{WALZEN_ZIEL}" '
+                      f'style="--ziel:{lage:.4f}%">{streifen}</div></div>')
+    lampen = "<i></i>" * LAMPEN
+    return (f'<div class="automat" data-automat aria-hidden="true"><span class="automat-streif"></span>'
+            f'<div class="automat-rahmen"><span class="lampen lampen-oben">{lampen}</span>'
+            f'<div class="walzen" style="--n:{len(STANDORTE)}"><span class="gewinnlinie"></span>{"".join(walzen)}</div>'
+            f'<span class="zeiger zeiger-l"></span><span class="zeiger zeiger-r"></span>'
+            f'<span class="lampen lampen-unten">{lampen}</span></div></div>')
 
 
 def zier():
@@ -334,6 +397,7 @@ def layout(name, titel, beschreibung, inhalt):
         f'<li><a href="standorte.html#{slug}"><span>{s["name"]}</span><span class="nr">{s["tel"]}</span></a></li>'
         for slug, s in STANDORTE.items())
     voll_titel = "Dream Spielcenter – Spielhallen von Wiesbaden bis Füssen" if name == "index" else f"{titel} – Dream Spielcenter"
+    kopfskript = "\n" + INTRO_SKRIPT if name == "index" else ""
     return f"""<!doctype html>
 <html lang="de">
 <head>
@@ -346,8 +410,9 @@ def layout(name, titel, beschreibung, inhalt):
 <meta name="color-scheme" content="dark">
 <link rel="preload" href="assets/fonts/bodoni-moda-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/spectral-500-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/lobster.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/style.css?v={stand('assets/css/style.css')}">
+<link rel="stylesheet" href="assets/css/style.css?v={stand('assets/css/style.css')}">{kopfskript}
 </head>
 <body data-seite="{name}">
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
@@ -411,6 +476,7 @@ def main():
     anzahl = len(STANDORTE)
     ersatz = {
         "{{LICHT}}": licht,
+        "{{AUTOMAT}}": automat,
         "{{ZIER}}": zier,
         "{{ZEITPLAN}}": zeitplan,
         "{{ZEILEN}}": zeilen,
