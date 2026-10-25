@@ -19,6 +19,7 @@ Platzhalter im Inhalt:
 Alle Standortangaben stehen nur in STANDORTE.
 PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py spielcenter-dream-24-v2
 """
+import hashlib
 import pathlib
 import re
 
@@ -317,6 +318,12 @@ def standort_namen():
 
 # ---------- Seite ----------
 
+def stand(datei):
+    """Prüfwert für ?v= hinter CSS und JS: ändert sich mit dem Inhalt, damit
+    kein Browser nach einer Änderung noch die alte Datei aus dem Zwischenspeicher zeigt."""
+    return hashlib.sha1((ROOT / datei).read_bytes()).hexdigest()[:8]
+
+
 def layout(name, titel, beschreibung, inhalt):
     menu = []
     for slug, label in NAV[1:]:
@@ -338,8 +345,9 @@ def layout(name, titel, beschreibung, inhalt):
 <meta name="theme-color" content="#050505">
 <meta name="color-scheme" content="dark">
 <link rel="preload" href="assets/fonts/bodoni-moda-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/spectral-500-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css?v={stand('assets/css/style.css')}">
 </head>
 <body data-seite="{name}">
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
@@ -393,7 +401,7 @@ def layout(name, titel, beschreibung, inhalt):
   </div>
 </footer>
 
-<script src="assets/js/main.js" defer></script>
+<script src="assets/js/main.js?v={stand('assets/js/main.js')}" defer></script>
 </body>
 </html>
 """

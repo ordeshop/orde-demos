@@ -23,6 +23,13 @@ in `build.py` sind dieselben.
   (beides Arturs Wunsch).
 - 25.10.2026: Feinschliff „Luxus“ (siehe unten) gebaut und geprüft: 360/390/1024/1440 px,
   axe-core ohne Befund, Live-Zeile und Zeitstrahl mit fünf festen Uhrzeiten getestet.
+- 25.10.2026: Kursive getauscht, Arturs Wunsch (die Bodoni-Kursive gefiel ihm nicht):
+  jetzt **Spectral kursiv**. 25 Schriften verglichen, auf der echten Seite in engerer Wahl
+  Spectral, Brygada 1918, Libre Baskerville, Castoro, Unna und Yellowtail (Schreibschrift).
+  Spectral, weil die Haarstriche auf Schwarz nicht wegbrechen, w und D ohne Schnörkel sind,
+  sie bis 17 px gut lesbar bleibt und „Fünfmal Dream.“ am Handy einzeilig bleibt. Ersatz,
+  falls gewünscht: Brygada 1918 (wärmer) oder Unna (leichter). Geprüft: 360/390/1440 px,
+  axe-core ohne Befund, keine vom Browser schräggestellte Bodoni mehr.
 
 ## Bauen
 
@@ -57,7 +64,8 @@ laute Flächen: Der Marken-Verlauf steht nur auf dem hervorgehobenen Wort der
 | Text / Grau | `#E9E7E4` / `#A4A19C` | Text und Nebentext (7,9 : 1) |
 
 **Schriften** (lokal als `.woff2`, OFL): **Bodoni Moda** (variabel mit optischer
-Größe) für Überschriften, kursiv für Hervorhebung; **Jost** (geometrisch, Futura-Art)
+Größe) für Überschriften; **Spectral kursiv** für alles Kursive (hervorgehobene Wörter,
+Pausenzeile, Bildideen, Zusatz unter den Häusern); **Jost** (geometrisch, Futura-Art)
 für Text, Menü und Zahlen; **Lobster** nur im Logo-Nachbau.
 
 **Layout:** Kopf liegt über einer dunklen Bühne. Rechts hängt das Dream-Schild
@@ -143,4 +151,6 @@ sie Grandhotels und Spielbanken bei Nacht zeigen.
 
 Statisches HTML und CSS, ein kleines `main.js` (Menü, Live-Status, Zeitstrahl,
 Formular-Attrappe). Kein Framework, kein CDN. Icons: Tabler (MIT) als Inline-SVG.
+CSS und JS werden mit `?v=` und einem Prüfwert des Inhalts eingebunden (`build.py`),
+damit nach einer Änderung kein Browser die alte Datei aus dem Zwischenspeicher zeigt.
 Lizenzen unter `demos/entwuerfe/spielcenter-dream-24-v2/assets/fonts/LIZENZEN.txt`.
