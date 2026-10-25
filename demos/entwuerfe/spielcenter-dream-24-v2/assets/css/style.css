@@ -171,7 +171,8 @@ table { font-variant-numeric: tabular-nums lining-nums; }
 
 /* Live-Zeile am Fuß der Bühne */
 .concierge { position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 28px; padding: 20px 0 clamp(30px, 3vw, 40px); border-top: 1px solid; border-image: linear-gradient(90deg, transparent, var(--gold-linie), transparent) 1; color: var(--grau); font-size: .9375rem; text-align: center; }
-.concierge p { display: inline-flex; align-items: center; gap: 12px; }
+.concierge p { max-width: 40em; }
+.concierge .lampe { display: inline-block; margin-right: 12px; vertical-align: .08em; }
 
 /* Das Licht geht an: der einzige Bewegungsmoment */
 @media (prefers-reduced-motion: no-preference) {
