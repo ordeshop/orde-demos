@@ -19,6 +19,10 @@ in `build.py` sind dieselben.
   reduziert, axe-core ohne Befund, Tastatur, Zeitlogik mit festen Uhrzeiten), PDF erzeugt.
   Noch an niemanden verschickt. Artur entscheidet,
   welche Fassung der Betreiber sieht; die andere wird dann gelöscht (ein Kunde, ein Link).
+- 25.10.2026: Farben der Originalseite übernommen, Zifferblätter durch Zeitstrahl ersetzt
+  (beides Arturs Wunsch).
+- 25.10.2026: Feinschliff „Luxus“ (siehe unten) gebaut und geprüft: 360/390/1024/1440 px,
+  axe-core ohne Befund, Live-Zeile und Zeitstrahl mit fünf festen Uhrzeiten getestet.
 
 ## Bauen
 
