@@ -1,0 +1,71 @@
+<!-- titel: Jobs | beschreibung: Jobs im Dream Spielcenter: Servicekraft, Aushilfe und Filialleitung in Füssen, Heidenheim, Kaufering, Senden und Wiesbaden. | nav: jobs -->
+  <section class="buehne" aria-labelledby="h1">
+    <div class="wrap">
+      <nav class="krumen" aria-label="Brotkrumen"><a href="index.html">Start</a><span aria-hidden="true"> / </span><span aria-current="page">Jobs</span></nav>
+      <h1 id="h1"><span class="breit">Arbeiten,</span> <span class="schmal">wenn andere ausgehen.</span></h1>
+      <p class="lead">Du bist gern Gastgeber, behältst auch spät abends den Überblick und gehst offen auf Menschen zu? Dann passt du ins Dream.</p>
+    </div>
+  </section>
+
+  <section class="abschnitt" aria-labelledby="h-stellen">
+    <div class="wrap">
+      <div class="abschnitt-kopf">
+        <h2 id="h-stellen">Offene Stellen</h2>
+        <p>In {{STANDORT_NAMEN}}. <span class="todo">Stellen und Bedingungen sind Beispiele, bitte ergänzen</span></p>
+      </div>
+      <ul class="stellen" role="list">
+        <li id="servicekraft">
+          <h3>Servicekraft (m/w/d)</h3>
+          <p>Gäste empfangen, Ausweise prüfen, Fragen beantworten, für Ordnung sorgen.</p>
+          <p class="stelle-meta">alle {{ZAHLWORT_KLEIN}} Häuser · Vollzeit oder Teilzeit</p>
+          <a class="btn btn-rot" href="#bewerben">Bewerben<span class="sr"> als Servicekraft</span></a>
+        </li>
+        <li id="aushilfe">
+          <h3>Aushilfe (m/w/d)</h3>
+          <p>Feste Schichten am Abend oder am Wochenende, gut neben Studium oder Hauptjob.</p>
+          <p class="stelle-meta">alle {{ZAHLWORT_KLEIN}} Häuser · Minijob</p>
+          <a class="btn btn-rot" href="#bewerben">Bewerben<span class="sr"> als Aushilfe</span></a>
+        </li>
+        <li id="filialleitung">
+          <h3>Filialleitung (m/w/d)</h3>
+          <p>Ein Haus führen: Team, Dienstplan, Kasse und Spielerschutz.</p>
+          <p class="stelle-meta">alle {{ZAHLWORT_KLEIN}} Häuser · Vollzeit</p>
+          <a class="btn btn-rot" href="#bewerben">Bewerben<span class="sr"> als Filialleitung</span></a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="abschnitt abschnitt-rauch" aria-labelledby="h-ablauf">
+    <div class="wrap">
+      <h2 id="h-ablauf">So läuft die Bewerbung</h2>
+      <ol class="schritte">
+        <li><h3>Formular schicken</h3><p>Ein Lebenslauf genügt, ein Anschreiben brauchst du nicht.</p></li>
+        <li><h3>Kennenlernen</h3><p>Wir melden uns und laden dich zu einem Gespräch in dein Haus ein.</p></li>
+        <li><h3>Einarbeitung</h3><p>Du lernst den Ablauf vor Ort und wirst im Jugend- und Spielerschutz geschult.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="abschnitt" id="bewerben" aria-labelledby="h-bewerben">
+    <div class="wrap formular-in">
+      <div>
+        <h2 id="h-bewerben">Bewerben</h2>
+        <p>Fragen vorab? Ruf die Zentrale an: <a href="{{ZENTRALE_TEL_LINK}}">{{ZENTRALE_TEL}}</a>.</p>
+      </div>
+      <form class="formular" action="#" data-demo novalidate>
+        <div class="feld"><label for="b-name">Name</label><input id="b-name" name="name" autocomplete="name" required></div>
+        <div class="feld"><label for="b-tel">Telefon</label><input id="b-tel" name="tel" type="tel" autocomplete="tel" required></div>
+        <div class="feld voll"><label for="b-mail">E-Mail</label><input id="b-mail" name="email" type="email" autocomplete="email" required></div>
+        <div class="feld"><label for="b-stelle">Stelle</label>
+          <select id="b-stelle" name="stelle"><option>Servicekraft (m/w/d)</option><option>Aushilfe (m/w/d)</option><option>Filialleitung (m/w/d)</option><option>Initiativbewerbung</option></select></div>
+        <div class="feld"><label for="b-ort">Haus</label>
+          <select id="b-ort" name="ort"><option>Egal</option>{{STANDORT_OPTIONEN}}</select></div>
+        <div class="feld voll"><label for="b-cv">Lebenslauf <span class="optional">PDF oder Foto, optional</span></label><input id="b-cv" name="cv" type="file" accept=".pdf,.jpg,.jpeg,.png"></div>
+        <div class="feld voll"><label for="b-msg">Ein paar Worte zu dir <span class="optional">optional</span></label><textarea id="b-msg" name="message" rows="4"></textarea></div>
+        <label class="zustimmung voll"><input type="checkbox" name="ok" required> <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Bewerbung verwendet werden (siehe <a href="datenschutz.html">Datenschutzerklärung</a>).</span></label>
+        <button class="btn btn-rot" type="submit">Bewerbung abschicken</button>
+        <p class="formular-meldung voll" role="status"></p>
+      </form>
+    </div>
+  </section>

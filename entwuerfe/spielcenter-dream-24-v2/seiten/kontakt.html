@@ -1,0 +1,41 @@
+<!-- titel: Kontakt | beschreibung: Kontakt zum Dream Spielcenter: Zentrale, Telefon der Häuser und Kontaktformular. | nav: kontakt -->
+  <section class="buehne" aria-labelledby="h1">
+    <div class="wrap">
+      <nav class="krumen" aria-label="Brotkrumen"><a href="index.html">Start</a><span aria-hidden="true"> / </span><span aria-current="page">Kontakt</span></nav>
+      <h1 id="h1"><span class="breit">Kontakt.</span> <span class="schmal">Anrufen, schreiben oder vorbeikommen.</span></h1>
+      <p class="lead">Fragen, Lob oder Kritik: Die Zentrale antwortet so schnell wie möglich. Für alles rund um Ihren Besuch rufen Sie am besten direkt im Haus an.</p>
+    </div>
+  </section>
+
+  <section class="abschnitt" aria-label="Telefon, E-Mail und Formular">
+    <div class="wrap formular-in">
+      <div class="kanaele">
+        <h2>Zentrale</h2>
+        <a class="kanal" href="{{ZENTRALE_TEL_LINK}}">{{ICON:phone}}{{ZENTRALE_TEL}}</a>
+        <a class="kanal" href="mailto:{{ZENTRALE_MAIL}}">{{ICON:mail}}{{ZENTRALE_MAIL}}</a>
+        <h2 class="kanaele-zwei">Die Häuser direkt</h2>
+        <ul class="haus-telefone" role="list">
+{{STANDORTE_TELEFON}}
+        </ul>
+      </div>
+      <form class="formular" action="#" data-demo novalidate>
+        <div class="feld"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
+        <div class="feld"><label for="f-mail">E-Mail</label><input id="f-mail" name="email" type="email" autocomplete="email" required></div>
+        <div class="feld"><label for="f-topic">Anliegen</label>
+          <select id="f-topic" name="topic"><option>Allgemeine Frage</option><option>Lob oder Kritik</option><option>Spielerschutz</option></select></div>
+        <div class="feld"><label for="f-ort">Haus</label>
+          <select id="f-ort" name="ort"><option>Allgemein</option>{{STANDORT_OPTIONEN}}</select></div>
+        <div class="feld voll"><label for="f-msg">Nachricht</label><textarea id="f-msg" name="message" rows="5" required></textarea></div>
+        <label class="zustimmung voll"><input type="checkbox" name="ok" required> <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage verwendet werden (siehe <a href="datenschutz.html">Datenschutzerklärung</a>).</span></label>
+        <button class="btn btn-rot" type="submit">Nachricht abschicken</button>
+        <p class="formular-meldung voll" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <section class="abschnitt abschnitt-rauch abschnitt-knapp" aria-label="Bewerbungen">
+    <div class="wrap hinweis">
+      <p><strong>Sie möchten bei uns arbeiten?</strong> Dafür gibt es ein eigenes Formular.</p>
+      <a class="link-weg" href="jobs.html#bewerben">Zur Bewerbung{{ICON:pfeil}}</a>
+    </div>
+  </section>
