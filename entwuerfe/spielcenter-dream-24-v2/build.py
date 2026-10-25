@@ -5,7 +5,9 @@ Quelle hier, fertige Seiten nach demos/entwuerfe/spielcenter-dream-24-v2/ (wird 
 Jede Datei in seiten/ beginnt mit einer Kopfzeile:
   <!-- titel: … | beschreibung: … | nav: standorte -->
 Platzhalter im Inhalt:
-  {{LICHT}}              Lichtschein und unscharfe Lichtpunkte für die Bühne
+  {{LICHT}}              Lichthof und Funken für die Bühne
+  {{ZIER}}               der Stern aus dem Logo zwischen zwei Linien
+  {{FOTO:hoch|quer|breit:Bildidee}}  Fotoplatz mit Bildidee und Format
   {{ZEITPLAN}}           alle Häuser als Zeitstrahl untereinander (Standorte)
   {{ZEILEN}}             alle Häuser als Zeilen mit kleinem Zeitstrahl
   {{STANDORTE_DETAIL}}   alle Häuser ausführlich mit Zeitstrahl und Tabelle
@@ -17,7 +19,6 @@ Platzhalter im Inhalt:
 Alle Standortangaben stehen nur in STANDORTE.
 PDF zum Weiterschicken danach mit:  python3 entwuerfe/pdf-erzeugen.py spielcenter-dream-24-v2
 """
-import math
 import pathlib
 import re
 
@@ -29,16 +30,23 @@ ROOT = HIER.parent.parent / "demos" / "entwuerfe" / "spielcenter-dream-24-v2"
 # open: Öffnungsstunde Mo..So (Feiertage wie Sonntag), close: Schluss am
 # Folgetag um diese Stunde (0 = Mitternacht). alter: None = unbekannt.
 # region: Großraum zur Orientierung. marke: Name des Hauses vor Ort, falls belegt.
+# Reihenfolge von Norden nach Süden, passend zu „Von Wiesbaden bis Füssen“.
 STANDORTE = {
-    "fuessen": {
-        "name": "Füssen", "region": "im Allgäu", "strasse": "Kemptener Str. 129", "zusatz": "",
-        "plz": "87629", "ort": "Füssen", "tel": "08362 926299", "alter": None,
-        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
+    "wiesbaden": {
+        "name": "Wiesbaden-Biebrich", "region": "am Rhein", "strasse": "Didierstr. 27a", "zusatz": "",
+        "plz": "65203", "ort": "Wiesbaden", "tel": "0611 608382", "alter": 21,
+        "open": [10, 10, 10, 10, 10, 10, 12], "close": 4,
+        "hinweis": "Adresse prüfen: manche Verzeichnisse nennen Äppelallee 27a",
     },
     "heidenheim": {
         "name": "Heidenheim-Schnaitheim", "region": "an der Brenz", "strasse": "Riedstr. 3", "zusatz": "",
         "plz": "89520", "ort": "Heidenheim an der Brenz", "tel": "07321 609343", "alter": 18,
         "open": [6, 6, 6, 6, 6, 7, 8], "close": 0, "hinweis": "",
+    },
+    "senden": {
+        "name": "Senden", "region": "bei Ulm", "strasse": "Berliner Str. 9", "zusatz": "im Iller-Center",
+        "plz": "89250", "ort": "Senden", "tel": "07307 32320", "alter": 21,
+        "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
     },
     "kaufering": {
         "name": "Kaufering", "region": "bei Landsberg am Lech", "strasse": "Viktor-Frankl-Str. 15", "zusatz": "",
@@ -46,16 +54,10 @@ STANDORTE = {
         "open": [9, 9, 9, 9, 9, 9, 11], "close": 3,
         "hinweis": "Zeiten prüfen: ein Verzeichnis nennt täglich 6 bis 3 Uhr",
     },
-    "senden": {
-        "name": "Senden", "region": "bei Ulm", "strasse": "Berliner Str. 9", "zusatz": "im Iller-Center",
-        "plz": "89250", "ort": "Senden", "tel": "07307 32320", "alter": 21,
+    "fuessen": {
+        "name": "Füssen", "region": "im Allgäu", "strasse": "Kemptener Str. 129", "zusatz": "",
+        "plz": "87629", "ort": "Füssen", "tel": "08362 926299", "alter": None,
         "open": [9, 9, 9, 9, 9, 9, 11], "close": 3, "hinweis": "",
-    },
-    "wiesbaden": {
-        "name": "Wiesbaden-Biebrich", "region": "am Rhein", "strasse": "Didierstr. 27a", "zusatz": "",
-        "plz": "65203", "ort": "Wiesbaden", "tel": "0611 608382", "alter": 21,
-        "open": [10, 10, 10, 10, 10, 10, 12], "close": 4,
-        "hinweis": "Adresse prüfen: manche Verzeichnisse nennen Äppelallee 27a",
     },
 }
 ZENTRALE = {
@@ -74,14 +76,8 @@ NAV = [
     ("kontakt", "Kontakt"),
 ]
 
-# Unscharfe Lichtpunkte auf der Bühne: x %, y %, Durchmesser px, Farbe, Deckkraft
-BOKEH = [
-    (61, 22, 96, "246,115,31", .30), (70, 72, 58, "255,201,40", .34), (88, 28, 124, "227,23,27", .22),
-    (94, 66, 74, "246,115,31", .28), (64, 88, 42, "227,23,27", .36), (82, 15, 44, "255,201,40", .34),
-    (56, 48, 30, "255,201,40", .40), (97, 42, 50, "246,115,31", .26), (78, 93, 88, "227,23,27", .18),
-    (73, 40, 9, "255,236,205", .9), (86, 55, 11, "255,236,205", .85), (58, 76, 8, "255,236,205", .9),
-    (92, 85, 7, "255,236,205", .8), (66, 10, 8, "255,236,205", .75),
-]
+# Winzige Funken um das Schild: x %, y %, Durchmesser px
+FUNKEN = [(33, 20, 3), (40, 31, 2), (61, 16, 3), (66, 29, 2), (57, 37, 2), (29, 33, 2), (71, 21, 3)]
 
 # Tabler Icons (MIT), Outline, Strichstärke 2
 ICONS = {
@@ -98,6 +94,7 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
     <radialGradient id="lg" cx="50%" cy="55%" r="60%">
       <stop offset="0" stop-color="#ffd23a"/><stop offset=".45" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e3171b"/>
     </radialGradient>
+    <symbol id="stern" viewBox="364 44 48 46"><path d="M388 46l6 15 16 1-12 10 4 16-14-9-14 9 4-16-12-10 16-1z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></symbol>
     <symbol id="logo" viewBox="0 0 480 230">
       <ellipse cx="240" cy="115" rx="232" ry="107" fill="#e3171b" stroke="#fff" stroke-width="7"/>
       <ellipse cx="240" cy="115" rx="218" ry="94" fill="url(#lg)"/>
@@ -214,10 +211,23 @@ def zeitplan():
 # ---------- Bühne ----------
 
 def licht():
-    punkte = "".join(
-        f'<span{" class=\"fern\"" if d < 16 else (" class=\"gross\"" if d >= 60 else "")} style="left:{x}%;top:{y}%;width:{d}px;height:{d}px;--farbe:{f};--deck:{o}"></span>'
-        for x, y, d, f, o in BOKEH)
-    return f'<div class="licht" aria-hidden="true"><div class="licht-schein"></div><div class="bokeh">{punkte}</div></div>'
+    funken = "".join(f'<span style="left:{x}%;top:{y}%;--d:{d}px"></span>' for x, y, d in FUNKEN)
+    return f'<div class="licht" aria-hidden="true"><div class="licht-schein"></div><div class="funken">{funken}</div></div>'
+
+
+def zier():
+    """Der Stern aus dem Dream-Logo zwischen zwei feinen Linien, das einzige Ornament."""
+    return '<div class="zier" aria-hidden="true"><svg viewBox="0 0 48 46"><use href="#stern"/></svg></div>'
+
+
+FORMATE = {"hoch": "Hochformat 4 : 5", "quer": "Querformat 3 : 2", "breit": "Breitformat 21 : 9"}
+
+
+def foto(format_, idee):
+    """Fotoplatz mit Bildidee: zeigt dem Betreiber, welches Foto hierher gehört."""
+    return (f'<figure class="rahmen rahmen-{format_}"><div class="rahmen-bild" role="img" aria-label="Platzhalter für ein Foto: {idee}">'
+            f'<p class="rahmen-text"><span class="rahmen-marke">Foto folgt</span><span class="rahmen-idee">{idee}</span>'
+            f'<span class="rahmen-format">{FORMATE[format_]}</span></p></div></figure>')
 
 
 # ---------- Listen ----------
@@ -225,16 +235,17 @@ def licht():
 def zeilen():
     teile = []
     for slug, s in STANDORTE.items():
-        teile.append(f"""        <li class="zeile" {offen(s)}>
+        kurz = s["name"].split("-")[0]
+        teile.append(f"""        <li class="zeile" data-name="{kurz}" {offen(s)}>
           <div class="zeile-ort">
             <h3><a href="standorte.html#{slug}">{s["name"]}</a></h3>
             <p>{s["region"]}</p>
           </div>
-          <address>{adresse(s)}</address>
           <div class="zeile-zeit">
             {zeitband(s)}
             <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>{heute_text(s)}</span></p>
           </div>
+          <address>{adresse(s)}</address>
           <div class="wege">
             <a class="weg" href="{maps_link(s)}" target="_blank" rel="noopener">{icon("route")}Route<span class="sr"> nach {s["name"]} (öffnet Google Maps)</span></a>
             <a class="weg" href="{tel_link(s["tel"])}">{icon("phone")}Anrufen<span class="sr"> in {s["name"]}: {s["tel"]}</span></a>
@@ -312,6 +323,9 @@ def layout(name, titel, beschreibung, inhalt):
         cur = ' aria-current="page"' if slug == name else ""
         menu.append(f'<li><a href="{slug}.html"{cur}>{label}</a></li>')
     fuss = "".join(f'<li><a href="{s}.html">{l}</a></li>' for s, l in NAV[1:])
+    fuss_haeuser = "".join(
+        f'<li><a href="standorte.html#{slug}"><span>{s["name"]}</span><span class="nr">{s["tel"]}</span></a></li>'
+        for slug, s in STANDORTE.items())
     voll_titel = "Dream Spielcenter – Spielhallen von Wiesbaden bis Füssen" if name == "index" else f"{titel} – Dream Spielcenter"
     return f"""<!doctype html>
 <html lang="de">
@@ -324,24 +338,25 @@ def layout(name, titel, beschreibung, inhalt):
 <meta name="theme-color" content="#050505">
 <meta name="color-scheme" content="dark">
 <link rel="preload" href="assets/fonts/bodoni-moda-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-seite="{name}">
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 <aside class="entwurf" aria-label="Hinweis zum Entwurf"><p><b>Entwurf</b> · Gestaltungsvorschlag von ORDÉ. Fotos, Texte und Angaben stimmen wir mit Ihnen ab.</p></aside>
 
 <!-- Logo als SVG-Nachbau; wird durch die Original-Logodatei ersetzt -->
 {SPRITE}
 
-<header class="kopf">
+<header class="kopf" data-kopf>
   <div class="wrap kopf-in">
     <a class="logo" href="index.html" aria-label="Dream Spielcenter – zur Startseite"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></a>
-    <button class="burger" type="button" aria-expanded="false" aria-controls="menu"><span class="sr">Menü</span><span class="burger-striche" aria-hidden="true"></span></button>
     <nav aria-label="Hauptnavigation">
       <ul class="menu" id="menu" role="list">
         {"".join(menu)}
       </ul>
     </nav>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="menu"><span class="sr">Menü</span><span class="burger-striche" aria-hidden="true"></span></button>
   </div>
 </header>
 
@@ -350,16 +365,25 @@ def layout(name, titel, beschreibung, inhalt):
 </main>
 
 <footer class="fuss">
+  <div class="wrap fuss-kopf">
+    <a class="logo" href="index.html" aria-label="Zur Startseite"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></a>
+    <p class="fuss-satz">{ZAHLWORTE.get(len(STANDORTE), len(STANDORTE))}mal <em>Dream.</em> Von Wiesbaden bis Füssen.</p>
+  </div>
   <div class="wrap fuss-in">
-    <div class="fuss-marke">
-      <a class="logo" href="index.html" aria-label="Zur Startseite"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></a>
-      <p>Dream Spielcenter<br>{ZENTRALE["firma"]}<br>{ZENTRALE["ort"]}</p>
+    <div>
+      <h2 class="fuss-titel">Die Häuser</h2>
+      <ul class="fuss-haeuser" role="list">{fuss_haeuser}</ul>
     </div>
-    <div class="fuss-kontakt">
-      <a href="{tel_link(ZENTRALE["tel"])}">{icon("phone")}{ZENTRALE["tel"]}</a>
-      <a href="mailto:{ZENTRALE["mail"]}">{icon("mail")}{ZENTRALE["mail"]}</a>
+    <div>
+      <h2 class="fuss-titel">Zentrale</h2>
+      <p>{ZENTRALE["firma"]}<br>{ZENTRALE["ort"]}</p>
+      <div class="fuss-kontakt">
+        <a href="{tel_link(ZENTRALE["tel"])}">{icon("phone")}{ZENTRALE["tel"]}</a>
+        <a href="mailto:{ZENTRALE["mail"]}">{icon("mail")}{ZENTRALE["mail"]}</a>
+      </div>
     </div>
     <nav aria-label="Seiten im Fuß">
+      <h2 class="fuss-titel">Seiten</h2>
       <ul role="list">{fuss}<li><a href="impressum.html">Impressum</a></li><li><a href="datenschutz.html">Datenschutz</a></li></ul>
     </nav>
   </div>
@@ -379,6 +403,7 @@ def main():
     anzahl = len(STANDORTE)
     ersatz = {
         "{{LICHT}}": licht,
+        "{{ZIER}}": zier,
         "{{ZEITPLAN}}": zeitplan,
         "{{ZEILEN}}": zeilen,
         "{{STANDORTE_DETAIL}}": standorte_detail,
@@ -405,6 +430,7 @@ def main():
             if alt in inhalt:
                 inhalt = inhalt.replace(alt, neu())
         inhalt = re.sub(r"\{\{ICON:(\w+)\}\}", lambda m: icon(m.group(1)), inhalt)
+        inhalt = re.sub(r"\{\{FOTO:(hoch|quer|breit):([^}]+)\}\}", lambda m: foto(m.group(1), m.group(2)), inhalt)
         rest = re.findall(r"\{\{[^}]+\}\}", inhalt)
         if rest:
             raise SystemExit(f"{datei.name}: unbekannte Platzhalter {rest}")

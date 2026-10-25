@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dream Spielcenter – Spielhallen von Wiesbaden bis Füssen</title>
-<meta name="description" content="Dream Spielcenter: Spielhallen in Füssen, Heidenheim, Kaufering, Senden und Wiesbaden. Adressen, Öffnungszeiten mit Live-Status, Jobs und Spielerschutz.">
+<meta name="description" content="Dream Spielcenter: Spielhallen in Wiesbaden, Heidenheim, Senden, Kaufering und Füssen. Adressen, Öffnungszeiten mit Live-Status, Jobs und Spielerschutz.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#050505">
 <meta name="color-scheme" content="dark">
 <link rel="preload" href="assets/fonts/bodoni-moda-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-seite="index">
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 <aside class="entwurf" aria-label="Hinweis zum Entwurf"><p><b>Entwurf</b> · Gestaltungsvorschlag von ORDÉ. Fotos, Texte und Angaben stimmen wir mit Ihnen ab.</p></aside>
 
@@ -21,6 +22,7 @@
     <radialGradient id="lg" cx="50%" cy="55%" r="60%">
       <stop offset="0" stop-color="#ffd23a"/><stop offset=".45" stop-color="#ff8a1e"/><stop offset="1" stop-color="#e3171b"/>
     </radialGradient>
+    <symbol id="stern" viewBox="364 44 48 46"><path d="M388 46l6 15 16 1-12 10 4 16-14-9-14 9 4-16-12-10 16-1z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></symbol>
     <symbol id="logo" viewBox="0 0 480 230">
       <ellipse cx="240" cy="115" rx="232" ry="107" fill="#e3171b" stroke="#fff" stroke-width="7"/>
       <ellipse cx="240" cy="115" rx="218" ry="94" fill="url(#lg)"/>
@@ -36,125 +38,138 @@
   </defs>
 </svg>
 
-<header class="kopf">
+<header class="kopf" data-kopf>
   <div class="wrap kopf-in">
     <a class="logo" href="index.html" aria-label="Dream Spielcenter – zur Startseite"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></a>
-    <button class="burger" type="button" aria-expanded="false" aria-controls="menu"><span class="sr">Menü</span><span class="burger-striche" aria-hidden="true"></span></button>
     <nav aria-label="Hauptnavigation">
       <ul class="menu" id="menu" role="list">
         <li><a href="standorte.html">Standorte</a></li><li><a href="angebot.html">Angebot</a></li><li><a href="jobs.html">Jobs</a></li><li><a href="spielerschutz.html">Spielerschutz</a></li><li><a href="kontakt.html">Kontakt</a></li>
       </ul>
     </nav>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="menu"><span class="sr">Menü</span><span class="burger-striche" aria-hidden="true"></span></button>
   </div>
 </header>
 
 <main id="inhalt">
   <section class="buehne buehne-start" aria-labelledby="h1">
-    <div class="licht" aria-hidden="true"><div class="licht-schein"></div><div class="bokeh"><span class="gross" style="left:61%;top:22%;width:96px;height:96px;--farbe:246,115,31;--deck:0.3"></span><span style="left:70%;top:72%;width:58px;height:58px;--farbe:255,201,40;--deck:0.34"></span><span class="gross" style="left:88%;top:28%;width:124px;height:124px;--farbe:227,23,27;--deck:0.22"></span><span class="gross" style="left:94%;top:66%;width:74px;height:74px;--farbe:246,115,31;--deck:0.28"></span><span style="left:64%;top:88%;width:42px;height:42px;--farbe:227,23,27;--deck:0.36"></span><span style="left:82%;top:15%;width:44px;height:44px;--farbe:255,201,40;--deck:0.34"></span><span style="left:56%;top:48%;width:30px;height:30px;--farbe:255,201,40;--deck:0.4"></span><span style="left:97%;top:42%;width:50px;height:50px;--farbe:246,115,31;--deck:0.26"></span><span class="gross" style="left:78%;top:93%;width:88px;height:88px;--farbe:227,23,27;--deck:0.18"></span><span class="fern" style="left:73%;top:40%;width:9px;height:9px;--farbe:255,236,205;--deck:0.9"></span><span class="fern" style="left:86%;top:55%;width:11px;height:11px;--farbe:255,236,205;--deck:0.85"></span><span class="fern" style="left:58%;top:76%;width:8px;height:8px;--farbe:255,236,205;--deck:0.9"></span><span class="fern" style="left:92%;top:85%;width:7px;height:7px;--farbe:255,236,205;--deck:0.8"></span><span class="fern" style="left:66%;top:10%;width:8px;height:8px;--farbe:255,236,205;--deck:0.75"></span></div></div>
+    <div class="licht" aria-hidden="true"><div class="licht-schein"></div><div class="funken"><span style="left:33%;top:20%;--d:3px"></span><span style="left:40%;top:31%;--d:2px"></span><span style="left:61%;top:16%;--d:3px"></span><span style="left:66%;top:29%;--d:2px"></span><span style="left:57%;top:37%;--d:2px"></span><span style="left:29%;top:33%;--d:2px"></span><span style="left:71%;top:21%;--d:3px"></span></div></div>
     <div class="wrap buehne-in">
-      <div class="buehne-text">
-        <h1 id="h1">Fünfmal <em>Dream.</em> <span class="unter">Von Wiesbaden bis Füssen.</span></h1>
-        <p class="lead">Spielhallen mit einer großen Auswahl an Geldgewinnspiel- und Unterhaltungsgeräten. Täglich geöffnet, die meisten bis 3 Uhr nachts. Zutritt nur für Erwachsene, mit Ausweis.</p>
-        <div class="aktionen">
-          <a class="btn btn-marke" href="standorte.html">Standorte und Zeiten</a>
-          <a class="btn btn-kontur" href="jobs.html">Jobs im Dream</a>
-        </div>
+      <div class="schild" aria-hidden="true">
+        <span class="schild-streif"></span>
+        <svg class="schild-logo" viewBox="0 0 480 230"><use href="#logo"/></svg>
+        <svg class="schild-spiegel" viewBox="0 0 480 230"><use href="#logo"/></svg>
       </div>
-      <div class="schild" aria-hidden="true"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></div>
+      <h1 id="h1">Fünfmal <em>Dream.</em> <span class="unter">Spielhallen von Wiesbaden bis Füssen</span></h1>
+      <div class="zier" aria-hidden="true"><svg viewBox="0 0 48 46"><use href="#stern"/></svg></div>
+      <p class="lead">Eine große Auswahl an Geldgewinnspiel- und Unterhaltungsgeräten, in gepflegter Atmosphäre und mit einem Team, das für Sie da ist. Zutritt ab 18, nur mit Ausweis.</p>
+      <div class="aktionen">
+        <a class="btn btn-marke" href="standorte.html">Standorte und Zeiten</a>
+        <a class="btn btn-kontur" href="jobs.html">Jobs im Dream</a>
+      </div>
+    </div>
+    <div class="wrap concierge">
+      <p><span class="lampe" aria-hidden="true" data-concierge-lampe></span><span data-concierge>Täglich geöffnet, die meisten Häuser bis 3 Uhr nachts.</span></p>
+      <a class="link-weg" href="#haeuser">Alle Häuser<svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a>
     </div>
   </section>
 
-  <section class="abschnitt" aria-labelledby="h-haeuser">
+  <section class="abschnitt" id="haeuser" aria-labelledby="h-haeuser">
     <div class="wrap">
       <div class="abschnitt-kopf">
-        <h2 id="h-haeuser">Fünf Häuser</h2>
-        <p>Der farbige Balken zeigt die heutigen Öffnungszeiten, von 6 Uhr morgens bis 6 Uhr am nächsten Morgen. Der weiße Strich ist die Uhrzeit jetzt. Steht er im Balken, ist offen.</p>
+        <h2 id="h-haeuser">Fünf <em>Häuser.</em></h2>
+        <p>Von Norden nach Süden. Der Balken zeigt die heutigen Öffnungszeiten, von 6 Uhr morgens bis 6 Uhr am nächsten Morgen. Der weiße Strich ist die Uhrzeit jetzt: Steht er im Balken, ist offen.</p>
       </div>
       <ul class="zeilen" role="list">
-        <li class="zeile" data-open="9,9,9,9,9,9,11" data-close="3">
+        <li class="zeile" data-name="Wiesbaden" data-open="10,10,10,10,10,10,12" data-close="4">
           <div class="zeile-ort">
-            <h3><a href="standorte.html#fuessen">Füssen</a></h3>
-            <p>im Allgäu</p>
+            <h3><a href="standorte.html#wiesbaden">Wiesbaden-Biebrich</a></h3>
+            <p>am Rhein</p>
           </div>
-          <address>Kemptener Str. 129<br>87629 Füssen</address>
           <div class="zeile-zeit">
-            <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
-            <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>9 bis 3 Uhr</span></p>
+            <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:16.67%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
+            <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>10 bis 4 Uhr</span></p>
           </div>
+          <address>Didierstr. 27a<br>65203 Wiesbaden</address>
           <div class="wege">
-            <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Kemptener+Str.+129+87629+Füssen" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Füssen (öffnet Google Maps)</span></a>
-            <a class="weg" href="tel:+498362926299"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Füssen: 08362 926299</span></a>
+            <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Didierstr.+27a+65203+Wiesbaden" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Wiesbaden-Biebrich (öffnet Google Maps)</span></a>
+            <a class="weg" href="tel:+49611608382"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Wiesbaden-Biebrich: 0611 608382</span></a>
           </div>
         </li>
-        <li class="zeile" data-open="6,6,6,6,6,7,8" data-close="0">
+        <li class="zeile" data-name="Heidenheim" data-open="6,6,6,6,6,7,8" data-close="0">
           <div class="zeile-ort">
             <h3><a href="standorte.html#heidenheim">Heidenheim-Schnaitheim</a></h3>
             <p>an der Brenz</p>
           </div>
-          <address>Riedstr. 3<br>89520 Heidenheim an der Brenz</address>
           <div class="zeile-zeit">
             <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:0.00%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
             <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>6 bis 24 Uhr</span></p>
           </div>
+          <address>Riedstr. 3<br>89520 Heidenheim an der Brenz</address>
           <div class="wege">
             <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Riedstr.+3+89520+Heidenheim+an+der+Brenz" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Heidenheim-Schnaitheim (öffnet Google Maps)</span></a>
             <a class="weg" href="tel:+497321609343"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Heidenheim-Schnaitheim: 07321 609343</span></a>
           </div>
         </li>
-        <li class="zeile" data-open="9,9,9,9,9,9,11" data-close="3">
-          <div class="zeile-ort">
-            <h3><a href="standorte.html#kaufering">Kaufering</a></h3>
-            <p>bei Landsberg am Lech</p>
-          </div>
-          <address>Viktor-Frankl-Str. 15<br>86916 Kaufering</address>
-          <div class="zeile-zeit">
-            <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
-            <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>9 bis 3 Uhr</span></p>
-          </div>
-          <div class="wege">
-            <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Viktor-Frankl-Str.+15+86916+Kaufering" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Kaufering (öffnet Google Maps)</span></a>
-            <a class="weg" href="tel:+4981914299104"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Kaufering: 08191 4299104</span></a>
-          </div>
-        </li>
-        <li class="zeile" data-open="9,9,9,9,9,9,11" data-close="3">
+        <li class="zeile" data-name="Senden" data-open="9,9,9,9,9,9,11" data-close="3">
           <div class="zeile-ort">
             <h3><a href="standorte.html#senden">Senden</a></h3>
             <p>bei Ulm</p>
           </div>
-          <address>Berliner Str. 9<br>im Iller-Center<br>89250 Senden</address>
           <div class="zeile-zeit">
             <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
             <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>9 bis 3 Uhr</span></p>
           </div>
+          <address>Berliner Str. 9<br>im Iller-Center<br>89250 Senden</address>
           <div class="wege">
             <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Berliner+Str.+9+89250+Senden" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Senden (öffnet Google Maps)</span></a>
             <a class="weg" href="tel:+49730732320"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Senden: 07307 32320</span></a>
           </div>
         </li>
-        <li class="zeile" data-open="10,10,10,10,10,10,12" data-close="4">
+        <li class="zeile" data-name="Kaufering" data-open="9,9,9,9,9,9,11" data-close="3">
           <div class="zeile-ort">
-            <h3><a href="standorte.html#wiesbaden">Wiesbaden-Biebrich</a></h3>
-            <p>am Rhein</p>
+            <h3><a href="standorte.html#kaufering">Kaufering</a></h3>
+            <p>bei Landsberg am Lech</p>
           </div>
-          <address>Didierstr. 27a<br>65203 Wiesbaden</address>
           <div class="zeile-zeit">
-            <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:16.67%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
-            <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>10 bis 4 Uhr</span></p>
+            <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
+            <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>9 bis 3 Uhr</span></p>
           </div>
+          <address>Viktor-Frankl-Str. 15<br>86916 Kaufering</address>
           <div class="wege">
-            <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Didierstr.+27a+65203+Wiesbaden" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Wiesbaden-Biebrich (öffnet Google Maps)</span></a>
-            <a class="weg" href="tel:+49611608382"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Wiesbaden-Biebrich: 0611 608382</span></a>
+            <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Viktor-Frankl-Str.+15+86916+Kaufering" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Kaufering (öffnet Google Maps)</span></a>
+            <a class="weg" href="tel:+4981914299104"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Kaufering: 08191 4299104</span></a>
+          </div>
+        </li>
+        <li class="zeile" data-name="Füssen" data-open="9,9,9,9,9,9,11" data-close="3">
+          <div class="zeile-ort">
+            <h3><a href="standorte.html#fuessen">Füssen</a></h3>
+            <p>im Allgäu</p>
+          </div>
+          <div class="zeile-zeit">
+            <div class="zeitband" aria-hidden="true"><span class="zeitband-balken" style="left:12.50%;width:75.00%" data-balken></span><span class="zeitband-jetzt" data-jetzt></span></div>
+            <p class="status"><span class="lampe" aria-hidden="true"></span><span data-status>9 bis 3 Uhr</span></p>
+          </div>
+          <address>Kemptener Str. 129<br>87629 Füssen</address>
+          <div class="wege">
+            <a class="weg" href="https://www.google.com/maps/search/?api=1&amp;query=Kemptener+Str.+129+87629+Füssen" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>Route<span class="sr"> nach Füssen (öffnet Google Maps)</span></a>
+            <a class="weg" href="tel:+498362926299"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Anrufen<span class="sr"> in Füssen: 08362 926299</span></a>
           </div>
         </li>
       </ul>
     </div>
   </section>
 
+  <section class="pause" aria-label="Gut zu wissen">
+    <div class="wrap">
+      <p class="pause-zeile"><span>Täglich geöffnet</span><svg class="pause-stern" viewBox="0 0 48 46" aria-hidden="true"><use href="#stern"/></svg><span>Zutritt ab 18</span><svg class="pause-stern" viewBox="0 0 48 46" aria-hidden="true"><use href="#stern"/></svg><span>Nur mit Ausweis</span></p>
+    </div>
+  </section>
+
   <section class="abschnitt abschnitt-samt" aria-labelledby="h-drinnen">
     <div class="wrap drinnen">
-      <div class="bildplatz bildplatz-breit" role="img" aria-label="Platzhalter für ein Foto vom Innenraum"><span>Foto Innenraum<small>kommt vom Betreiber</small></span></div>
-      <h2 id="h-drinnen">Drinnen im <em>Dream</em></h2>
+      <figure class="rahmen rahmen-hoch"><div class="rahmen-bild" role="img" aria-label="Platzhalter für ein Foto: Gerätereihe im Halbdunkel, warmes Seitenlicht, keine Gäste im Bild"><p class="rahmen-text"><span class="rahmen-marke">Foto folgt</span><span class="rahmen-idee">Gerätereihe im Halbdunkel, warmes Seitenlicht, keine Gäste im Bild</span><span class="rahmen-format">Hochformat 4 : 5</span></p></div></figure>
       <div class="drinnen-text">
+        <h2 id="h-drinnen">Drinnen im <em>Dream.</em></h2>
         <p>Viele verschiedene Geräte, gepflegte Räume und Personal, das während der ganzen Öffnungszeit vor Ort ist.</p>
         <ul class="punkte" role="list">
           <li>Geldgewinnspielgeräte mit vielen verschiedenen Spielen</li>
@@ -164,52 +179,67 @@
         </ul>
         <a class="link-weg" href="angebot.html">Das ganze Angebot<svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a>
       </div>
+      <figure class="rahmen rahmen-quer"><div class="rahmen-bild" role="img" aria-label="Platzhalter für ein Foto: Theke und Team, freundlich, Blick in den Raum"><p class="rahmen-text"><span class="rahmen-marke">Foto folgt</span><span class="rahmen-idee">Theke und Team, freundlich, Blick in den Raum</span><span class="rahmen-format">Querformat 3 : 2</span></p></div></figure>
     </div>
   </section>
 
   <section class="abschnitt" aria-labelledby="h-jobs">
-    <div class="wrap band-in">
-      <div class="band-text">
-        <h2 id="h-jobs">Arbeiten, <em>wenn andere ausgehen.</em></h2>
-        <p>Wir suchen Leute für Service und Leitung in unseren Häusern: abends, nachts und am Wochenende, mit Einarbeitung vor Ort. <span class="todo">Stellen sind Beispiele</span></p>
-        <a class="btn btn-kontur" href="jobs.html">Offene Stellen ansehen</a>
+    <div class="wrap">
+      <h2 id="h-jobs" class="aussage">Arbeiten, <em>wenn andere ausgehen.</em></h2>
+      <div class="jobs-in">
+        <div class="jobs-text">
+          <p>Wir suchen Leute für Service und Leitung in unseren Häusern: abends, nachts und am Wochenende, mit Einarbeitung vor Ort. <span class="todo">Stellen sind Beispiele</span></p>
+          <a class="btn btn-kontur" href="jobs.html">Offene Stellen ansehen</a>
+        </div>
+        <ul class="jobzeilen" role="list" aria-label="Offene Stellen (Beispiele)">
+          <li><a href="jobs.html#servicekraft"><span class="job-titel">Servicekraft (m/w/d)</span><span>Vollzeit oder Teilzeit</span><svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a></li>
+          <li><a href="jobs.html#aushilfe"><span class="job-titel">Aushilfe (m/w/d)</span><span>Minijob</span><svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a></li>
+          <li><a href="jobs.html#filialleitung"><span class="job-titel">Filialleitung (m/w/d)</span><span>Vollzeit</span><svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a></li>
+        </ul>
       </div>
-      <ul class="jobzeilen" role="list" aria-label="Offene Stellen (Beispiele)">
-        <li><a href="jobs.html#servicekraft"><span class="job-titel">Servicekraft (m/w/d)</span><span>Vollzeit oder Teilzeit</span><svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a></li>
-        <li><a href="jobs.html#aushilfe"><span class="job-titel">Aushilfe (m/w/d)</span><span>Minijob</span><svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a></li>
-        <li><a href="jobs.html#filialleitung"><span class="job-titel">Filialleitung (m/w/d)</span><span>Vollzeit</span><svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a></li>
-      </ul>
     </div>
   </section>
 
   <section class="abschnitt abschnitt-samt" aria-labelledby="h-schutz">
-    <div class="wrap schutz">
-      <h2 id="h-schutz">Spielen hat bei uns <em>Grenzen.</em></h2>
-      <dl class="regeln">
-        <div><dt>Ab 18, an den meisten Standorten ab 21</dt><dd>Wir kontrollieren am Eingang. Bitte bringen Sie einen gültigen Lichtbildausweis mit.</dd></div>
-        <div><dt>Abgleich mit der Sperrdatei OASIS</dt><dd>Vor dem Spiel prüfen wir jeden Gast gegen das bundesweite Sperrsystem. Eine Selbstsperre können Sie bei uns beantragen.</dd></div>
-        <div><dt>Ein Team, das hinschaut</dt><dd>Unser Personal ist im Spielerschutz geschult und spricht Gäste an, wenn Spielen zum Problem zu werden scheint.</dd></div>
-      </dl>
-      <div class="hotline">
-        <p>Glücksspiel kann süchtig machen. Die Bundeszentrale für gesundheitliche Aufklärung berät kostenlos und anonym:</p>
-        <a class="hotline-nr" href="tel:08001372700">0800 1 37 27 00</a>
-        <a class="link-weg" href="spielerschutz.html">Sperre, Selbsttest und Beratung<svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a>
+    <div class="wrap">
+      <div class="plakette">
+        <div class="zier" aria-hidden="true"><svg viewBox="0 0 48 46"><use href="#stern"/></svg></div>
+        <h2 id="h-schutz">Spielen hat bei uns <em>Grenzen.</em></h2>
+        <dl class="regeln regeln-drei">
+          <div><dt>Ab 18, an den meisten Standorten ab 21</dt><dd>Wir kontrollieren am Eingang. Bitte bringen Sie einen gültigen Lichtbildausweis mit.</dd></div>
+          <div><dt>Abgleich mit der Sperrdatei OASIS</dt><dd>Vor dem Spiel prüfen wir jeden Gast gegen das bundesweite Sperrsystem. Eine Selbstsperre können Sie bei uns beantragen.</dd></div>
+          <div><dt>Ein Team, das hinschaut</dt><dd>Unser Personal ist im Spielerschutz geschult und spricht Gäste an, wenn Spielen zum Problem zu werden scheint.</dd></div>
+        </dl>
+        <div class="hotline">
+          <p>Glücksspiel kann süchtig machen. Die Bundeszentrale für gesundheitliche Aufklärung berät kostenlos und anonym:</p>
+          <a class="hotline-nr" href="tel:08001372700">0800 1 37 27 00</a>
+          <a class="link-weg" href="spielerschutz.html">Mehr zum Spielerschutz<svg class="i" aria-hidden="true"><use href="#i-pfeil"/></svg></a>
+        </div>
       </div>
     </div>
   </section>
 </main>
 
 <footer class="fuss">
+  <div class="wrap fuss-kopf">
+    <a class="logo" href="index.html" aria-label="Zur Startseite"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></a>
+    <p class="fuss-satz">Fünfmal <em>Dream.</em> Von Wiesbaden bis Füssen.</p>
+  </div>
   <div class="wrap fuss-in">
-    <div class="fuss-marke">
-      <a class="logo" href="index.html" aria-label="Zur Startseite"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></a>
-      <p>Dream Spielcenter<br>MSW Spiel + Freizeit GmbH<br>Eislingen/Fils</p>
+    <div>
+      <h2 class="fuss-titel">Die Häuser</h2>
+      <ul class="fuss-haeuser" role="list"><li><a href="standorte.html#wiesbaden"><span>Wiesbaden-Biebrich</span><span class="nr">0611 608382</span></a></li><li><a href="standorte.html#heidenheim"><span>Heidenheim-Schnaitheim</span><span class="nr">07321 609343</span></a></li><li><a href="standorte.html#senden"><span>Senden</span><span class="nr">07307 32320</span></a></li><li><a href="standorte.html#kaufering"><span>Kaufering</span><span class="nr">08191 4299104</span></a></li><li><a href="standorte.html#fuessen"><span>Füssen</span><span class="nr">08362 926299</span></a></li></ul>
     </div>
-    <div class="fuss-kontakt">
-      <a href="tel:+497161988240"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>07161 98824-0</a>
-      <a href="mailto:info@dream-spielcenter.de"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>info@dream-spielcenter.de</a>
+    <div>
+      <h2 class="fuss-titel">Zentrale</h2>
+      <p>MSW Spiel + Freizeit GmbH<br>Eislingen/Fils</p>
+      <div class="fuss-kontakt">
+        <a href="tel:+497161988240"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>07161 98824-0</a>
+        <a href="mailto:info@dream-spielcenter.de"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>info@dream-spielcenter.de</a>
+      </div>
     </div>
     <nav aria-label="Seiten im Fuß">
+      <h2 class="fuss-titel">Seiten</h2>
       <ul role="list"><li><a href="standorte.html">Standorte</a></li><li><a href="angebot.html">Angebot</a></li><li><a href="jobs.html">Jobs</a></li><li><a href="spielerschutz.html">Spielerschutz</a></li><li><a href="kontakt.html">Kontakt</a></li><li><a href="impressum.html">Impressum</a></li><li><a href="datenschutz.html">Datenschutz</a></li></ul>
     </nav>
   </div>

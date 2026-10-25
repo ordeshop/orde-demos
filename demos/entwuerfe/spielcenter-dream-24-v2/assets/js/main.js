@@ -8,10 +8,24 @@ if (burger && menu) {
     const auf = burger.getAttribute('aria-expanded') !== 'true';
     burger.setAttribute('aria-expanded', String(auf));
     menu.classList.toggle('offen', auf);
+    document.querySelector('[data-kopf]')?.classList.toggle('menue-offen', auf);
   });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') { burger.click(); burger.focus(); }
   });
+}
+
+// Kopf: wird beim Scrollen mattes Glas. Auf der Startseite erscheint das Logo darin
+// erst, wenn das große Schild aus dem Bild ist (sonst stünde es doppelt da).
+const kopf = document.querySelector('[data-kopf]');
+if (kopf) {
+  const fest = () => kopf.classList.toggle('fest', window.scrollY > 8);
+  fest();
+  addEventListener('scroll', fest, { passive: true });
+  const schild = document.querySelector('.buehne-start .schild');
+  if (schild && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => kopf.classList.toggle('logo-aus', e.isIntersecting), { rootMargin: '-84px 0px 0px 0px' }).observe(schild);
+  }
 }
 
 // Uhrzeit in Deutschland, egal in welcher Zeitzone das Gerät steht. tag: 0 = Montag
@@ -65,11 +79,33 @@ function aktualisieren() {
     const heute = String((l.tag + 1) % 7); // JS-Wochentag, So = 0
     el.querySelectorAll('tr[data-d]').forEach(tr => tr.classList.toggle('heute', tr.dataset.d.split(' ').includes(heute)));
   });
+  concierge(z);
   document.querySelectorAll('[data-plan-jetzt]').forEach(strich => {
     strich.style.setProperty('--x', stelle(z.h) + '%');
     strich.querySelector('[data-uhrzeit]').textContent = z.uhr;
     strich.classList.add('lebt');
   });
+}
+
+// Live-Zeile auf der Bühne: welche Häuser gerade geöffnet sind
+const ZAHLWORTE = { 2: 'zwei', 3: 'drei', 4: 'vier', 5: 'fünf', 6: 'sechs', 7: 'sieben', 8: 'acht' };
+const aufzaehlen = namen => namen.length < 2 ? namen.join('') : namen.slice(0, -1).join(', ') + ' und ' + namen[namen.length - 1];
+function concierge(z) {
+  const text = document.querySelector('[data-concierge]');
+  if (!text) return;
+  const haeuser = [...document.querySelectorAll('.zeile[data-name]')];
+  const offen = haeuser.filter(h => h.dataset.state === 'offen').map(h => h.dataset.name);
+  document.querySelector('[data-concierge-lampe]')?.classList.toggle('an', offen.length > 0);
+  if (offen.length === haeuser.length) {
+    text.textContent = 'Jetzt sind alle ' + (ZAHLWORTE[haeuser.length] || haeuser.length) + ' Häuser geöffnet.';
+  } else if (offen.length) {
+    text.textContent = 'Jetzt geöffnet in ' + aufzaehlen(offen) + '.';
+  } else {
+    const naechstes = haeuser
+      .map(h => ({ name: h.dataset.name, ab: h.dataset.open.split(',').map(Number)[z.tag] }))
+      .sort((a, b) => a.ab - b.ab)[0];
+    text.textContent = 'Gerade sind alle Häuser geschlossen. ' + naechstes.name + ' öffnet um ' + naechstes.ab + ' Uhr.';
+  }
 }
 
 aktualisieren();

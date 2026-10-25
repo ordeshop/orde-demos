@@ -106,6 +106,35 @@ Betriebs, und der Zeitstrahl zeigt die echten Zeiten. Ähnlichkeit zu den
 ORDÉ-Demos: FORGE ist dunkel, aber kalt und hart; diese Seite ist warm, mit
 Kontrastschrift und dem Verlauf aus dem Dream-Logo.
 
+## Feinschliff „Luxus“ (25.10.2026)
+
+Arturs Wunsch: noch luxuriöser und professioneller. Richtung, Farben, Schriften und
+Zeitstrahl bleiben; geändert wird, was billig wirkte, und es kommen Details dazu, wie
+sie Grandhotels und Spielbanken bei Nacht zeigen.
+
+- **Bühne als Filmvorspann, auf der Mittelachse:** das Dream-Schild als Emblem mit
+  Lichthof, einem feinen waagerechten Lichtstreif (wie ein anamorphotisches Objektiv)
+  und einer Spiegelung wie auf schwarzem Glas. Die runden Lichtflecken entfallen
+  (wirkten wie ein Effektfilter), es bleiben wenige winzige Funken. Unten eine
+  Live-Zeile: welche Häuser gerade geöffnet sind.
+- **Kopf:** bleibt beim Scrollen stehen und wird dann mattes Glas; auf der Startseite
+  erscheint das Logo darin erst, wenn das große Schild aus dem Bild ist (kein
+  doppeltes Logo).
+- **Häuser von Norden nach Süden** (Wiesbaden, Heidenheim, Senden, Kaufering,
+  Füssen), passend zu „Von Wiesbaden bis Füssen“. Größere Namen, feinerer Zeitstrahl.
+- **Bildregie statt grauer Kästen:** Fotoplätze sind Rahmen mit Sucherecken und einer
+  Bildidee samt Format („Gerätereihe im Halbdunkel, warmes Seitenlicht, Hochformat
+  4 : 5“). So weiß der Betreiber, welches Foto er liefern soll.
+- **Rhythmus:** eine große Schriftzeile als Pause zwischen den Abschnitten
+  („Täglich geöffnet · Zutritt ab 18 · Nur mit Ausweis“), Spielerschutz als gerahmte
+  Plakette, großer Fuß mit allen Häusern und Telefonnummern.
+- **Zierde aus dem Logo:** der Stern des Dream-Logos als einziges Ornament (Trenner,
+  Plakette), sparsam eingesetzt.
+- **Details:** feines Filmkorn über der ganzen Seite, Lichtkante am Hauptknopf, Unterstrich
+  der Navigation wächst aus der Mitte, ruhigere Platzhalter-Markierung, Favicon.
+- Bewegung bleibt bei einem Moment: Beim Laden geht das Schild an, der Lichtstreif zieht
+  auf, der Raum wird hell.
+
 ## Technik
 
 Statisches HTML und CSS, ein kleines `main.js` (Menü, Live-Status, Zeitstrahl,

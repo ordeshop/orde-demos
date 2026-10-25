@@ -1,34 +1,47 @@
-<!-- titel: Start | beschreibung: Dream Spielcenter: Spielhallen in Füssen, Heidenheim, Kaufering, Senden und Wiesbaden. Adressen, Öffnungszeiten mit Live-Status, Jobs und Spielerschutz. | nav: index -->
+<!-- titel: Start | beschreibung: Dream Spielcenter: Spielhallen in Wiesbaden, Heidenheim, Senden, Kaufering und Füssen. Adressen, Öffnungszeiten mit Live-Status, Jobs und Spielerschutz. | nav: index -->
   <section class="buehne buehne-start" aria-labelledby="h1">
     {{LICHT}}
     <div class="wrap buehne-in">
-      <div class="buehne-text">
-        <h1 id="h1">{{ZAHLWORT}}mal <em>Dream.</em> <span class="unter">Von Wiesbaden bis Füssen.</span></h1>
-        <p class="lead">Spielhallen mit einer großen Auswahl an Geldgewinnspiel- und Unterhaltungsgeräten. Täglich geöffnet, die meisten bis 3 Uhr nachts. Zutritt nur für Erwachsene, mit Ausweis.</p>
-        <div class="aktionen">
-          <a class="btn btn-marke" href="standorte.html">Standorte und Zeiten</a>
-          <a class="btn btn-kontur" href="jobs.html">Jobs im Dream</a>
-        </div>
+      <div class="schild" aria-hidden="true">
+        <span class="schild-streif"></span>
+        <svg class="schild-logo" viewBox="0 0 480 230"><use href="#logo"/></svg>
+        <svg class="schild-spiegel" viewBox="0 0 480 230"><use href="#logo"/></svg>
       </div>
-      <div class="schild" aria-hidden="true"><svg viewBox="0 0 480 230"><use href="#logo"/></svg></div>
+      <h1 id="h1">{{ZAHLWORT}}mal <em>Dream.</em> <span class="unter">Spielhallen von Wiesbaden bis Füssen</span></h1>
+      {{ZIER}}
+      <p class="lead">Eine große Auswahl an Geldgewinnspiel- und Unterhaltungsgeräten, in gepflegter Atmosphäre und mit einem Team, das für Sie da ist. Zutritt ab 18, nur mit Ausweis.</p>
+      <div class="aktionen">
+        <a class="btn btn-marke" href="standorte.html">Standorte und Zeiten</a>
+        <a class="btn btn-kontur" href="jobs.html">Jobs im Dream</a>
+      </div>
+    </div>
+    <div class="wrap concierge">
+      <p><span class="lampe" aria-hidden="true" data-concierge-lampe></span><span data-concierge>Täglich geöffnet, die meisten Häuser bis 3 Uhr nachts.</span></p>
+      <a class="link-weg" href="#haeuser">Alle Häuser{{ICON:pfeil}}</a>
     </div>
   </section>
 
-  <section class="abschnitt" aria-labelledby="h-haeuser">
+  <section class="abschnitt" id="haeuser" aria-labelledby="h-haeuser">
     <div class="wrap">
       <div class="abschnitt-kopf">
-        <h2 id="h-haeuser">{{ZAHLWORT}} Häuser</h2>
-        <p>Der farbige Balken zeigt die heutigen Öffnungszeiten, von 6 Uhr morgens bis 6 Uhr am nächsten Morgen. Der weiße Strich ist die Uhrzeit jetzt. Steht er im Balken, ist offen.</p>
+        <h2 id="h-haeuser">{{ZAHLWORT}} <em>Häuser.</em></h2>
+        <p>Von Norden nach Süden. Der Balken zeigt die heutigen Öffnungszeiten, von 6 Uhr morgens bis 6 Uhr am nächsten Morgen. Der weiße Strich ist die Uhrzeit jetzt: Steht er im Balken, ist offen.</p>
       </div>
       {{ZEILEN}}
     </div>
   </section>
 
+  <section class="pause" aria-label="Gut zu wissen">
+    <div class="wrap">
+      <p class="pause-zeile"><span>Täglich geöffnet</span><svg class="pause-stern" viewBox="0 0 48 46" aria-hidden="true"><use href="#stern"/></svg><span>Zutritt ab 18</span><svg class="pause-stern" viewBox="0 0 48 46" aria-hidden="true"><use href="#stern"/></svg><span>Nur mit Ausweis</span></p>
+    </div>
+  </section>
+
   <section class="abschnitt abschnitt-samt" aria-labelledby="h-drinnen">
     <div class="wrap drinnen">
-      <div class="bildplatz bildplatz-breit" role="img" aria-label="Platzhalter für ein Foto vom Innenraum"><span>Foto Innenraum<small>kommt vom Betreiber</small></span></div>
-      <h2 id="h-drinnen">Drinnen im <em>Dream</em></h2>
+      {{FOTO:hoch:Gerätereihe im Halbdunkel, warmes Seitenlicht, keine Gäste im Bild}}
       <div class="drinnen-text">
+        <h2 id="h-drinnen">Drinnen im <em>Dream.</em></h2>
         <p>Viele verschiedene Geräte, gepflegte Räume und Personal, das während der ganzen Öffnungszeit vor Ort ist.</p>
         <ul class="punkte" role="list">
           <li>Geldgewinnspielgeräte mit vielen verschiedenen Spielen</li>
@@ -38,36 +51,42 @@
         </ul>
         <a class="link-weg" href="angebot.html">Das ganze Angebot{{ICON:pfeil}}</a>
       </div>
+      {{FOTO:quer:Theke und Team, freundlich, Blick in den Raum}}
     </div>
   </section>
 
   <section class="abschnitt" aria-labelledby="h-jobs">
-    <div class="wrap band-in">
-      <div class="band-text">
-        <h2 id="h-jobs">Arbeiten, <em>wenn andere ausgehen.</em></h2>
-        <p>Wir suchen Leute für Service und Leitung in unseren Häusern: abends, nachts und am Wochenende, mit Einarbeitung vor Ort. <span class="todo">Stellen sind Beispiele</span></p>
-        <a class="btn btn-kontur" href="jobs.html">Offene Stellen ansehen</a>
+    <div class="wrap">
+      <h2 id="h-jobs" class="aussage">Arbeiten, <em>wenn andere ausgehen.</em></h2>
+      <div class="jobs-in">
+        <div class="jobs-text">
+          <p>Wir suchen Leute für Service und Leitung in unseren Häusern: abends, nachts und am Wochenende, mit Einarbeitung vor Ort. <span class="todo">Stellen sind Beispiele</span></p>
+          <a class="btn btn-kontur" href="jobs.html">Offene Stellen ansehen</a>
+        </div>
+        <ul class="jobzeilen" role="list" aria-label="Offene Stellen (Beispiele)">
+          <li><a href="jobs.html#servicekraft"><span class="job-titel">Servicekraft (m/w/d)</span><span>Vollzeit oder Teilzeit</span>{{ICON:pfeil}}</a></li>
+          <li><a href="jobs.html#aushilfe"><span class="job-titel">Aushilfe (m/w/d)</span><span>Minijob</span>{{ICON:pfeil}}</a></li>
+          <li><a href="jobs.html#filialleitung"><span class="job-titel">Filialleitung (m/w/d)</span><span>Vollzeit</span>{{ICON:pfeil}}</a></li>
+        </ul>
       </div>
-      <ul class="jobzeilen" role="list" aria-label="Offene Stellen (Beispiele)">
-        <li><a href="jobs.html#servicekraft"><span class="job-titel">Servicekraft (m/w/d)</span><span>Vollzeit oder Teilzeit</span>{{ICON:pfeil}}</a></li>
-        <li><a href="jobs.html#aushilfe"><span class="job-titel">Aushilfe (m/w/d)</span><span>Minijob</span>{{ICON:pfeil}}</a></li>
-        <li><a href="jobs.html#filialleitung"><span class="job-titel">Filialleitung (m/w/d)</span><span>Vollzeit</span>{{ICON:pfeil}}</a></li>
-      </ul>
     </div>
   </section>
 
   <section class="abschnitt abschnitt-samt" aria-labelledby="h-schutz">
-    <div class="wrap schutz">
-      <h2 id="h-schutz">Spielen hat bei uns <em>Grenzen.</em></h2>
-      <dl class="regeln">
-        <div><dt>Ab 18, an den meisten Standorten ab 21</dt><dd>Wir kontrollieren am Eingang. Bitte bringen Sie einen gültigen Lichtbildausweis mit.</dd></div>
-        <div><dt>Abgleich mit der Sperrdatei OASIS</dt><dd>Vor dem Spiel prüfen wir jeden Gast gegen das bundesweite Sperrsystem. Eine Selbstsperre können Sie bei uns beantragen.</dd></div>
-        <div><dt>Ein Team, das hinschaut</dt><dd>Unser Personal ist im Spielerschutz geschult und spricht Gäste an, wenn Spielen zum Problem zu werden scheint.</dd></div>
-      </dl>
-      <div class="hotline">
-        <p>Glücksspiel kann süchtig machen. Die Bundeszentrale für gesundheitliche Aufklärung berät kostenlos und anonym:</p>
-        <a class="hotline-nr" href="tel:08001372700">0800 1 37 27 00</a>
-        <a class="link-weg" href="spielerschutz.html">Sperre, Selbsttest und Beratung{{ICON:pfeil}}</a>
+    <div class="wrap">
+      <div class="plakette">
+        {{ZIER}}
+        <h2 id="h-schutz">Spielen hat bei uns <em>Grenzen.</em></h2>
+        <dl class="regeln regeln-drei">
+          <div><dt>Ab 18, an den meisten Standorten ab 21</dt><dd>Wir kontrollieren am Eingang. Bitte bringen Sie einen gültigen Lichtbildausweis mit.</dd></div>
+          <div><dt>Abgleich mit der Sperrdatei OASIS</dt><dd>Vor dem Spiel prüfen wir jeden Gast gegen das bundesweite Sperrsystem. Eine Selbstsperre können Sie bei uns beantragen.</dd></div>
+          <div><dt>Ein Team, das hinschaut</dt><dd>Unser Personal ist im Spielerschutz geschult und spricht Gäste an, wenn Spielen zum Problem zu werden scheint.</dd></div>
+        </dl>
+        <div class="hotline">
+          <p>Glücksspiel kann süchtig machen. Die Bundeszentrale für gesundheitliche Aufklärung berät kostenlos und anonym:</p>
+          <a class="hotline-nr" href="tel:08001372700">0800 1 37 27 00</a>
+          <a class="link-weg" href="spielerschutz.html">Mehr zum Spielerschutz{{ICON:pfeil}}</a>
+        </div>
       </div>
     </div>
   </section>
