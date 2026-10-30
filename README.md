@@ -89,7 +89,8 @@ Liegt Chromium schon irgendwo, kann der Pfad über die Umgebungsvariable
 ## Woher die Bilder stammen
 
 Die Fotos in den Demos sind teils selbst erzeugt, teils vom Auftraggeber
-gestellt. Für echte Kundenseiten gilt: Bilder stellt der Kunde, und er
+gestellt. Jede Demo trägt im Rückkehr-Balken den Hinweis „Bilder mit KI
+erzeugt“, am Desktop und am Handy (EU AI Act Art. 50 Abs. 4). Für echte Kundenseiten gilt: Bilder stellt der Kunde, und er
 sichert die Rechte daran zu — so steht es in den AGB, § 7.
 
 ## Verwandte Projekte

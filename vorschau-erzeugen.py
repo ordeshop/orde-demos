@@ -42,6 +42,8 @@ def demos_finden(auswahl):
         os.path.basename(os.path.dirname(p))
         for p in glob.glob(os.path.join(DEMOS, "*", "index.html"))
     )
+    # Entwürfe für echte Betriebe bekommen keine Vorschaubilder
+    namen = [n for n in namen if n != "entwuerfe"]
     if not auswahl:
         return namen
     unbekannt = [a for a in auswahl if a not in namen]

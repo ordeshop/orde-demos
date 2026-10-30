@@ -44,6 +44,12 @@ alle davon im Entwurf. Unklar? Nach der bestehenden Website richten.
 5. Inhalte nur aus dem, was belegt ist: bestehende Website, Angaben des
    Kunden, Branchenverzeichnis. Alles Ungeprüfte als gelber Platzhalter.
    Impressum und Datenschutz bleiben Platzhalter, Formulare sind Attrappen.
+   **Bilder nur echte vom Betrieb** (bestehende Website, Google-Profil,
+   vom Kunden geschickt). Keine KI-Bilder, die den Betrieb, seine Räume oder
+   seine Leute zeigen, als wären sie echt: Das wäre ein Deepfake im Sinne
+   des EU AI Act (Art. 50 Abs. 4) und täuscht obendrein den Kunden. Geht es
+   nicht ohne, dann eine neutrale Stimmung ohne erkennbare Personen, und am
+   Bild sichtbar „KI-Platzhalter, wird durch echte Fotos ersetzt“.
 6. **Recherche:** zuerst die bestehende Website, dann Google-Profil und
    Branchenverzeichnisse. Ist die alte Seite nicht direkt abrufbar, ihre
    Inhalte über die Websuche mit `allowed_domains` auf die Domain des Kunden

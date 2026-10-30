@@ -68,7 +68,8 @@ Vorschaubild fällt niemandem auf, bis ein Kunde sich wundert.
 1. Ordner unter `demos/` anlegen
 2. Den Rückkehr-Balken unten einbauen — so wie in den anderen. Ohne ihn
    kommt der Besucher nicht zurück zu ORDÉ, und der Hinweis „Beispielseite ·
-   kein echter Betrieb" fehlt.
+   kein echter Betrieb · Bilder mit KI erzeugt" fehlt. Der KI-Hinweis ist
+   Pflicht (EU AI Act Art. 50 Abs. 4) und muss auch am Handy sichtbar sein.
 3. `python3 vorschau-erzeugen.py <name>`
 4. Im Repo `orde-website` in `build.py` unter `BRANCHEN` eintragen
 
@@ -109,8 +110,13 @@ und löschen nichts voneinander (`dangerous-clean-slate: false`).
 
 ## Bilder
 
-Teils selbst erzeugt, teils gestellt. Für echte Kundenseiten gilt: Bilder
-stellt der Kunde und sichert die Rechte daran zu (ORDÉ-AGB § 7).
+Teils selbst erzeugt, teils gestellt. Mit KI erzeugte Bilder, vor allem
+von Menschen, müssen als KI erkennbar sein (EU AI Act Art. 50 Abs. 4, gilt
+seit 02.08.2026). Das leistet der Rückkehr-Balken; er darf deshalb in keiner
+Demo fehlen. Einzelheiten: `Business-Handbuch/KI-VERORDNUNG.md`.
+
+Für echte Kundenseiten gilt: Bilder stellt der Kunde und sichert die Rechte
+daran zu (ORDÉ-AGB § 7).
 
 Neue Bilder vor dem Einbauen nach WebP wandeln und verkleinern. Die Demos
 waren einmal 20 MB schwer und die Seite dadurch unbenutzbar.
