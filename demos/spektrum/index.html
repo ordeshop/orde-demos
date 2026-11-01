@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="de" data-showreel>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Spektrum · Showreel von ORDÉ</title>
+<meta name="description" content="Klang, Licht, Strömung und Gravitation, alles live im Browser berechnet: Chladni-Figuren, Prisma, Strömungssimulation, Schwarzes Loch.">
+<link rel="stylesheet" href="../bibliothek/schriften.css">
+<style>
+/* Layout: fünf Bühnen, jede ein physikalisches Phänomen (Schwingung, Klang, Licht, Strömung, Gravitation),
+   jede klebt beim Scrollen fest und wird live berechnet. Am Rand ein Messgerät: Messwert, Szene, fps, Ton.
+   Bewusst nur ein dunkler Look. */
+:root{
+  --leere:#050507;
+  --tiefe:#0d0d12;
+  --hell:#ecebf2;
+  --grau:#8c8a98;
+  --linie:rgba(236,235,242,.14);
+  --spektrum:linear-gradient(90deg,#7a2cff,#2a6bff 18%,#20d3ff 34%,#3dff8a 50%,#ffe23d 66%,#ff8a1f 82%,#ff2b4a);
+  --violett:#8a5cff;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --text:"Onest","Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:"Fragment Mono",ui-monospace,Menlo,Consolas,monospace;
+  --gl:max(16px,env(safe-area-inset-left,0px));
+  --gr:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--leere)}
+body{background:var(--leere);color:var(--hell);font-family:var(--text);font-weight:300;font-size:16px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:var(--leere)}
+::selection{background:var(--violett);color:#fff}
+button{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--hell);outline-offset:4px}
+.rand{padding-left:var(--gl);padding-right:var(--gr)}
+.klebe{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+canvas{display:block}
+.vollbild{position:absolute;inset:0;width:100%;height:100%}
+.kicker{font:400 11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;margin:0;color:var(--grau)}
+.kicker b{font-weight:400;color:var(--hell)}
+.fliess{font:300 16px/1.65 var(--text);margin:0;max-width:40ch;color:var(--grau)}
+.titel{margin:0;font:700 clamp(40px,6vw,104px)/.92 var(--display);letter-spacing:-.03em;text-wrap:balance}
+.spek{background:var(--spektrum);-webkit-background-clip:text;background-clip:text;color:transparent}
+.formel{font:400 13px/1.5 var(--mono);color:var(--hell);margin:0;opacity:.85}
+.ui{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding-top:calc(70px + env(safe-area-inset-top,0px));padding-bottom:calc(68px + var(--unten));pointer-events:none}
+.ui-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px 40px;text-shadow:0 2px 20px rgba(5,5,7,.9)}
+.block{display:grid;gap:14px;max-width:640px}
+.wert{font:200 clamp(56px,8vw,128px)/.85 var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums;text-align:right}
+.wert small{display:block;font:400 11px/1.6 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--grau);margin-bottom:8px}
+
+/* ---------- Auftakt ---------- */
+.auftakt{position:fixed;inset:0;z-index:100;background:var(--leere);display:grid;place-items:center;animation:notaus 0s 6s forwards}
+@keyframes notaus{to{visibility:hidden;opacity:0}}
+.auftakt svg{width:100%;height:180px;overflow:visible}
+.auftakt path{fill:none;stroke:url(#spekVerlauf);stroke-width:2}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:14px;pointer-events:none;font:400 11px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding-left:var(--gl);padding-right:var(--gr);color:var(--hell)}
+.hud-oben{top:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+.hud-unten{bottom:0;padding-bottom:calc(18px + var(--unten))}
+.hud-marke{font:700 13px/1 var(--display);letter-spacing:.24em}
+.hud-wert{font-variant-numeric:tabular-nums;text-align:right;color:var(--hell)}
+.hud-rechts{display:flex;gap:14px;align-items:center}
+.ton{pointer-events:auto;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--linie);background:rgba(13,13,18,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:400 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.ton[aria-pressed="true"]{border-color:transparent;background:linear-gradient(var(--tiefe),var(--tiefe)) padding-box,var(--spektrum) border-box;border:1px solid transparent}
+.ton i{width:8px;height:8px;border-radius:50%;background:var(--grau)}
+.ton[aria-pressed="true"] i{background:#3dff8a;box-shadow:0 0 10px #3dff8a}
+.hud-balken{position:fixed;left:0;right:0;bottom:0;height:2px;z-index:51;pointer-events:none}
+.hud-balken i{display:block;height:100%;background:var(--spektrum);transform-origin:0 50%;transform:scaleX(0)}
+
+/* ---------- 00 Schwingung ---------- */
+.s-held{position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden}
+.held-inhalt{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding-top:calc(70px + env(safe-area-inset-top,0px));padding-bottom:calc(68px + var(--unten))}
+.held-titel{align-self:center;margin:0;font:800 clamp(56px,13vw,230px)/.85 var(--display);letter-spacing:-.05em;text-align:center;mix-blend-mode:screen}
+.held-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px 40px}
+.held-fuss .unter{margin:0;font:300 clamp(20px,2.2vw,30px)/1.25 var(--text);max-width:24ch}
+
+/* ---------- Szenen ---------- */
+.s-klang{position:relative;height:460vh}
+.s-prisma{position:relative;height:340vh}
+.s-fluid{position:relative;height:260vh}
+.s-loch{position:relative;height:360vh}
+.lambda{position:absolute;font:400 11px/1 var(--mono);color:var(--hell);transform:translate(8px,-50%);white-space:nowrap;pointer-events:none;opacity:.85;text-shadow:0 0 8px rgba(5,5,7,.9)}
+.fluid-hinweis{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:400 12px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--grau);pointer-events:none;transition:opacity .6s}
+.fluid-fehlt{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;background:radial-gradient(circle at 30% 40%,#2a1458,transparent 50%),radial-gradient(circle at 70% 60%,#073a4a,transparent 50%),var(--leere)}
+
+/* ---------- Abspann ---------- */
+.s-abspann{position:relative;padding-block:clamp(100px,16vh,180px) calc(120px + var(--unten));overflow:hidden}
+.s-abspann::before{content:"";position:absolute;left:-10%;right:-10%;top:0;height:2px;background:var(--spektrum);opacity:.8}
+.abspann-inhalt{display:grid;gap:clamp(40px,7vh,72px)}
+.ende{margin:0;font:800 clamp(64px,15vw,260px)/.82 var(--display);letter-spacing:-.05em}
+.credits{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:0 48px;margin:0;border-top:1px solid var(--linie)}
+.credits div{display:grid;grid-template-columns:11ch minmax(0,1fr);gap:16px;padding-block:14px;border-bottom:1px solid var(--linie);min-width:0}
+.credits dt{font:400 11px/1.8 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--grau)}
+.credits dd{margin:0;font:300 15px/1.5 var(--text)}
+.abspann-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px}
+.knopf{display:inline-flex;align-items:center;gap:12px;min-height:54px;padding:0 28px;border-radius:999px;border:1px solid transparent;background:linear-gradient(var(--leere),var(--leere)) padding-box,var(--spektrum) border-box;font:500 15px/1 var(--text);cursor:pointer;transition:background .3s}
+.knopf:hover,.knopf:focus-visible{background:var(--spektrum) padding-box,var(--spektrum) border-box;color:var(--leere)}
+.hinweis{font:300 13px/1.6 var(--text);max-width:62ch;margin:0;color:var(--grau)}
+
+@media (max-width:700px){
+  .hud .lang{display:none}
+  .credits div{grid-template-columns:1fr;gap:2px}
+  .wert{text-align:left}
+}
+</style>
+<style>
+/* Platz für den Rückkehr-Balken: alles, was unten am Rand sitzt, rückt über ihn */
+:root{--balkenhoehe:58px;--unten:calc(env(safe-area-inset-bottom,0px) + var(--balkenhoehe))}
+@media (max-width:640px){:root{--balkenhoehe:94px}}
+.hud-balken{bottom:var(--unten)!important}
+</style>
+</head>
+<body>
+<div class="auftakt" id="auftakt" aria-hidden="true">
+  <svg viewBox="0 0 1000 180" preserveAspectRatio="none">
+    <defs><linearGradient id="spekVerlauf" x1="0" x2="1"><stop offset="0" stop-color="#7a2cff"/><stop offset=".2" stop-color="#2a6bff"/><stop offset=".4" stop-color="#20d3ff"/><stop offset=".55" stop-color="#3dff8a"/><stop offset=".7" stop-color="#ffe23d"/><stop offset=".85" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ff2b4a"/></linearGradient></defs>
+    <path id="aWelle" pathLength="1" d=""/>
+  </svg>
+</div>
+
+<div class="hud hud-oben" aria-hidden="true">
+  <span class="hud-marke">SPEKTRUM</span>
+  <span class="hud-wert" id="hudWert">Schwingung</span>
+</div>
+<div class="hud hud-unten">
+  <span class="lang" aria-hidden="true" id="hudSzene">00 / 05 · Schwingung</span>
+  <span class="hud-rechts"><span aria-hidden="true"><span id="fps">60</span> fps · <span id="aufl">100</span> %</span>
+    <button class="ton" id="ton" type="button" aria-pressed="false"><i aria-hidden="true"></i><span>Ton an</span></button></span>
+</div>
+<div class="hud-balken" aria-hidden="true"><i id="balken"></i></div>
+
+<main>
+
+<!-- 00 SCHWINGUNG -->
+<section class="s-held" id="held" data-nr="00" data-name="Schwingung">
+  <canvas class="vollbild" id="cWelle" aria-hidden="true"></canvas>
+  <div class="held-inhalt rand">
+    <p class="kicker ein"><b>00</b> / 05 · Schwingung · die Maus ist der Regler</p>
+    <h1 class="held-titel spek" id="heldTitel">Spektrum</h1>
+    <div class="held-fuss ein">
+      <p class="unter">Klang, Licht, Strömung und Schwerkraft. Alles live gerechnet, kein einziges Video.</p>
+      <p class="formel" id="welleFormel">y = A · sin(2π f t) · A = 0,50 · f = 3,0</p>
+    </div>
+  </div>
+</section>
+
+<!-- 01 KLANG -->
+<section class="s-klang" id="klang" data-nr="01" data-name="Klang">
+  <div class="klebe">
+    <canvas class="vollbild" id="cKlang" aria-hidden="true"></canvas>
+    <div class="ui rand">
+      <p class="kicker"><b>01</b> / 05 · Klang · Chladni-Figuren</p>
+      <span></span>
+      <div class="ui-fuss">
+        <div class="block">
+          <h2 class="titel">Sand zeigt, wo die Platte <span class="spek">still steht.</span></h2>
+          <p class="fliess"><span id="sandZahl">40.000</span> Körner auf einer schwingenden Platte. Wo sie sich bewegt, springen sie weg, an den Knotenlinien bleiben sie liegen. Scrollen wechselt die Eigenschwingung, die Maus kippt die Platte.</p>
+          <p class="formel">cos(nπx)·cos(mπy) − cos(mπx)·cos(nπy) = 0</p>
+        </div>
+        <div class="wert"><small>Mode (n, m)</small><span id="klangMode">1 · 2</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 PRISMA -->
+<section class="s-prisma" id="prisma" data-nr="02" data-name="Licht">
+  <div class="klebe">
+    <canvas class="vollbild" id="cPrisma" aria-hidden="true"></canvas>
+    <div id="lambdas" aria-hidden="true"></div>
+    <div class="ui rand">
+      <p class="kicker"><b>02</b> / 05 · Licht · Brechung und Dispersion</p>
+      <span></span>
+      <div class="ui-fuss">
+        <div class="block">
+          <h2 class="titel">Weißes Licht ist <span class="spek">jede Farbe zugleich.</span></h2>
+          <p class="fliess">Jede Wellenlänge bricht im Glas ein wenig anders. Gerechnet mit dem Brechungsgesetz und der Cauchy-Formel für Kronglas, die Auffächerung zur Sichtbarkeit fünffach verstärkt. Die Maus dreht das Prisma.</p>
+          <p class="formel">n₁·sin θ₁ = n₂·sin θ₂ · n(λ) = A + B/λ²</p>
+        </div>
+        <div class="wert"><small>Einfallswinkel</small><span id="prismaWinkel">48°</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 FLUID -->
+<section class="s-fluid" id="fluid" data-nr="03" data-name="Strömung">
+  <div class="klebe">
+    <canvas class="vollbild" id="cFluid" aria-hidden="true"></canvas>
+    <p class="fluid-hinweis" id="fluidHinweis" aria-hidden="true">Maus bewegen · Farbe rühren</p>
+    <div class="ui rand">
+      <p class="kicker"><b>03</b> / 05 · Strömung · Navier-Stokes auf der Grafikkarte</p>
+      <span></span>
+      <div class="ui-fuss">
+        <div class="block">
+          <h2 class="titel">Farbe, die sich wie <span class="spek">Wasser</span> verhält.</h2>
+          <p class="fliess">Eine echte Strömungssimulation: Geschwindigkeit, Druck und Wirbel werden jedes Bild neu gelöst. Die Maus schiebt die Flüssigkeit, schnelle Bewegungen ziehen Wirbel.</p>
+          <p class="formel">∂u/∂t + (u·∇)u = −∇p + ν∇²u · ∇·u = 0</p>
+        </div>
+        <div class="wert"><small>Druck-Iterationen</small><span>20</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 GRAVITATION -->
+<section class="s-loch" id="loch" data-nr="04" data-name="Gravitation">
+  <div class="klebe">
+    <canvas class="vollbild" id="cLoch" aria-hidden="true"></canvas>
+    <div class="ui rand">
+      <p class="kicker"><b>04</b> / 05 · Gravitation · Gravitationslinse</p>
+      <span></span>
+      <div class="ui-fuss">
+        <div class="block">
+          <h2 class="titel">Masse <span class="spek">krümmt das Licht.</span></h2>
+          <p class="fliess">Ein Schwarzes Loch vor einem Sternfeld. Das Licht der Sterne dahinter wird um es herumgebogen, die heiße Scheibe leuchtet auf der Seite heller, die auf uns zukommt. Scrollen erhöht die Masse, die Maus verschiebt das Loch.</p>
+          <p class="formel">r_s = 2GM / c²</p>
+        </div>
+        <div class="wert"><small>Masse, relativ</small><span id="lochMasse">1,0</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 ABSPANN -->
+<section class="s-abspann" id="abspann" data-nr="05" data-name="Abspann">
+  <div class="abspann-inhalt rand">
+    <p class="kicker"><b>05</b> / 05 · Abspann</p>
+    <h2 class="ende spek">Alles schwingt.</h2>
+    <dl class="credits">
+      <div><dt>Schwingung</dt><dd>Oszilloskop auf Canvas, Frequenz und Amplitude an der Maus</dd></div>
+      <div><dt>Klang</dt><dd>40.000 Sandkörner wandern zu den Knotenlinien einer Plattenschwingung</dd></div>
+      <div><dt>Licht</dt><dd>Strahlengang durch ein Prisma, Brechungsgesetz und Cauchy-Formel je Wellenlänge</dd></div>
+      <div><dt>Strömung</dt><dd>Navier-Stokes-Löser auf der Grafikkarte: Advektion, Wirbelstärke, Druck</dd></div>
+      <div><dt>Gravitation</dt><dd>Gravitationslinse und Akkretionsscheibe im Shader</dd></div>
+      <div><dt>Ton</dt><dd>Synthesizer im Browser, je Szene ein eigener Klang</dd></div>
+      <div><dt>Leistung</dt><dd>Volle Auflösung, die Seite senkt sie nur, wenn das Gerät nicht mitkommt</dd></div>
+      <div><dt>Schrift</dt><dd>Unbounded, Onest, Fragment Mono</dd></div>
+    </dl>
+    <div class="abspann-fuss">
+      <button class="knopf" id="nochmal" type="button">Noch einmal schwingen ↑</button>
+      <p class="hinweis">Abstrakte Beispielseite, kein echter Betrieb. Keine Videos, keine Bilder, keine KI-Bilder: Jedes Pixel wird im Browser berechnet. Gebaut von ORDÉ als eine einzige HTML-Datei.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../bibliothek/gsap.min.js"></script>
+<script>window.gsap && gsap.ticker.lagSmoothing(0);</script>
+<script src="../bibliothek/lenis.min.js"></script>
+<script>
+(() => {
+"use strict";
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FEIN = matchMedia("(pointer: fine)").matches;
+const KLEIN = innerWidth < 700;
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const komma = (v, n = 1) => v.toFixed(n).replace(".", ",");
+const DPR = Math.min(devicePixelRatio || 1, 2);
+
+const maus = { x: innerWidth * .5, y: innerHeight * .5, nx: 0, ny: 0, dx: 0, dy: 0, zuletzt: 0 };
+addEventListener("pointermove", e => { maus.dx += e.clientX - maus.x; maus.dy += e.clientY - maus.y; maus.x = e.clientX; maus.y = e.clientY; maus.nx = e.clientX / innerWidth * 2 - 1; maus.ny = -(e.clientY / innerHeight * 2 - 1); maus.zuletzt = performance.now(); }, { passive: true });
+const aktivMaus = () => performance.now() - maus.zuletzt < 2500;
+function fortschritt(el) { const r = el.getBoundingClientRect(); const tot = r.height - innerHeight; return tot > 0 ? clamp(-r.top / tot, 0, 1) : (r.top < 0 ? 1 : 0); }
+function sichtbar(el) { const r = el.getBoundingClientRect(); return r.bottom > -40 && r.top < innerHeight + 40; }
+
+let lenis = null;
+if (!RM && window.Lenis) { try { lenis = new Lenis({ lerp: .085, smoothWheel: true }); } catch (e) { lenis = null; } }
+const szenen = []; let hudWert = "Schwingung";
+
+/* ================= Qualität: Auflösung folgt der Bildrate ================= */
+const Q = { faktor: 1, fps: 60, n: 0, t: performance.now(), gut: 0 };
+const fpsEl = $("#fps"), auflEl = $("#aufl");
+function qualitaet(jetzt) {
+  Q.n++;
+  if (jetzt - Q.t > 1000) {
+    Q.fps = Q.n * 1000 / (jetzt - Q.t); Q.n = 0; Q.t = jetzt;
+    if (Q.fps < 46 && Q.faktor > .5) { Q.faktor = Math.max(.5, Q.faktor - .1); Q.gut = 0; }
+    else if (Q.fps > 57 && Q.faktor < 1) { if (++Q.gut > 2) { Q.faktor = Math.min(1, Q.faktor + .1); Q.gut = 0; } }
+    fpsEl.textContent = Math.round(Q.fps); auflEl.textContent = Math.round(Q.faktor * 100);
+  }
+}
+
+/* ================= Ton ================= */
+const ton = { ctx: null, an: false, master: null, szene: "", knoten: {} };
+function tonAufbauen() {
+  const c = new (window.AudioContext || window.webkitAudioContext)();
+  const master = c.createGain(); master.gain.value = 0; const komp = c.createDynamicsCompressor(); master.connect(komp); komp.connect(c.destination);
+  const hall = c.createConvolver(); const len = c.sampleRate * 2.6; const ir = c.createBuffer(2, len, c.sampleRate);
+  for (let k = 0; k < 2; k++) { const d = ir.getChannelData(k); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+  hall.buffer = ir; const hallG = c.createGain(); hallG.gain.value = .45; hall.connect(hallG); hallG.connect(master);
+  const bus = c.createGain(); bus.connect(master); bus.connect(hall);
+  // Stimmen: Sinus (Klang), drei Glastöne (Licht), Rauschen (Strömung), Bordun (Gravitation), Welle (Schwingung)
+  const osz = (typ, f, g) => { const o = c.createOscillator(); o.type = typ; o.frequency.value = f; const gg = c.createGain(); gg.gain.value = 0; o.connect(gg); gg.connect(bus); o.start(); return { o, g: gg }; };
+  const welle = osz("sine", 220, 0);
+  const sinus = osz("sine", 440, 0), sinus2 = osz("sine", 660, 0);
+  const glas = [osz("sine", 1318.5, 0), osz("sine", 1567.98, 0), osz("sine", 1975.5, 0)];
+  const rb = c.createBuffer(1, c.sampleRate * 2, c.sampleRate); const rd = rb.getChannelData(0); for (let i = 0; i < rd.length; i++) rd[i] = Math.random() * 2 - 1;
+  const rq = c.createBufferSource(); rq.buffer = rb; rq.loop = true; const rf = c.createBiquadFilter(); rf.type = "bandpass"; rf.frequency.value = 600; rf.Q.value = .8; const rg = c.createGain(); rg.gain.value = 0; rq.connect(rf); rf.connect(rg); rg.connect(bus); rq.start();
+  const bordun = [osz("sawtooth", 41.2, 0), osz("sawtooth", 41.5, 0)]; const bf = c.createBiquadFilter(); bf.type = "lowpass"; bf.frequency.value = 160;
+  bordun.forEach(b => { b.g.disconnect(); b.g.connect(bf); }); bf.connect(bus);
+  Object.assign(ton, { ctx: c, master, knoten: { welle, sinus, sinus2, glas, rauschen: { g: rg, f: rf }, bordun, bf } });
+}
+function setze(param, wert, zeit = .15) { if (ton.ctx) param.setTargetAtTime(wert, ton.ctx.currentTime, zeit); }
+function tonSzene(name, werte = {}) {
+  if (!ton.ctx || !ton.an) return;
+  const k = ton.knoten;
+  setze(k.welle.g.gain, name === "Schwingung" ? .09 * (werte.a ?? .5) : 0, .1);
+  if (werte.f) setze(k.welle.o.frequency, werte.f, .05);
+  setze(k.sinus.g.gain, name === "Klang" ? .07 : 0); setze(k.sinus2.g.gain, name === "Klang" ? .03 : 0);
+  if (werte.klang) { setze(k.sinus.o.frequency, werte.klang, .3); setze(k.sinus2.o.frequency, werte.klang * 1.5, .3); }
+  k.glas.forEach((g, i) => setze(g.g.gain, name === "Licht" ? .018 * (1 + Math.sin(performance.now() / 900 + i * 2)) : 0, .3));
+  setze(k.rauschen.g.gain, name === "Strömung" ? clamp(.02 + (werte.tempo || 0) * .1, 0, .16) : 0, .1);
+  if (werte.tempo !== undefined) setze(k.rauschen.f.frequency, 300 + werte.tempo * 2400, .1);
+  k.bordun.forEach(b => setze(b.g.gain, name === "Gravitation" ? .06 : 0, .4));
+  if (werte.masse) setze(k.bf.frequency, 120 + 60 / werte.masse, .3);
+}
+const tonKnopf = $("#ton");
+tonKnopf.addEventListener("click", () => {
+  if (!ton.ctx) { try { tonAufbauen(); } catch (e) { return; } }
+  ton.an = !ton.an; ton.ctx.resume();
+  setze(ton.master.gain, ton.an ? .9 : 0, .2);
+  tonKnopf.setAttribute("aria-pressed", ton.an ? "true" : "false"); tonKnopf.querySelector("span").textContent = ton.an ? "Ton aus" : "Ton an";
+});
+
+/* ================= Hilfe: Shader-Fläche (WebGL1) ================= */
+function shaderFlaeche(cv, frag, skal) {
+  const gl = cv.getContext("webgl", { antialias: false, alpha: false, powerPreference: "high-performance" });
+  if (!gl) return null;
+  const sh = (typ, src) => { const s = gl.createShader(typ); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const pr = gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}"));
+  gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, frag)); gl.linkProgram(pr); gl.useProgram(pr);
+  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; const u = n => (n in U) ? U[n] : (U[n] = gl.getUniformLocation(pr, n));
+  function groesse() { const d = DPR * skal * Q.faktor; const w = Math.max(1, Math.round(cv.clientWidth * d)), h = Math.max(1, Math.round(cv.clientHeight * d)); if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); } }
+  return { gl, u, groesse, zeichne() { gl.drawArrays(gl.TRIANGLES, 0, 3); } };
+}
+
+/* ================= 00 SCHWINGUNG: Oszilloskop ================= */
+function initWelle() {
+  const el = $("#held"), cv = $("#cWelle"), x = cv.getContext("2d"), formel = $("#welleFormel");
+  let A = .5, f = 3, ph = 0;
+  szenen.push({ el, update(t, dt) {
+    const d = DPR * Q.faktor; const W = Math.round(cv.clientWidth * d), H = Math.round(cv.clientHeight * d);
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    const zA = aktivMaus() ? clamp(.15 + (1 - maus.y / innerHeight) * .85, .1, 1) : .45 + .2 * Math.sin(t * .7);
+    const zF = aktivMaus() ? 1 + maus.x / innerWidth * 9 : 3 + Math.sin(t * .3);
+    A = lerp(A, zA, .08); f = lerp(f, zF, .08); if (!RM) ph += dt * 1.6;
+    x.fillStyle = "rgba(5,5,7,.32)"; x.fillRect(0, 0, W, H);
+    x.strokeStyle = "rgba(236,235,242,.06)"; x.lineWidth = 1;
+    for (let i = 1; i < 10; i++) { x.beginPath(); x.moveTo(i * W / 10, 0); x.lineTo(i * W / 10, H); x.stroke(); }
+    for (let i = 1; i < 8; i++) { x.beginPath(); x.moveTo(0, i * H / 8); x.lineTo(W, i * H / 8); x.stroke(); }
+    const g = x.createLinearGradient(0, 0, W, 0); ["#7a2cff", "#2a6bff", "#20d3ff", "#3dff8a", "#ffe23d", "#ff8a1f", "#ff2b4a"].forEach((c, i) => g.addColorStop(i / 6, c));
+    x.globalCompositeOperation = "lighter";
+    for (let k = 0; k < 3; k++) {
+      x.strokeStyle = g; x.lineWidth = (k === 0 ? 2.2 : 7 + k * 6) * d; x.globalAlpha = k === 0 ? 1 : .12 / k;
+      x.beginPath();
+      for (let i = 0; i <= 400; i++) { const u = i / 400; const y = H / 2 + Math.sin(u * f * Math.PI * 2 + ph) * A * H * .32 * (1 + .12 * Math.sin(u * 40 + ph * 3) * (k === 0 ? 1 : 0)) * Math.sin(u * Math.PI); i ? x.lineTo(u * W, y) : x.moveTo(u * W, y); }
+      x.stroke();
+    }
+    x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
+    formel.textContent = `y = A · sin(2π f t) · A = ${komma(A, 2)} · f = ${komma(f)}`;
+    hudWert = `A ${komma(A, 2)} · f ${komma(f)}`;
+    tonSzene("Schwingung", { a: A, f: 110 * Math.pow(2, f / 3) });
+  }});
+}
+
+/* ================= 01 KLANG: Chladni ================= */
+const MODEN = [[1, 2], [2, 3], [1, 4], [3, 5], [2, 5], [4, 7], [3, 7], [5, 8], [6, 9]];
+function initKlang() {
+  const el = $("#klang"), cv = $("#cKlang");
+  const gl = cv.getContext("webgl", { antialias: true, alpha: false, powerPreference: "high-performance" });
+  if (!gl) return;
+  const N = KLEIN ? 22000 : 40000;
+  $("#sandZahl").textContent = new Intl.NumberFormat("de-DE").format(N);
+  const pos = new Float32Array(N * 2); for (let i = 0; i < N * 2; i++) pos[i] = Math.random() * 2 - 1;
+  const sh = (typ, src) => { const s = gl.createShader(typ); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const pr = gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, `attribute vec2 a; uniform float uKipp,uDreh,uAsp,uGr,uS; varying float vT;
+    void main(){ vec3 p=vec3(a.x,a.y,0.);
+      float c=cos(uDreh),s=sin(uDreh); p.xy=vec2(c*p.x-s*p.y,s*p.x+c*p.y);
+      float ck=cos(uKipp),sk=sin(uKipp); p=vec3(p.x,p.y*ck,p.y*sk);
+      float w=1.+p.z*.55; vec2 q=p.xy/w*uGr; q.x/=uAsp; q.y+=.06;
+      gl_Position=vec4(q,0.,1.); gl_PointSize=uS/w; vT=p.z; }`));
+  gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, `precision mediump float; varying float vT; uniform vec3 uFarbe;
+    void main(){ float d=length(gl_PointCoord-.5); if(d>.5) discard; gl_FragColor=vec4(uFarbe*(.75+.25*vT),smoothstep(.5,.15,d)*.85); }`));
+  gl.linkProgram(pr); gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, pos, gl.DYNAMIC_DRAW);
+  const loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  // Platte als Linienrahmen
+  const rahmen = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]); const rb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, rb); gl.bufferData(gl.ARRAY_BUFFER, rahmen, gl.STATIC_DRAW);
+  const U = n => gl.getUniformLocation(pr, n);
+  const uKipp = U("uKipp"), uDreh = U("uDreh"), uAsp = U("uAsp"), uGr = U("uGr"), uS = U("uS"), uFarbe = U("uFarbe");
+  gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+  const modeEl = $("#klangMode"); let mode = -1, n = 1, m = 2, kipp = .9, dreh = 0;
+  const PI = Math.PI;
+  szenen.push({ el, update(t, dt) {
+    const d = DPR * Q.faktor; const W = Math.round(cv.clientWidth * d), H = Math.round(cv.clientHeight * d);
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; gl.viewport(0, 0, W, H); }
+    const p = fortschritt(el);
+    const i = Math.min(MODEN.length - 1, Math.floor(p * MODEN.length));
+    if (i !== mode) {
+      mode = i; [n, m] = MODEN[i]; modeEl.textContent = `${n} · ${m}`;
+      // Platte anschlagen: Körner springen auf
+      if (!RM) for (let k = 0; k < N * 2; k++) pos[k] += (Math.random() - .5) * .12;
+    }
+    const sum = n * n + m * m;
+    hudWert = `Mode ${n}·${m} · f ∝ n²+m² = ${sum}`;
+    tonSzene("Klang", { klang: 55 * Math.sqrt(sum) * 2 });
+    // Körner wandern zu den Knotenlinien
+    if (!RM) {
+      const schritt = .0032 * Math.min(dt * 60, 2), zittern = .075;
+      for (let k = 0; k < N; k++) {
+        let x = pos[k * 2], y = pos[k * 2 + 1];
+        const cnx = Math.cos(n * PI * x), cmy = Math.cos(m * PI * y), cmx = Math.cos(m * PI * x), cny = Math.cos(n * PI * y);
+        const f = cnx * cmy - cmx * cny;
+        const gx = -n * PI * Math.sin(n * PI * x) * cmy + m * PI * Math.sin(m * PI * x) * cny;
+        const gy = -m * PI * cnx * Math.sin(m * PI * y) + n * PI * cmx * Math.sin(n * PI * y);
+        const s = f > 0 ? 1 : -1, gl2 = Math.hypot(gx, gy) + 1e-3;
+        x -= s * gx / gl2 * schritt * Math.min(1, Math.abs(f) * 4);
+        y -= s * gy / gl2 * schritt * Math.min(1, Math.abs(f) * 4);
+        const a = Math.abs(f) * zittern + .0022; x += (Math.random() - .5) * a; y += (Math.random() - .5) * a;
+        if (x < -1 || x > 1) x = clamp(x, -1, 1) * .99; if (y < -1 || y > 1) y = clamp(y, -1, 1) * .99;
+        pos[k * 2] = x; pos[k * 2 + 1] = y;
+      }
+    }
+    kipp = lerp(kipp, .78 + maus.ny * .25, .06); dreh = lerp(dreh, maus.nx * .35 + (RM ? 0 : Math.sin(t * .2) * .08), .06);
+    gl.clearColor(.02, .02, .027, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+    const asp = W / H, gr = Math.min(.82, .82 * asp * (asp < 1 ? 1.15 : .62));
+    gl.uniform1f(uKipp, kipp); gl.uniform1f(uDreh, dreh); gl.uniform1f(uAsp, asp); gl.uniform1f(uGr, gr);
+    // Platte
+    gl.bindBuffer(gl.ARRAY_BUFFER, rb); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform1f(uS, 1); gl.uniform3f(uFarbe, .035, .035, .045); gl.drawArrays(gl.TRIANGLE_FAN, 0, 4); gl.uniform3f(uFarbe, .3, .29, .36); gl.drawArrays(gl.LINE_LOOP, 0, 4);
+    // Sand
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, pos); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform1f(uS, (KLEIN ? 2.8 : 2.6) * d); gl.uniform3f(uFarbe, .9, .82, .66);
+    gl.drawArrays(gl.POINTS, 0, N);
+  }});
+}
+
+/* ================= 02 LICHT: Prisma ================= */
+function wellenFarbe(l) { // Wellenlänge in nm → RGB (Näherung nach Bruton)
+  let r = 0, g = 0, b = 0;
+  if (l < 440) { r = -(l - 440) / 60; b = 1; } else if (l < 490) { g = (l - 440) / 50; b = 1; } else if (l < 510) { g = 1; b = -(l - 510) / 20; }
+  else if (l < 580) { r = (l - 510) / 70; g = 1; } else if (l < 645) { r = 1; g = -(l - 645) / 65; } else { r = 1; }
+  const k = l < 420 ? .3 + .7 * (l - 380) / 40 : l > 700 ? .3 + .7 * (780 - l) / 80 : 1;
+  return [r * k, g * k, b * k];
+}
+function brechen(I, N, eta) { // I, N normiert; N zeigt gegen I
+  const c = -(I[0] * N[0] + I[1] * N[1]); const k = 1 - eta * eta * (1 - c * c);
+  if (k < 0) return null; const f = eta * c - Math.sqrt(k);
+  return [eta * I[0] + f * N[0], eta * I[1] + f * N[1]];
+}
+function schnitt(P, D, A, B) { // Strahl P+tD gegen Strecke AB
+  const ex = B[0] - A[0], ey = B[1] - A[1]; const den = D[0] * ey - D[1] * ex; if (Math.abs(den) < 1e-9) return null;
+  const t = ((A[0] - P[0]) * ey - (A[1] - P[1]) * ex) / den, s = ((A[0] - P[0]) * D[1] - (A[1] - P[1]) * D[0]) / den;
+  return t > 1e-6 && s >= 0 && s <= 1 ? { t, p: [P[0] + t * D[0], P[1] + t * D[1]] } : null;
+}
+function initPrisma() {
+  const el = $("#prisma"), cv = $("#cPrisma"), lambdas = $("#lambdas"), winkelEl = $("#prismaWinkel");
+  const NL = 28;
+  const f = shaderFlaeche(cv, `precision highp float;
+uniform vec2 uRes; uniform float uZeit; uniform vec2 uE, uP0, uA[3]; uniform vec2 uX[${NL}], uD[${NL}]; uniform vec3 uF[${NL}]; uniform float uOk[${NL}];
+float seg(vec2 p,vec2 a,vec2 b){vec2 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.);return length(pa-ba*h);}
+float strahl(vec2 p,vec2 a,vec2 d){vec2 pa=p-a;float h=max(dot(pa,d),0.);return length(pa-d*h)+step(h,0.)*10.;}
+float h1(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+float n2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h1(i),h1(i+vec2(1,0)),f.x),mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),f.x),f.y);}
+float dreieck(vec2 p){ // vorzeichenbehafteter Abstand zum Prisma
+  vec2 a=uA[0],b=uA[1],c=uA[2];
+  vec2 e0=b-a,e1=c-b,e2=a-c,v0=p-a,v1=p-b,v2=p-c;
+  vec2 pq0=v0-e0*clamp(dot(v0,e0)/dot(e0,e0),0.,1.),pq1=v1-e1*clamp(dot(v1,e1)/dot(e1,e1),0.,1.),pq2=v2-e2*clamp(dot(v2,e2)/dot(e2,e2),0.,1.);
+  float s=sign(e0.x*e2.y-e0.y*e2.x);
+  vec2 d=min(min(vec2(dot(pq0,pq0),s*(v0.x*e0.y-v0.y*e0.x)),vec2(dot(pq1,pq1),s*(v1.x*e1.y-v1.y*e1.x))),vec2(dot(pq2,pq2),s*(v2.x*e2.y-v2.y*e2.x)));
+  return -sqrt(d.x)*sign(d.y);
+}
+void main(){
+  vec2 p=(gl_FragCoord.xy-.5*uRes)/uRes.y;
+  float px=1.5/uRes.y;
+  vec3 c=vec3(.012,.012,.02);
+  // Lichtmuster am Boden (Kaustik), sehr leise
+  float k=n2(p*7.+vec2(uZeit*.15,0.))*n2(p*11.-vec2(0.,uZeit*.1));
+  c+=vec3(.05,.06,.12)*pow(k,3.)*.8;
+  // einfallender weißer Strahl
+  float de=seg(p,uP0,uE);
+  c+=vec3(1.)*(smoothstep(px*2.,0.,de)+.35*exp(-de*90.)+.12*exp(-de*18.));
+  // Prisma
+  float dp=dreieck(p);
+  float innen=step(dp,0.);
+  // Strahlen im Glas und danach
+  vec3 sp=vec3(0.);
+  for(int i=0;i<${NL};i++){
+    if(uOk[i]<.5) continue;
+    float di=seg(p,uE,uX[i]);
+    sp+=uF[i]*(smoothstep(px*1.5,0.,di)*.35+exp(-di*160.)*.12)*innen;
+    float da=strahl(p,uX[i],uD[i]);
+    float weit=length(p-uX[i]);
+    sp+=uF[i]*(smoothstep(px*(1.5+weit*3.),0.,da)*.5+exp(-da*(70./(1.+weit*3.)))*.22)*(1.-innen);
+  }
+  c+=sp*1.2;
+  // Glas: Kante, Glanz, leichte Tönung
+  c=mix(c,c*.85+vec3(.03,.035,.05),innen*.8);
+  c+=vec3(.75,.8,1.)*smoothstep(px*2.,0.,abs(dp))*.9;
+  c+=vec3(.5,.55,.8)*exp(-abs(dp)*60.)*.15;
+  c+=vec3(.9)*smoothstep(.02,0.,abs(dp+.012))*innen*.08;
+  // Vignette und Körnung
+  vec2 q=gl_FragCoord.xy/uRes-.5; c*=1.-dot(q,q)*.8;
+  c+=(h1(gl_FragCoord.xy+fract(uZeit)*71.)-.5)*.02;
+  gl_FragColor=vec4(pow(max(c,0.),vec3(.95)),1.);
+}`, KLEIN ? .9 : 1);
+  if (!f) return;
+  const LAMBDA = [], FARBEN = [];
+  for (let i = 0; i < NL; i++) { const l = 400 + i * (300 / (NL - 1)); LAMBDA.push(l); FARBEN.push(...wellenFarbe(l)); }
+  const brechzahl = l => { const um = l / 1000; return 1.5046 + .0042 * 5 / (um * um) - (.0042 * 4 / (.55 * .55)); }; // Kronglas BK7, Dispersion ×5 um 550 nm
+  const marken = [400, 500, 600, 700].map(l => { const s = document.createElement("span"); s.className = "lambda"; s.textContent = l + " nm"; lambdas.appendChild(s); return { l, s }; });
+  let rot = 0, zeit = 0;
+  szenen.push({ el, update(t, dt) {
+    f.groesse(); const W = f.gl.canvas.width, H = f.gl.canvas.height, asp = W / H;
+    const p = fortschritt(el);
+    const ziel = (FEIN && aktivMaus() ? maus.nx * .35 + maus.ny * .1 : Math.sin(t * .35) * .22) + (p - .5) * .5;
+    rot = lerp(rot, ziel, .06); if (!RM) zeit += dt;
+    const S = KLEIN ? .26 : .32, C = [asp < 1 ? -.08 : -.22, .06];
+    const ecken = [0, 1, 2].map(i => { const a = rot + Math.PI / 2 + i * 2 * Math.PI / 3; return [C[0] + Math.cos(a) * S, C[1] + Math.sin(a) * S]; });
+    // einfallender Strahl, waagrecht von links auf die linke Fläche
+    const D0 = [Math.cos(.36), Math.sin(.36)];
+    let li = 0, lmx = 1e9; for (let i = 0; i < 3; i++) { const mxx = (ecken[i][0] + ecken[(i + 1) % 3][0]) / 2; if (mxx < lmx) { lmx = mxx; li = i; } }
+    const fa = ecken[li], fb = ecken[(li + 1) % 3], unten = fa[1] < fb[1] ? fa : fb, oben = fa[1] < fb[1] ? fb : fa;
+    const M = [lerp(unten[0], oben[0], .42), lerp(unten[1], oben[1], .42)];
+    const P0 = [M[0] - D0[0] * 3, M[1] - D0[1] * 3];
+    let best = null, fl = -1;
+    for (let i = 0; i < 3; i++) { const s = schnitt(P0, D0, ecken[i], ecken[(i + 1) % 3]); if (s && (!best || s.t < best.t)) { best = s; fl = i; } }
+    const X = new Float32Array(NL * 2), D = new Float32Array(NL * 2), OK = new Float32Array(NL);
+    let E = [-.5, 0];
+    if (best) {
+      E = best.p;
+      const A = ecken[fl], B = ecken[(fl + 1) % 3]; let nx = -(B[1] - A[1]), ny = B[0] - A[0]; const nl = Math.hypot(nx, ny); nx /= nl; ny /= nl;
+      if (nx * D0[0] + ny * D0[1] > 0) { nx = -nx; ny = -ny; }
+      const einfall = Math.acos(clamp(-(nx * D0[0] + ny * D0[1]), -1, 1)) * 180 / Math.PI;
+      winkelEl.textContent = Math.round(einfall) + "°";
+      for (let i = 0; i < NL; i++) {
+        const n = brechzahl(LAMBDA[i]);
+        const R1 = brechen(D0, [nx, ny], 1 / n); if (!R1) continue;
+        const r1l = Math.hypot(R1[0], R1[1]); const d1 = [R1[0] / r1l, R1[1] / r1l];
+        let aus = null, af = -1;
+        for (let j = 0; j < 3; j++) { if (j === fl) continue; const s = schnitt([E[0] + d1[0] * 1e-4, E[1] + d1[1] * 1e-4], d1, ecken[j], ecken[(j + 1) % 3]); if (s && (!aus || s.t < aus.t)) { aus = s; af = j; } }
+        if (!aus) continue;
+        const A2 = ecken[af], B2 = ecken[(af + 1) % 3]; let mx = -(B2[1] - A2[1]), my = B2[0] - A2[0]; const ml = Math.hypot(mx, my); mx /= ml; my /= ml;
+        if (mx * d1[0] + my * d1[1] > 0) { mx = -mx; my = -my; }
+        const R2 = brechen(d1, [mx, my], n); if (!R2) continue;
+        const r2l = Math.hypot(R2[0], R2[1]);
+        X[i * 2] = aus.p[0]; X[i * 2 + 1] = aus.p[1]; D[i * 2] = R2[0] / r2l; D[i * 2 + 1] = R2[1] / r2l; OK[i] = 1;
+      }
+    }
+    const gl = f.gl;
+    gl.uniform2f(f.u("uRes"), W, H); gl.uniform1f(f.u("uZeit"), zeit);
+    gl.uniform2f(f.u("uE"), E[0], E[1]); gl.uniform2f(f.u("uP0"), P0[0], P0[1]); gl.uniform2fv(f.u("uA"), new Float32Array(ecken.flat()));
+    gl.uniform2fv(f.u("uX"), X); gl.uniform2fv(f.u("uD"), D); gl.uniform3fv(f.u("uF"), new Float32Array(FARBEN)); gl.uniform1fv(f.u("uOk"), OK);
+    f.zeichne();
+    // Beschriftung der Wellenlängen am rechten Rand
+    const r0 = cv.getBoundingClientRect(), wx = asp * .5 - .06;
+    marken.forEach(({ l, s }) => {
+      const i = Math.round((l - 400) / 300 * (NL - 1));
+      if (!OK[i] || D[i * 2] <= 0) { s.style.opacity = 0; return; }
+      const tt = (wx - X[i * 2]) / D[i * 2]; const y = X[i * 2 + 1] + D[i * 2 + 1] * tt;
+      const sx = r0.width * (.5 + (wx) / asp) - 70, sy = r0.height * (.5 - y);
+      s.style.left = sx + "px"; s.style.top = sy + "px"; s.style.opacity = (sy > 80 && sy < r0.height - 190) ? .9 : 0;
+    });
+    hudWert = `λ 400–700 nm · Dispersion ×5`;
+    tonSzene("Licht");
+  }});
+}
+
+/* ================= 03 STRÖMUNG: Navier-Stokes (WebGL2) ================= */
+function initFluid() {
+  const el = $("#fluid"), cv = $("#cFluid"), hinweis = $("#fluidHinweis");
+  const gl = cv.getContext("webgl2", { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: "high-performance" });
+  const ext = gl && gl.getExtension("EXT_color_buffer_float");
+  if (!gl || !ext) { const d = document.createElement("div"); d.className = "fluid-fehlt"; d.innerHTML = '<p class="fliess">Dieses Gerät kann die Strömung nicht rechnen (WebGL2 mit Gleitkomma-Texturen fehlt).</p>'; cv.after(d); return; }
+  gl.getExtension("OES_texture_float_linear");
+  const VS = `#version 300 es
+    in vec2 aPos; out vec2 vUv,vL,vR,vT,vB; uniform vec2 texel;
+    void main(){ vUv=aPos*.5+.5; vL=vUv-vec2(texel.x,0.); vR=vUv+vec2(texel.x,0.); vT=vUv+vec2(0.,texel.y); vB=vUv-vec2(0.,texel.y); gl_Position=vec4(aPos,0.,1.); }`;
+  const KOPF = "#version 300 es\nprecision highp float; precision highp sampler2D; in vec2 vUv,vL,vR,vT,vB; out vec4 o;\n";
+  const prog = src => {
+    const mk = (t, s) => { const x = gl.createShader(t); gl.shaderSource(x, s); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x)); return x; };
+    const p = gl.createProgram(); gl.attachShader(p, mk(gl.VERTEX_SHADER, VS)); gl.attachShader(p, mk(gl.FRAGMENT_SHADER, KOPF + src)); gl.bindAttribLocation(p, 0, "aPos"); gl.linkProgram(p);
+    const U = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); for (let i = 0; i < n; i++) { const nm = gl.getActiveUniform(p, i).name; U[nm] = gl.getUniformLocation(p, nm); }
+    return { p, U };
+  };
+  const P = {
+    leeren: prog(`uniform sampler2D uT; uniform float wert; void main(){ o=wert*texture(uT,vUv); }`),
+    klecks: prog(`uniform sampler2D uT; uniform float asp,radius; uniform vec3 farbe; uniform vec2 punkt;
+      void main(){ vec2 p=vUv-punkt; p.x*=asp; vec3 s=exp(-dot(p,p)/radius)*farbe; o=vec4(texture(uT,vUv).xyz+s,1.); }`),
+    advektion: prog(`uniform sampler2D uV,uQ; uniform vec2 texel; uniform float dt,schwund;
+      void main(){ vec2 c=vUv-dt*texture(uV,vUv).xy*texel; o=texture(uQ,c)/(1.+schwund*dt); o.a=1.; }`),
+    divergenz: prog(`uniform sampler2D uV;
+      void main(){ float L=texture(uV,vL).x,R=texture(uV,vR).x,T=texture(uV,vT).y,B=texture(uV,vB).y; vec2 C=texture(uV,vUv).xy;
+        if(vL.x<0.)L=-C.x; if(vR.x>1.)R=-C.x; if(vT.y>1.)T=-C.y; if(vB.y<0.)B=-C.y; o=vec4(.5*(R-L+T-B),0.,0.,1.); }`),
+    wirbel: prog(`uniform sampler2D uV; void main(){ float L=texture(uV,vL).y,R=texture(uV,vR).y,T=texture(uV,vT).x,B=texture(uV,vB).x; o=vec4(.5*(R-L-T+B),0.,0.,1.); }`),
+    wirbelKraft: prog(`uniform sampler2D uV,uC; uniform float staerke,dt;
+      void main(){ float L=texture(uC,vL).x,R=texture(uC,vR).x,T=texture(uC,vT).x,B=texture(uC,vB).x,C=texture(uC,vUv).x;
+        vec2 f=.5*vec2(abs(T)-abs(B),abs(R)-abs(L)); f/=length(f)+.0001; f*=staerke*C; f.y*=-1.;
+        vec2 v=texture(uV,vUv).xy+f*dt; o=vec4(clamp(v,-1000.,1000.),0.,1.); }`),
+    druck: prog(`uniform sampler2D uP,uDiv; void main(){ float L=texture(uP,vL).x,R=texture(uP,vR).x,T=texture(uP,vT).x,B=texture(uP,vB).x; float d=texture(uDiv,vUv).x; o=vec4((L+R+B+T-d)*.25,0.,0.,1.); }`),
+    gradient: prog(`uniform sampler2D uP,uV; void main(){ float L=texture(uP,vL).x,R=texture(uP,vR).x,T=texture(uP,vT).x,B=texture(uP,vB).x; vec2 v=texture(uV,vUv).xy-vec2(R-L,T-B); o=vec4(v,0.,1.); }`),
+    anzeige: prog(`uniform sampler2D uT; uniform vec2 texel;
+      void main(){ vec3 c=texture(uT,vUv).rgb;
+        vec3 lc=texture(uT,vL).rgb,rc=texture(uT,vR).rgb,tc=texture(uT,vT).rgb,bc=texture(uT,vB).rgb;
+        float dx=length(rc)-length(lc),dy=length(tc)-length(bc); vec3 n=normalize(vec3(dx,dy,length(texel)*2.));
+        float licht=clamp(dot(n,normalize(vec3(-.4,.6,.7)))+.55,.6,1.25);
+        c*=licht; c=c/(1.+c*.35); vec2 q=vUv-.5; c*=1.-dot(q,q)*.9;
+        o=vec4(pow(c,vec3(.9)),1.); }`)
+  };
+  const vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
+  const ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(0);
+  function fbo(w, h, intern, format, filter) {
+    gl.activeTexture(gl.TEXTURE0); const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, intern, w, h, 0, format, gl.HALF_FLOAT, null);
+    const fb = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, fb); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    gl.viewport(0, 0, w, h); gl.clearColor(0, 0, 0, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+    return { tex, fb, w, h, tx: 1 / w, ty: 1 / h, bind(e) { gl.activeTexture(gl.TEXTURE0 + e); gl.bindTexture(gl.TEXTURE_2D, tex); return e; } };
+  }
+  const doppelt = (...a) => { let r = fbo(...a), w = fbo(...a); return { get r() { return r; }, get w() { return w; }, tausch() { const x = r; r = w; w = x; } }; };
+  let SIM = KLEIN ? 128 : 192, FARB = KLEIN ? 512 : 1024;
+  let vel, dye, div, curl, pres;
+  function felder() {
+    const asp = cv.clientWidth / Math.max(1, cv.clientHeight);
+    const sim = asp >= 1 ? [Math.round(SIM * asp), SIM] : [SIM, Math.round(SIM / asp)];
+    const far = asp >= 1 ? [Math.round(FARB * asp), FARB] : [FARB, Math.round(FARB / asp)];
+    vel = doppelt(sim[0], sim[1], gl.RG16F, gl.RG, gl.LINEAR); dye = doppelt(far[0], far[1], gl.RGBA16F, gl.RGBA, gl.LINEAR);
+    div = fbo(sim[0], sim[1], gl.R16F, gl.RED, gl.NEAREST); curl = fbo(sim[0], sim[1], gl.R16F, gl.RED, gl.NEAREST); pres = doppelt(sim[0], sim[1], gl.R16F, gl.RED, gl.NEAREST);
+  }
+  function blit(ziel) { if (ziel) { gl.viewport(0, 0, ziel.w, ziel.h); gl.bindFramebuffer(gl.FRAMEBUFFER, ziel.fb); } else { gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight); gl.bindFramebuffer(gl.FRAMEBUFFER, null); } gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0); }
+  function nutze(pp, texel) { gl.useProgram(pp.p); if (texel && pp.U.texel) gl.uniform2f(pp.U.texel, texel[0], texel[1]); return pp.U; }
+  function groesse() { const d = DPR * Q.faktor; const w = Math.round(cv.clientWidth * d), h = Math.round(cv.clientHeight * d); if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; } }
+  groesse(); felder();
+  let letzteAsp = cv.clientWidth / cv.clientHeight;
+  addEventListener("resize", () => { const a = cv.clientWidth / Math.max(1, cv.clientHeight); if (Math.abs(a - letzteAsp) > .15) { letzteAsp = a; felder(); } });
+  function klecks(x, y, dx, dy, farbe) {
+    const asp = cv.width / cv.height;
+    let U = nutze(P.klecks, [vel.r.tx, vel.r.ty]);
+    gl.uniform1i(U.uT, vel.r.bind(0)); gl.uniform1f(U.asp, asp); gl.uniform2f(U.punkt, x, y); gl.uniform3f(U.farbe, dx, dy, 0); gl.uniform1f(U.radius, .25 / 100);
+    blit(vel.w); vel.tausch();
+    gl.uniform1i(U.uT, dye.r.bind(0)); gl.uniform3f(U.farbe, farbe[0], farbe[1], farbe[2]); gl.uniform1f(U.radius, .32 / 100);
+    blit(dye.w); dye.tausch();
+  }
+  const spek = h => { const c = wellenFarbe(400 + ((h % 1) + 1) % 1 * 300); return c.map(v => v * .55 + .02); };
+  function schritt(dt) {
+    const tx = [vel.r.tx, vel.r.ty];
+    let U = nutze(P.wirbel, tx); gl.uniform1i(U.uV, vel.r.bind(0)); blit(curl);
+    U = nutze(P.wirbelKraft, tx); gl.uniform1i(U.uV, vel.r.bind(0)); gl.uniform1i(U.uC, curl.bind(1)); gl.uniform1f(U.staerke, 28); gl.uniform1f(U.dt, dt); blit(vel.w); vel.tausch();
+    U = nutze(P.divergenz, tx); gl.uniform1i(U.uV, vel.r.bind(0)); blit(div);
+    U = nutze(P.leeren, tx); gl.uniform1i(U.uT, pres.r.bind(0)); gl.uniform1f(U.wert, .8); blit(pres.w); pres.tausch();
+    U = nutze(P.druck, tx); gl.uniform1i(U.uDiv, div.bind(0));
+    for (let i = 0; i < 20; i++) { gl.uniform1i(U.uP, pres.r.bind(1)); blit(pres.w); pres.tausch(); }
+    U = nutze(P.gradient, tx); gl.uniform1i(U.uP, pres.r.bind(0)); gl.uniform1i(U.uV, vel.r.bind(1)); blit(vel.w); vel.tausch();
+    U = nutze(P.advektion, tx); gl.uniform1i(U.uV, vel.r.bind(0)); gl.uniform1i(U.uQ, vel.r.bind(0)); gl.uniform1f(U.dt, dt); gl.uniform1f(U.schwund, .15); blit(vel.w); vel.tausch();
+    gl.uniform1i(U.uV, vel.r.bind(0)); gl.uniform1i(U.uQ, dye.r.bind(1)); gl.uniform1f(U.schwund, .5); blit(dye.w); dye.tausch();
+  }
+  let lx = -1, ly = -1, auto = 0, farbT = Math.random(), tempo = 0, gemalt = false;
+  szenen.push({ el, update(t, dt) {
+    groesse();
+    const r0 = el.getBoundingClientRect();
+    if (FEIN && aktivMaus() && maus.y > Math.max(0, r0.top) && maus.y < Math.min(innerHeight, r0.bottom)) {
+      const x = maus.x / innerWidth, y = 1 - (maus.y - Math.max(0, r0.top)) / innerHeight;
+      if (lx >= 0) { const dx = (x - lx) * 6000, dy = (y - ly) * 6000; const sp = Math.hypot(dx, dy); tempo = lerp(tempo, clamp(sp / 900, 0, 1), .2); if (sp > 1) { farbT += .004; klecks(x, y, dx, dy, spek(farbT)); gemalt = true; } }
+      lx = x; ly = y;
+    } else {
+      lx = -1; tempo = lerp(tempo, .25, .05);
+      if (!RM) { auto += dt; const a = auto * .9; const x = .5 + .3 * Math.cos(a) * Math.sin(a * .7), y = .5 + .28 * Math.sin(a * 1.3); const vx = -Math.sin(a) * 900, vy = Math.cos(a * 1.3) * 700; farbT += .003; klecks(x, y, vx, vy, spek(farbT)); }
+    }
+    hinweis.style.opacity = gemalt ? 0 : .8;
+    if (!RM) schritt(Math.min(dt, 1 / 30));
+    const U = nutze(P.anzeige, [1 / cv.width, 1 / cv.height]); gl.uniform1i(U.uT, dye.r.bind(0)); blit(null);
+    hudWert = `Gitter ${vel.r.w}×${vel.r.h} · Farbe ${dye.r.w}×${dye.r.h}`;
+    tonSzene("Strömung", { tempo });
+  }});
+}
+
+/* ================= 04 GRAVITATION: Schwarzes Loch ================= */
+function initLoch() {
+  const el = $("#loch"), cv = $("#cLoch"), masseEl = $("#lochMasse");
+  const f = shaderFlaeche(cv, `precision highp float;
+uniform vec2 uRes,uLoch; uniform float uZeit,uM;
+float h1(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h1(i),h1(i+vec2(1,0)),f.x),mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*n2(p);p*=2.03;a*=.5;}return s;}
+vec3 himmel(vec2 q){
+  vec3 c=vec3(.004,.004,.01);
+  float neb=fbm(q*1.6+vec2(3.,1.)); c+=vec3(.16,.07,.28)*pow(neb,3.)*1.4+vec3(.03,.12,.2)*pow(fbm(q*2.3-7.),4.)*1.6;
+  for(int k=0;k<3;k++){ float sk=18.+float(k)*22.; vec2 g=floor(q*sk), fr=fract(q*sk); float h=h1(g+float(k)*13.);
+    vec2 o=vec2(h1(g+1.7),h1(g+4.2)); float d=length(fr-o); float hell=step(.86,h)*(h-.86)*7.;
+    c+=mix(vec3(.7,.8,1.),vec3(1.,.85,.7),h1(g+9.))*smoothstep(.09,0.,d)*hell; }
+  return c;
+}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-.5*uRes)/uRes.y;
+  vec2 d=uv-uLoch; float r=length(d); vec2 dir=d/max(r,1e-4);
+  float rs=.075*uM;
+  // Gravitationslinse: Ablenkung ~ rs²/r, Einstein-Ring bei r ≈ 1.5 rs
+  float ab=rs*rs*2.4/max(r,rs*.6);
+  vec3 c=himmel(uv-dir*ab+vec2(uZeit*.004,0.));
+  // Scheibe: dünn, geneigt, rotierend
+  vec2 e=vec2(d.x,d.y/.24); float re=length(e);
+  float ein=rs*1.7, aus=rs*5.2;
+  float ring=smoothstep(ein,ein*1.15,re)*smoothstep(aus,aus*.6,re);
+  float w=atan(e.y,e.x);
+  float streif=fbm(vec2(w*3.-uZeit*1.4/max(re/rs,1.),re/rs*4.));
+  float doppler=1.+.75*cos(w);
+  float temp=1.-smoothstep(ein,aus,re);
+  vec3 heiss=mix(vec3(1.,.42,.12),vec3(1.,.93,.78),temp);
+  vec3 scheibe=heiss*ring*(.35+.9*streif)*doppler*1.6;
+  // hinterer Teil der Scheibe erscheint über dem Loch gebogen
+  float rb=length(vec2(d.x,(d.y-rs*.35)/.92));
+  float bogen=smoothstep(rs*1.35,rs*1.5,rb)*smoothstep(rs*2.6,rs*1.7,rb)*step(0.,d.y);
+  vec3 hinten=heiss*bogen*(.4+.8*fbm(vec2(atan(d.y,d.x)*4.+uZeit*.8,rb/rs*5.)))*.9;
+  // Schatten und Photonenring
+  float schatten=smoothstep(rs*1.02,rs*.98,r);
+  float photon=exp(-pow((r-rs*1.08)/(rs*.05),2.));
+  c=c*(1.-schatten);
+  c+=hinten*(1.-schatten);
+  c+=vec3(1.,.8,.55)*photon*1.2;
+  // vorderer Teil der Scheibe liegt vor dem Schatten
+  float vorne=step(d.y,0.);
+  c=mix(c,c+scheibe,max(vorne,1.-schatten));
+  c+=heiss*exp(-max(r-rs,0.)/rs*1.6)*.08;
+  vec2 q=gl_FragCoord.xy/uRes-.5; c*=1.-dot(q,q)*.9;
+  c=c/(1.+c*.25);
+  gl_FragColor=vec4(pow(max(c,0.),vec3(.92)),1.);
+}`, KLEIN ? .85 : .9);
+  if (!f) return;
+  const L = { x: .25, y: .05 }; let M = 1, zeit = 0;
+  szenen.push({ el, update(t, dt) {
+    f.groesse(); const W = f.gl.canvas.width, H = f.gl.canvas.height, asp = W / H;
+    const p = fortschritt(el); M = lerp(M, .7 + p * 2.1, .06); if (!RM) zeit += dt;
+    const zx = FEIN && aktivMaus() ? maus.nx * asp * .5 * .7 : (asp > 1 ? .28 : 0) + Math.sin(t * .2) * .05, zy = FEIN && aktivMaus() ? maus.ny * .5 * .6 : .1 + Math.cos(t * .25) * .03;
+    L.x = lerp(L.x, zx, .05); L.y = lerp(L.y, zy, .05);
+    f.gl.uniform2f(f.u("uRes"), W, H); f.gl.uniform2f(f.u("uLoch"), L.x, L.y); f.gl.uniform1f(f.u("uZeit"), zeit); f.gl.uniform1f(f.u("uM"), M);
+    f.zeichne();
+    masseEl.textContent = komma(M); hudWert = `r_s ∝ M = ${komma(M, 2)}`;
+    tonSzene("Gravitation", { masse: M });
+  }});
+}
+
+/* ================= Start ================= */
+const sicher = (n, fn) => { try { fn(); } catch (e) { console.warn(n, e); } };
+sicher("welle", initWelle); sicher("klang", initKlang); sicher("prisma", initPrisma); sicher("fluid", initFluid); sicher("loch", initLoch);
+
+const hudWertEl = $("#hudWert"), hudSzene = $("#hudSzene"), balken = $("#balken"), abschnitte = $$("main > section");
+let letzte = "", letzterWert = "", aktuelleSzene = "";
+function hud() {
+  const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  balken.style.transform = `scaleX(${clamp(scrollY / max, 0, 1).toFixed(4)})`;
+  const mitte = innerHeight / 2;
+  for (const a of abschnitte) { const r = a.getBoundingClientRect(); if (r.top <= mitte && r.bottom >= mitte) { const k = `${a.dataset.nr} / 05 · ${a.dataset.name}`; if (k !== letzte) { hudSzene.textContent = k; letzte = k; aktuelleSzene = a.dataset.name; if (a.id === "abspann") hudWert = "Ende"; } break; } }
+  if (hudWert !== letzterWert) { hudWertEl.textContent = hudWert; letzterWert = hudWert; }
+  if (aktuelleSzene === "Abspann") tonSzene("Abspann");
+}
+let letzteZeit = performance.now();
+function schleife(jetzt) {
+  requestAnimationFrame(schleife);
+  const dt = Math.min(.05, (jetzt - letzteZeit) / 1000); letzteZeit = jetzt; const t = jetzt / 1000;
+  if (lenis) lenis.raf(jetzt);
+  qualitaet(jetzt);
+  for (const s of szenen) { if (sichtbar(s.el)) { try { s.update(t, dt); } catch (e) { console.warn(e); s.update = () => {}; } } }
+  hud();
+}
+requestAnimationFrame(schleife);
+$("#nochmal").addEventListener("click", () => { if (lenis) lenis.scrollTo(0, { duration: 3.2 }); else scrollTo({ top: 0, behavior: RM ? "auto" : "smooth" }); });
+
+/* ================= Auftakt ================= */
+const auftakt = $("#auftakt"), welle = $("#aWelle");
+let pd = "M0 90"; for (let i = 1; i <= 200; i++) { const u = i / 200; pd += ` L${(u * 1000).toFixed(1)} ${(90 + Math.sin(u * Math.PI * 12) * 70 * Math.sin(u * Math.PI)).toFixed(1)}`; }
+welle.setAttribute("d", pd);
+if (window.gsap && !RM) {
+  gsap.set(welle, { strokeDasharray: 1, strokeDashoffset: 1 });
+  const tl = gsap.timeline({ onComplete: () => { auftakt.hidden = true; } });
+  tl.to(welle, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" })
+    .to(welle, { scaleY: 0, transformOrigin: "50% 50%", duration: .6, ease: "power3.in" })
+    .to(auftakt, { opacity: 0, duration: .6 })
+    .from("#heldTitel", { scaleY: 0, opacity: 0, duration: 1.2, ease: "expo.out" }, "-=.4")
+    .from("#held .ein", { y: 20, opacity: 0, duration: .8, stagger: .1 }, "-=.8");
+} else auftakt.hidden = true;
+})();
+</script>
+
+<div id="ordeBalken">
+  <a href="../../referenzen.html">&larr; Zur&uuml;ck zu ORD&Eacute;</a>
+  <span>Beispielseite &middot; alles live berechnet &middot; keine Videos, keine KI-Bilder</span>
+  <a class="ordeCta" href="../../anfrage.html">So eine Seite anfragen</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));font-size:13px}
+  #ordeBalken span{order:3;flex-basis:100%;text-align:center;font-size:11.5px;line-height:1.3}
+}
+@media print{#ordeBalken{display:none}}
+</style>
+</body>
+</html>

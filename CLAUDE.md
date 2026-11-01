@@ -15,6 +15,29 @@ Keine echten Betriebe. Arbeitssprache Deutsch.
 Jede Demo ist eine einzelne HTML-Datei mit eingebettetem CSS plus einem
 Bilderordner. Kein Build, kein Framework.
 
+## Showreels
+
+Vier Seiten ohne Branche: `monolith/`, `spektrum/`, `lumen/`, `lichtfeld/`. Sie
+zeigen, was technisch geht (WebGL, 3D, Simulationen) und erscheinen auf byorde.com
+in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
+`BRANCHEN`. Abweichend von den sechs Demos:
+
+- **Keine KI-Bilder.** Die Videos sind von Mixkit, `spektrum` ist ganz berechnet.
+  Der Rückkehr-Balken sagt deshalb „Videos von Mixkit, keine KI-Bilder“ statt
+  „Bilder mit KI erzeugt“. Kommt je ein KI-Bild dazu, muss der Hinweis zurück.
+- **Nichts von fremden Servern.** Three.js, GSAP, Lenis und alle Schriften liegen
+  in `demos/bibliothek/`. Keine CDN-Links und kein Google Fonts einbauen, sonst
+  stimmt die Datenschutzerklärung von byorde.com nicht mehr.
+- **Rand unten:** Alles, was unten am Rand sitzt, nutzt `var(--unten)`
+  (Balkenhöhe plus sicherer Bereich), damit der Rückkehr-Balken nichts verdeckt.
+- **Vorschaubilder:** `<html data-showreel>` sorgt dafür, dass
+  `vorschau-erzeugen.py` die Animation laufen lässt, 3D in Software rechnet und
+  erst nach dem Vorspann fotografiert. Die fps-Anzeige wird dabei ausgeblendet.
+- **Gewicht:** `monolith` bringt 11,9 MB Full-HD-Video mit (lädt erst beim
+  Hinscrollen), die anderen 0,1 bis 6,3 MB.
+
+Englische Fassungen gibt es noch nicht.
+
 ## Entwürfe für echte Betriebe
 
 `demos/entwuerfe/<name>/` sind Gestaltungsvorschläge für **echte** Betriebe,

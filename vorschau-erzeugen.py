@@ -36,6 +36,17 @@ SCHMAL = {"breite": 640, "hoehe": 1313, "endung": "-handy.webp", "faktor": 2}
 
 GUETE = 72   # WebP-Qualitaet. Hoeher = schoener und groesser.
 
+# Showreels (<html data-showreel>) leben von WebGL und einem Vorspann. Fuer sie
+# bleibt die Animation an, der Browser rechnet 3D in Software, und das Bild
+# entsteht erst, wenn der Vorspann durch ist.
+SHOWREEL_WARTEN = 7000   # Millisekunden
+WEBGL_ARGS = ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"]
+
+
+def ist_showreel(pfad):
+    with open(pfad, encoding="utf-8") as f:
+        return "data-showreel" in f.read(600)
+
 
 def demos_finden(auswahl):
     namen = sorted(
@@ -73,7 +84,7 @@ def main():
 
     with sync_playwright() as p:
         start = {"executable_path": browser_pfad} if browser_pfad else {}
-        browser = p.chromium.launch(**start)
+        browser = p.chromium.launch(args=WEBGL_ARGS, **start)
         # Je Demo die deutsche Seite, und die englische, wenn es sie gibt
         auftraege = []
         for name in namen:
@@ -89,13 +100,23 @@ def main():
                     device_scale_factor=form["faktor"],
                 )
                 seite.goto("file://" + seite_datei)
-                seite.wait_for_load_state("networkidle")
-                # Animationen abschalten, damit das Bild nicht mitten in
-                # einer Einblendung entsteht
-                seite.add_style_tag(content="*{animation:none!important;"
-                                            "transition:none!important;"
-                                            "opacity:1!important}")
-                seite.wait_for_timeout(400)
+                if ist_showreel(seite_datei):
+                    # Videos laufen in Schleife, "networkidle" kaeme nie
+                    seite.wait_for_load_state("load")
+                    seite.wait_for_timeout(SHOWREEL_WARTEN)
+                    # Die fps-Anzeige zeigt hier nur die Software-Bildrate
+                    # des Fotobrowsers, nicht die eines echten Geraets
+                    seite.add_style_tag(content=".hud-fps,.hud-rechts>span[aria-hidden]"
+                                                "{visibility:hidden!important}")
+                    seite.wait_for_timeout(200)
+                else:
+                    seite.wait_for_load_state("networkidle")
+                    # Animationen abschalten, damit das Bild nicht mitten in
+                    # einer Einblendung entsteht
+                    seite.add_style_tag(content="*{animation:none!important;"
+                                                "transition:none!important;"
+                                                "opacity:1!important}")
+                    seite.wait_for_timeout(400)
                 roh = os.path.join(ZIEL, name + ".png")
                 seite.screenshot(path=roh)
                 seite.close()
