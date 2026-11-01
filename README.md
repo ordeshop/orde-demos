@@ -14,6 +14,18 @@ Hinweis „Beispielseite · kein echter Betrieb" und einem Weg zurück zu ORDÉ.
 | `praxis/` | Praxisseite mit Sprechzeiten | Praxis |
 | `elektro/` | Elektrobetrieb mit Leistungen | Handwerk |
 
+Dazu vier **Showreels** ohne Branche, die zeigen, was im Browser technisch geht:
+
+| Ordner | Was es darstellt |
+|---|---|
+| `monolith/` | Erfundenes Betonhaus in 3D: Grundriss wird Volumen, Sonnenstudie, Schnitt |
+| `spektrum/` | Chladni-Figuren, Prisma, Strömungssimulation, Schwarzes Loch, alles berechnet |
+| `lumen/` | Erfundener Duft: Facettenglas, Glaslinse, Tinte, Teilchen, Goldportal |
+| `lichtfeld/` | Abstrakt: Raymarching, Chrom und Glas, Teilchen, Video in Schrift |
+
+Gemeinsame Bibliotheken und Schriften liegen lokal in `demos/bibliothek/`
+(Lizenzen in `demos/bibliothek/LIZENZEN.md`).
+
 ## Aufbau
 
 ```

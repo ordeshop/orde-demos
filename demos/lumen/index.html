@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="de" data-showreel>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lumen No. 4 · Showreel von ORDÉ</title>
+<meta name="description" content="Kampagne für einen erfundenen Duft: geschliffenes Glas in 3D, flüssige Glaslinse, Tinte, Teilchen und ein goldenes Portal.">
+<link rel="stylesheet" href="../bibliothek/schriften.css">
+<style>
+/* Layout: eine Duftkampagne in fünf Bühnen. Jede Bühne zeigt einen Effekt (Facet Glass, Liquid Glass,
+   Ink Reveal, Teilchen, Portal); der Effekt steht unten im Rand. Bewusst nur ein heller Look:
+   Porzellan, Tinte, Gold, wie Papier und Glas im Atelier. */
+:root{
+  --porzellan:#eceef0;
+  --porzellan-tief:#dfe2e5;
+  --tinte:#16130f;
+  --rauch:#58544f;
+  --gold:#96701f;
+  --gold-hell:#d8b46a;
+  --champagner:#e6d6b0;
+  --linie:rgba(22,19,15,.14);
+  --display:"Italiana","Didot","Bodoni 72",Georgia,serif;
+  --serif:"Newsreader","Iowan Old Style",Georgia,serif;
+  --grotesk:"Jost","Futura","Century Gothic",system-ui,sans-serif;
+  --gl:max(16px,env(safe-area-inset-left,0px));
+  --gr:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--porzellan)}
+body{background:var(--porzellan);color:var(--tinte);font-family:var(--grotesk);font-weight:300;font-size:16px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:var(--porzellan)}
+::selection{background:var(--champagner)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--gold);outline-offset:4px}
+.rand{padding-left:var(--gl);padding-right:var(--gr)}
+.klebe{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+canvas{display:block}
+.vollbild{position:absolute;inset:0;width:100%;height:100%}
+.nur-vorlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.kicker{font:400 12px/1.4 var(--grotesk);letter-spacing:.32em;text-transform:uppercase;margin:0;color:var(--rauch)}
+.kicker b{font-weight:500;color:var(--gold)}
+.fliess{font:300 16px/1.65 var(--grotesk);margin:0;max-width:40ch;color:var(--rauch)}
+.zitat{font:italic 300 clamp(22px,2.6vw,36px)/1.2 var(--serif);margin:0;text-wrap:balance}
+.angabe{font:400 13px/1.5 var(--grotesk);letter-spacing:.08em;margin:0;color:var(--rauch);font-variant-numeric:tabular-nums}
+.quelle{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+
+/* ---------- Auftakt ---------- */
+.auftakt{position:fixed;inset:0;z-index:100;display:grid;place-items:center;pointer-events:none;animation:notaus 0s 6s forwards}
+@keyframes notaus{to{visibility:hidden;opacity:0}}
+.auftakt .haelfte{position:absolute;left:0;right:0;height:50%;background:var(--porzellan)}
+.auftakt .oben{top:0}.auftakt .unten{bottom:0}
+.auftakt svg{position:relative;width:min(80vw,640px);height:auto;overflow:visible}
+.auftakt text{font-family:var(--display);font-size:120px;fill:var(--tinte);fill-opacity:0;stroke:var(--gold);stroke-width:.8}
+.auftakt .strich{position:absolute;left:50%;top:50%;width:min(80vw,640px);height:1px;background:var(--gold);transform:translateX(-50%) scaleX(0)}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:16px;pointer-events:none;font:400 11px/1.2 var(--grotesk);letter-spacing:.28em;text-transform:uppercase;color:var(--tinte);padding-left:var(--gl);padding-right:var(--gr)}
+.hud-oben{top:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+.hud-unten{bottom:0;padding-bottom:calc(18px + var(--unten))}
+.hud-marke{font:400 18px/1 var(--display);letter-spacing:.22em}
+.hud-effekt{display:flex;align-items:center;gap:10px}
+.hud-effekt::before{content:"";width:28px;height:1px;background:var(--gold)}
+.hud-effekt b{font-weight:500;color:var(--gold)}
+.hud-balken{position:fixed;left:0;right:0;bottom:0;height:2px;z-index:51;pointer-events:none}
+.hud-balken i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0)}
+
+/* ---------- Zeiger ---------- */
+.zeiger{position:fixed;left:0;top:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--gold);z-index:90;pointer-events:none;display:none;transition:opacity .3s}
+.zeiger-ring{position:fixed;left:0;top:0;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:1px solid var(--gold);z-index:90;pointer-events:none;display:none;transition:opacity .3s,width .3s,height .3s,margin .3s}
+.zeiger.weg,.zeiger-ring.weg{opacity:0}
+@media (pointer:fine){.zeiger,.zeiger-ring{display:block}}
+
+/* ---------- 01 Flakon ---------- */
+.s-flakon{position:relative;height:300vh}
+.flakon-ui{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:1fr auto;row-gap:32px;align-items:end;padding-top:calc(70px + env(safe-area-inset-top,0px));padding-bottom:calc(64px + var(--unten));pointer-events:none}
+.flakon-titel{display:grid;gap:20px;grid-column:1;grid-row:1}
+.flakon-titel h1{margin:0;font:400 clamp(88px,14vw,240px)/.82 var(--display);letter-spacing:.02em}
+.flakon-titel h1 small{display:block;font:italic 300 .32em/1 var(--serif);letter-spacing:0;color:var(--gold);padding-left:.12em;margin-top:.1em}
+.flakon-daten{grid-column:1;grid-row:2;justify-self:start;display:grid;gap:0;width:min(100%,380px);border-top:1px solid var(--linie);margin:0}
+.flakon-daten div{display:flex;justify-content:space-between;gap:24px;padding-block:10px;border-bottom:1px solid var(--linie)}
+.flakon-daten dt{font:400 11px/1.6 var(--grotesk);letter-spacing:.24em;text-transform:uppercase;color:var(--rauch)}
+.flakon-daten dd{margin:0;font:400 15px/1.5 var(--grotesk);font-variant-numeric:tabular-nums}
+.flakon-hinweis{position:absolute;left:50%;bottom:calc(24px + var(--unten));transform:translateX(-50%);font:400 11px/1 var(--grotesk);letter-spacing:.3em;text-transform:uppercase;color:var(--rauch);white-space:nowrap}
+
+/* ---------- 02 Glas ---------- */
+.s-glas{position:relative;height:280vh}
+.glas-ui{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding-top:calc(70px + env(safe-area-inset-top,0px));padding-bottom:calc(64px + var(--unten));pointer-events:none}
+.glas-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px}
+
+/* ---------- 03 Noten ---------- */
+.s-noten{position:relative;height:360vh}
+.noten-ui{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1fr auto;padding-top:calc(70px + env(safe-area-inset-top,0px));padding-bottom:calc(64px + var(--unten));pointer-events:none;column-gap:24px}
+.noten-ui .kicker{grid-column:1/-1}
+.note{grid-column:1;grid-row:3;display:grid;gap:12px;max-width:620px}
+.note-wort{margin:0;font:400 clamp(80px,13vw,220px)/.8 var(--display);letter-spacing:.01em;color:var(--tinte);mix-blend-mode:multiply}
+.note-stoffe{font:italic 300 clamp(22px,2.4vw,34px)/1.2 var(--serif);margin:0}
+.pyramide{grid-column:2;grid-row:3;align-self:end;width:clamp(90px,10vw,140px);height:auto}
+.pyramide path{fill:none;stroke:var(--tinte);stroke-width:1}
+.pyramide .band{fill:var(--gold);opacity:0;transition:opacity .5s}
+.pyramide .band.an{opacity:.85}
+.noten-hinweis{grid-column:1/-1;grid-row:2;align-self:start;justify-self:end;text-align:right}
+
+/* ---------- 04 Sprühstoß ---------- */
+.s-spray{position:relative;height:400vh;background:var(--porzellan)}
+.spray-ui{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding-top:calc(70px + env(safe-area-inset-top,0px));padding-bottom:calc(64px + var(--unten));pointer-events:none}
+.spray-kopf{display:grid;gap:16px;max-width:640px}
+.spray-kopf h2{margin:0;font:400 clamp(48px,7vw,120px)/.9 var(--display)}
+.stufen{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 28px}
+.stufen li{font:400 12px/1 var(--grotesk);letter-spacing:.26em;text-transform:uppercase;color:var(--rauch);display:flex;gap:10px;align-items:center;transition:color .4s}
+.stufen li::before{content:"";width:20px;height:1px;background:currentColor;transition:width .5s}
+.stufen li.an{color:var(--gold)}
+.stufen li.an::before{width:52px}
+
+/* ---------- 05 Portal ---------- */
+.s-portal{position:relative;height:360vh}
+.portal-ui{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding-top:calc(70px + env(safe-area-inset-top,0px));padding-bottom:calc(64px + var(--unten));pointer-events:none}
+.portal-ende{position:absolute;inset:0;display:grid;place-items:center;text-align:center;opacity:0;pointer-events:none}
+.portal-ende-innen{display:grid;gap:20px;justify-items:center}
+.portal-ende h2{margin:0;font:400 clamp(72px,13vw,220px)/.85 var(--display);letter-spacing:.02em}
+.portal-ende h2 small{display:block;font:italic 300 .3em/1.2 var(--serif);color:var(--gold)}
+
+/* ---------- Abspann ---------- */
+.s-abspann{position:relative;padding-block:clamp(90px,14vh,160px) calc(110px + var(--unten));border-top:1px solid var(--linie)}
+.abspann-inhalt{display:grid;gap:clamp(36px,6vh,64px)}
+.abspann-inhalt h2{margin:0;font:400 clamp(44px,6vw,96px)/.95 var(--display);max-width:16ch}
+.credits{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:0 48px;margin:0;border-top:1px solid var(--linie)}
+.credits div{display:grid;grid-template-columns:12ch minmax(0,1fr);gap:16px;padding-block:14px;border-bottom:1px solid var(--linie);min-width:0}
+.credits dt{font:400 11px/1.8 var(--grotesk);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.credits dd{margin:0;font:300 15px/1.5 var(--grotesk)}
+.abspann-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px}
+.knopf{pointer-events:auto;display:inline-flex;align-items:center;gap:14px;min-height:54px;padding:0 30px;border:1px solid var(--tinte);background:transparent;font:400 13px/1 var(--grotesk);letter-spacing:.26em;text-transform:uppercase;cursor:pointer;transition:background-color .35s,color .35s}
+.knopf:hover,.knopf:focus-visible{background:var(--tinte);color:var(--porzellan)}
+.hinweis{font:300 13px/1.6 var(--grotesk);max-width:62ch;margin:0;color:var(--rauch)}
+
+@media (max-width:760px){
+  .flakon-ui{grid-template-columns:1fr;align-content:space-between}
+  .flakon-titel{align-self:start}
+  .flakon-daten{justify-self:stretch}
+  .flakon-hinweis{display:none}
+  .noten-hinweis{display:none}
+  .hud .lang{display:none}
+  .credits div{grid-template-columns:1fr;gap:2px}
+}
+</style>
+<style>
+/* Platz für den Rückkehr-Balken: alles, was unten am Rand sitzt, rückt über ihn */
+:root{--balkenhoehe:58px;--unten:calc(env(safe-area-inset-bottom,0px) + var(--balkenhoehe))}
+@media (max-width:640px){:root{--balkenhoehe:94px}}
+.hud-balken{bottom:var(--unten)!important}
+</style>
+</head>
+<body>
+<div class="auftakt" id="auftakt" aria-hidden="true">
+  <div class="haelfte oben" id="hOben"></div><div class="haelfte unten" id="hUnten"></div>
+  <div class="strich" id="aStrich"></div>
+  <svg viewBox="0 0 640 160" id="aSvg"><text x="320" y="118" text-anchor="middle" id="aText">LUMEN</text></svg>
+</div>
+
+<div class="hud hud-oben" aria-hidden="true">
+  <span class="hud-marke">LUMEN</span>
+  <span id="hudSzene">01 — Flakon</span>
+</div>
+<div class="hud hud-unten" aria-hidden="true">
+  <span class="lang">Erfundene Marke · Beispielseite</span>
+  <span class="hud-effekt">Effekt <b id="hudEffekt">Facet Glass</b></span>
+</div>
+<div class="hud-balken" aria-hidden="true"><i id="balken"></i></div>
+<div class="zeiger" id="zeiger" aria-hidden="true"></div><div class="zeiger-ring" id="zeigerRing" aria-hidden="true"></div>
+
+<main>
+
+<!-- 01 FLAKON -->
+<section class="s-flakon" id="flakon" data-nr="01" data-name="Flakon" data-effekt="Facet Glass">
+  <div class="klebe">
+    <canvas class="vollbild" id="cFlakon" aria-hidden="true"></canvas>
+    <div class="flakon-ui rand">
+      <div class="flakon-titel ein">
+        <p class="kicker"><b>01</b> — Flakon</p>
+        <h1>Lumen<small>No. 4</small></h1>
+        <p class="zitat">Ein Duft wie Licht durch geschliffenes Glas.</p>
+      </div>
+      <dl class="flakon-daten ein">
+        <div><dt>Art</dt><dd>Eau de Parfum</dd></div>
+        <div><dt>Inhalt</dt><dd>50 ml</dd></div>
+        <div><dt>Flakon</dt><dd>8 Facetten, Kappe vergoldet</dd></div>
+        <div><dt>Marke</dt><dd>erfunden für diese Demo</dd></div>
+      </dl>
+    </div>
+    <p class="flakon-hinweis">Maus bewegen · Scrollen dreht den Flakon</p>
+  </div>
+</section>
+
+<!-- 02 GLAS -->
+<section class="s-glas" id="glas" data-nr="02" data-name="Glas" data-effekt="Liquid Glass">
+  <div class="klebe">
+    <video class="quelle" id="seideVideo" src="media/seide.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <canvas class="vollbild" id="cGlas" aria-hidden="true"></canvas>
+    <h2 class="nur-vorlesen">Klarheit</h2>
+    <div class="glas-ui rand">
+      <p class="kicker"><b>02</b> — Glas</p>
+      <span></span>
+      <div class="glas-fuss">
+        <p class="fliess">Ein Tropfen flüssiges Glas folgt deiner Maus. Er bricht, vergrößert und zerlegt das Licht an seinem Rand in Farben. Zieht man schnell, zieht er Fäden.</p>
+        <p class="angabe">Brechung · Vergrößerung · Farbsaum</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 NOTEN -->
+<section class="s-noten" id="noten" data-nr="03" data-name="Duftnoten" data-effekt="Ink Reveal">
+  <div class="klebe">
+    <video class="quelle" id="note0" src="media/kopf.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <video class="quelle" id="note1" src="media/herz.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <video class="quelle" id="note2" src="media/basis.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <canvas class="vollbild" id="cNoten" aria-hidden="true"></canvas>
+    <div class="noten-ui rand">
+      <p class="kicker"><b>03</b> — Duftnoten</p>
+      <p class="angabe noten-hinweis">Die Maus malt mit Tinte.<br>Darunter liegt die Farbe.</p>
+      <div class="note" aria-live="polite">
+        <p class="angabe" id="noteZeit">Die ersten 15 Minuten</p>
+        <h2 class="note-wort" id="noteWort">Kopf</h2>
+        <p class="note-stoffe" id="noteStoffe">Bergamotte, Zitrone, rosa Pfeffer</p>
+      </div>
+      <svg class="pyramide" viewBox="0 0 120 104" aria-hidden="true">
+        <path class="band" id="band0" d="M60 2 L80.8 38 L39.2 38 Z"/>
+        <path class="band" id="band1" d="M39.2 38 L80.8 38 L99.4 70 L20.6 70 Z"/>
+        <path class="band" id="band2" d="M20.6 70 L99.4 70 L119 102 L1 102 Z"/>
+        <path d="M60 2 L119 102 L1 102 Z M39.2 38 L80.8 38 M20.6 70 L99.4 70"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 04 SPRÜHSTOSS -->
+<section class="s-spray" id="spray" data-nr="04" data-name="Sprühstoß" data-effekt="Particle Morph">
+  <div class="klebe">
+    <canvas class="vollbild" id="cSpray" aria-hidden="true"></canvas>
+    <div class="spray-ui rand">
+      <div class="spray-kopf">
+        <p class="kicker"><b>04</b> — Sprühstoß</p>
+        <h2>Aus Glas wird Nebel, aus Nebel ein Name.</h2>
+        <p class="fliess"><span id="sprayZahl">30.000</span> goldene Teilchen. Scrollen löst den Flakon auf. Die Maus schiebt den Nebel beiseite.</p>
+      </div>
+      <span></span>
+      <ol class="stufen" id="stufen"><li class="an">Flakon</li><li>Nebel</li><li>Name</li></ol>
+    </div>
+  </div>
+</section>
+
+<!-- 05 PORTAL -->
+<section class="s-portal" id="portal" data-nr="05" data-name="Portal" data-effekt="Golden Portal">
+  <div class="klebe">
+    <video class="quelle" id="portalVideo" src="media/portal.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <canvas class="vollbild" id="cPortal" aria-hidden="true"></canvas>
+    <div class="portal-ui rand">
+      <p class="kicker"><b>05</b> — Portal</p>
+      <span></span>
+      <p class="fliess">Drei Goldringe drehen sich gegeneinander, in der Mitte wirbelt Licht. Scrollen fliegt hindurch.</p>
+    </div>
+    <div class="portal-ende" id="portalEnde">
+      <div class="portal-ende-innen rand">
+        <p class="kicker">Eau de Parfum · 50 ml</p>
+        <h2>Lumen<small>No. 4</small></h2>
+        <p class="zitat">Licht, das man tragen kann.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABSPANN -->
+<section class="s-abspann" id="abspann" data-nr="06" data-name="Abspann" data-effekt="—">
+  <div class="abspann-inhalt rand">
+    <p class="kicker"><b>06</b> — Abspann</p>
+    <h2>Fünf Effekte, eine Seite.</h2>
+    <dl class="credits">
+      <div><dt>Facet Glass</dt><dd>Three.js, Glas mit Lichtbrechung, Flüssigkeit mit Bernsteinfärbung, vergoldete Kappe</dd></div>
+      <div><dt>Liquid Glass</dt><dd>WebGL-Shader: Linse aus drei verschmelzenden Tropfen über laufendem Video</dd></div>
+      <div><dt>Ink Reveal</dt><dd>Tuschebild über Farbvideo, die Maus malt die Maske, Ränder franst Rauschen aus</dd></div>
+      <div><dt>Particle Morph</dt><dd>Teilchen formen Flakon, Nebel und Schriftzug, Maus als Kraftfeld</dd></div>
+      <div><dt>Golden Portal</dt><dd>Drei Ringe aus Gold, Lichtwirbel aus einem Video im Shader, Flug hindurch</dd></div>
+      <div><dt>Schrift</dt><dd>Italiana, Newsreader, Jost</dd></div>
+      <div><dt>Clips</dt><dd>Mixkit, frei lizenziert</dd></div>
+    </dl>
+    <div class="abspann-fuss">
+      <button class="knopf" id="nochmal" type="button">Zurück zum Flakon ↑</button>
+      <p class="hinweis">Lumen No. 4 ist eine erfundene Marke für diese Beispielseite, kein echtes Produkt. Die Videos sind echte Aufnahmen von Mixkit, keine KI-Bilder. Flakon, Glas, Teilchen und Portal werden live im Browser berechnet. Gebaut von ORDÉ als eine einzige HTML-Datei.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../bibliothek/gsap.min.js"></script>
+<script>window.gsap && gsap.ticker.lagSmoothing(0);</script>
+<script src="../bibliothek/three.min.js"></script>
+<script src="../bibliothek/lenis.min.js"></script>
+<script>
+(() => {
+"use strict";
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FEIN = matchMedia("(pointer: fine)").matches;
+const KLEIN = innerWidth < 760;
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const DPR = Math.min(devicePixelRatio || 1, 2);
+
+const maus = { x: innerWidth * .62, y: innerHeight * .45, nx: 0, ny: 0, zuletzt: 0 };
+addEventListener("pointermove", e => { maus.x = e.clientX; maus.y = e.clientY; maus.nx = e.clientX / innerWidth * 2 - 1; maus.ny = -(e.clientY / innerHeight * 2 - 1); maus.zuletzt = performance.now(); }, { passive: true });
+const aktivMaus = () => performance.now() - maus.zuletzt < 2500;
+function fortschritt(el) { const r = el.getBoundingClientRect(); const tot = r.height - innerHeight; return tot > 0 ? clamp(-r.top / tot, 0, 1) : (r.top < 0 ? 1 : 0); }
+function sichtbar(el) { const r = el.getBoundingClientRect(); return r.bottom > -40 && r.top < innerHeight + 40; }
+
+let lenis = null;
+if (!RM && window.Lenis) { try { lenis = new Lenis({ lerp: .08, smoothWheel: true }); } catch (e) { lenis = null; } }
+const szenen = [];
+
+/* ================= Studio-Licht für Glas und Gold ================= */
+function studio(renderer) {
+  const env = new THREE.Scene();
+  env.add(new THREE.Mesh(new THREE.SphereGeometry(20, 48, 24), new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    vertexShader: "varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
+    fragmentShader: "varying vec3 vP;void main(){float y=vP.y;vec3 c=mix(vec3(.55,.55,.57),vec3(.95,.95,.96),smoothstep(-.6,.8,y));c=mix(c,vec3(.9,.78,.55),smoothstep(.4,-.6,y)*.35);gl_FragColor=vec4(c,1.);}"
+  })));
+  const tafel = (farbe, k, pos, w, h) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(farbe).multiplyScalar(k), side: THREE.DoubleSide })); p.position.set(...pos); p.lookAt(0, 0, 0); env.add(p); };
+  tafel(0xffffff, 5, [-7, 4, 6], 3, 9);
+  tafel(0xffffff, 4, [8, 2, 3], 2.5, 10);
+  tafel(0xffe2b0, 3.5, [0, 10, -2], 12, 2);
+  tafel(0x222222, 1, [0, -2, -10], 14, 6);
+  tafel(0x050505, 1, [-9, 0, -3], 2.2, 16);
+  tafel(0x050505, 1, [9, 0, -5], 1.6, 16);
+  tafel(0x0a0806, 1, [3, -1, 9], 1.2, 14);
+  tafel(0x050505, 1, [-4, 0, 9], 1, 14);
+  const pm = new THREE.PMREMGenerator(renderer); const tex = pm.fromScene(env, .02).texture; pm.dispose(); return tex;
+}
+function rendererMachen(cv, aa) {
+  const r = new THREE.WebGLRenderer({ canvas: cv, antialias: aa, powerPreference: "high-performance" });
+  r.setPixelRatio(Math.min(DPR, 1.5)); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
+  return r;
+}
+function textTextur(zeilen, w, h) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d");
+  x.fillStyle = "#eceef0"; x.fillRect(0, 0, w, h);
+  zeilen(x, w, h);
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; return t;
+}
+
+/* ================= 01 FLAKON ================= */
+function initFlakon() {
+  const el = $("#flakon"), cv = $("#cFlakon");
+  const r = rendererMachen(cv, true);
+  const sc = new THREE.Scene(); sc.background = new THREE.Color(0xeceef0);
+  sc.environment = studio(r);
+  const cam = new THREE.PerspectiveCamera(32, 1, .1, 100);
+
+  // Hintergrund mit Schrift (wird durch das Glas gebrochen)
+  const tex = textTextur((x, w, h) => {
+    x.fillStyle = "#d8b46a"; x.beginPath(); x.arc(w / 2, h * .44, h * .2, 0, 6.283); x.fill();
+    x.strokeStyle = "#16130f"; x.lineWidth = 2;
+    for (let i = 0; i < 64; i++) { const xx = w * (i + .5) / 64; x.globalAlpha = i % 4 === 0 ? .5 : .18; x.beginPath(); x.moveTo(xx, 0); x.lineTo(xx, h); x.stroke(); }
+    x.globalAlpha = 1;
+    x.fillStyle = "#16130f"; x.textAlign = "center"; x.textBaseline = "middle";
+    x.font = `400 ${h * .78}px Italiana, Didot, Georgia, serif`; x.fillText("4", w / 2, h * .5);
+  }, 2048, 1024);
+  const wand = new THREE.Mesh(new THREE.PlaneGeometry(16, 8), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  wand.position.set(0, .3, -4); sc.add(wand);
+  const kulisse = new THREE.Mesh(new THREE.SphereGeometry(40, 32, 16), new THREE.MeshBasicMaterial({ color: 0xe4e7ea, side: THREE.BackSide, toneMapped: false }));
+  sc.add(kulisse);
+
+  const flakon = new THREE.Group(); sc.add(flakon);
+  const profil = [[0, -1.2], [.86, -1.2], [1.02, -1.12], [1.06, -.95], [1.06, .62], [1.0, .82], [.62, .98], [.34, 1.06], [.3, 1.24], [0, 1.24]].map(([a, b]) => new THREE.Vector2(a, b));
+  let glasGeo = new THREE.LatheGeometry(profil, 8, Math.PI / 8); glasGeo = glasGeo.toNonIndexed(); glasGeo.computeVertexNormals();
+  const glas = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: .02, transmission: 1, thickness: 1.6, ior: 1.52, specularIntensity: 1, clearcoat: 1, clearcoatRoughness: .02, flatShading: true, envMapIntensity: 1.4 });
+  flakon.add(new THREE.Mesh(glasGeo, glas));
+  const fluessigProfil = [[0, -1.08], [.88, -1.08], [.93, -1.0], [.93, .35], [0, .35]].map(([a, b]) => new THREE.Vector2(a, b));
+  let flGeo = new THREE.LatheGeometry(fluessigProfil, 8, Math.PI / 8); flGeo = flGeo.toNonIndexed(); flGeo.computeVertexNormals();
+  const fluessig = new THREE.MeshPhysicalMaterial({ color: 0xffe2a8, transmission: 1, thickness: 1.2, ior: 1.36, roughness: .05, attenuationColor: new THREE.Color(0xd08a2a), attenuationDistance: .9, flatShading: true });
+  flakon.add(new THREE.Mesh(flGeo, fluessig));
+  const gold = new THREE.MeshPhysicalMaterial({ color: 0xd9ac55, metalness: 1, roughness: .16, clearcoat: .6, flatShading: true });
+  const kappe = new THREE.Mesh(new THREE.CylinderGeometry(.46, .46, .78, 8, 1), gold); kappe.position.y = 1.64; kappe.rotation.y = Math.PI / 8; flakon.add(kappe);
+  const kragen = new THREE.Mesh(new THREE.CylinderGeometry(.36, .36, .1, 8, 1), gold); kragen.position.y = 1.25; kragen.rotation.y = Math.PI / 8; flakon.add(kragen);
+  const deckel = new THREE.Mesh(new THREE.OctahedronGeometry(.16, 0), gold); deckel.position.y = 2.08; flakon.add(deckel);
+  // weicher Schatten
+  const sc2 = document.createElement("canvas"); sc2.width = sc2.height = 256; const sx = sc2.getContext("2d");
+  const gr = sx.createRadialGradient(128, 128, 0, 128, 128, 128); gr.addColorStop(0, "rgba(22,19,15,.38)"); gr.addColorStop(1, "rgba(22,19,15,0)"); sx.fillStyle = gr; sx.fillRect(0, 0, 256, 256);
+  const schatten = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 1.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc2), transparent: true, depthWrite: false, toneMapped: false }));
+  schatten.rotation.x = -Math.PI / 2; schatten.position.y = -1.22; flakon.add(schatten);
+
+  let fx = 1.2, fy = -.1;
+  function groesse() {
+    const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+    if (cam.aspect < 1) { fx = 0; fy = -.25; cam.position.set(0, .4, 13.5); } else { fx = cam.aspect > 1.5 ? 1.75 : 1.25; fy = -.15; cam.position.set(0, .5, 9.5); }
+    wand.position.x = fx;
+  }
+  groesse(); addEventListener("resize", groesse);
+  let dreh = 0, rx = 0, ry = 0;
+  const ui = $("#flakon .flakon-ui");
+  szenen.push({ el, update(t, dt) {
+    const p = fortschritt(el);
+    if (!RM) dreh += dt * .25;
+    ry = lerp(ry, maus.nx * .6, .06); rx = lerp(rx, -maus.ny * .18, .06);
+    flakon.rotation.set(rx + Math.sin(p * Math.PI) * .25, dreh + ry + p * Math.PI * 2, 0);
+    wand.position.x = lerp(fx, 0, sstep(.35, .9, p));
+    flakon.position.set(lerp(fx, 0, sstep(.35, .9, p)), fy + (RM ? 0 : Math.sin(t * .9) * .06), 0);
+    const s = 1 + sstep(.35, .95, p) * .5; flakon.scale.setScalar(s * (cam.aspect < 1 ? .8 : 1));
+    ui.style.opacity = (1 - sstep(.5, .8, p)).toFixed(3);
+    r.render(sc, cam);
+  }});
+}
+
+/* ================= Hilfe: Shader-Fläche ================= */
+function shaderFlaeche(cv, frag, skal) {
+  const gl = cv.getContext("webgl", { antialias: false, alpha: false, powerPreference: "high-performance" });
+  if (!gl) return null;
+  const sh = (typ, src) => { const s = gl.createShader(typ); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const pr = gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}"));
+  gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, frag)); gl.linkProgram(pr); gl.useProgram(pr);
+  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; const u = n => (n in U) ? U[n] : (U[n] = gl.getUniformLocation(pr, n));
+  const d = DPR * skal;
+  function groesse() { const w = Math.max(1, Math.round(cv.clientWidth * d)), h = Math.max(1, Math.round(cv.clientHeight * d)); if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); return true; } return false; }
+  function textur(einheit, farbe) {
+    const tx = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + einheit); gl.bindTexture(gl.TEXTURE_2D, tx); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1, 1, 0, gl.RGB, gl.UNSIGNED_BYTE, new Uint8Array(farbe || [236, 238, 240]));
+    return { laden(q) { gl.activeTexture(gl.TEXTURE0 + einheit); gl.bindTexture(gl.TEXTURE_2D, tx); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, q); return true; } catch (e) { return false; } } };
+  }
+  return { gl, u, groesse, d, textur, zeichne() { gl.drawArrays(gl.TRIANGLES, 0, 3); } };
+}
+const spielen = v => { if (v.paused) { const pr = v.play(); pr && pr.catch(() => {}); } };
+
+/* ================= 02 GLAS: Liquid Glass ================= */
+function initGlas() {
+  const el = $("#glas"), cv = $("#cGlas"), vid = $("#seideVideo");
+  const f = shaderFlaeche(cv, `precision highp float;
+uniform sampler2D uTex; uniform vec2 uRes,uP0,uP1,uP2; uniform float uR,uZeit;
+float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
+float sdf(vec2 p){
+  float wob=sin(atan(p.y-uP0.y,p.x-uP0.x)*3.+uZeit*1.7)*uR*.03;
+  float a=length(p-uP0)-uR-wob; float b=length(p-uP1)-uR*.6; float c=length(p-uP2)-uR*.36;
+  return smin(smin(a,b,uR*.7),c,uR*.55);
+}
+void main(){
+  vec2 fc=gl_FragCoord.xy; vec2 uv=fc/uRes;
+  float d=sdf(fc);
+  vec3 col=texture2D(uTex,uv).rgb;
+  if(d>0.){ col*=1.-.16*exp(-d/(uR*.25))*smoothstep(-uR*.3,uR*.2,uP0.y-fc.y+uR*.15); }
+  if(d<0.){
+    vec2 e=vec2(1.5,0.);
+    vec2 g=normalize(vec2(sdf(fc+e.xy)-sdf(fc-e.xy),sdf(fc+e.yx)-sdf(fc-e.yx))+1e-5);
+    float tiefe=clamp(-d/(uR*.9),0.,1.);
+    float rand=1.-tiefe;
+    float bieg=pow(rand,2.2);
+    vec2 b=uv-g*bieg*uR*.5/uRes+(uv-uP0/uRes)*(-.22)*(1.-bieg);
+    float disp=bieg*.012;
+    col=vec3(texture2D(uTex,b+g*disp).r,texture2D(uTex,b).g,texture2D(uTex,b-g*disp).b);
+    col=col*1.04+.015;
+    float kante=smoothstep(0.,2.5,-d)*smoothstep(uR*.09,1.5,-d);
+    float licht=max(dot(g,normalize(vec2(-.55,.85))),0.);
+    col+=kante*(.18+.7*pow(licht,2.));
+    col-=smoothstep(uR*.1,0.,-d)*.06*(1.-licht);
+    vec2 hp=(fc-uP0)/uR-vec2(-.34,.42);
+    col+=.22*smoothstep(.32,0.,length(hp*vec2(1.,1.7)));
+  }
+  gl_FragColor=vec4(col,1.);
+}`, KLEIN ? .8 : .7);
+  if (!f) return;
+  const tex = f.textur(0);
+  // Bühne: Seide + Schrift in einer 2D-Fläche
+  const buehne = document.createElement("canvas"); const bx = buehne.getContext("2d");
+  let schriftBereit = false;
+  (document.fonts ? Promise.race([document.fonts.load('400 200px "Italiana"'), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve()).then(() => schriftBereit = true);
+  function zeichneBuehne(t) {
+    const W = cv.width, H = cv.height; if (buehne.width !== W || buehne.height !== H) { buehne.width = W; buehne.height = H; }
+    if (vid.readyState >= 2) {
+      const vw = vid.videoWidth, vh = vid.videoHeight, s = Math.max(W / vw, H / vh);
+      bx.drawImage(vid, (W - vw * s) / 2, (H - vh * s) / 2, vw * s, vh * s);
+    } else { bx.fillStyle = "#e9ebee"; bx.fillRect(0, 0, W, H); }
+    bx.fillStyle = "rgba(236,238,240,.35)"; bx.fillRect(0, 0, W, H);
+    const fs = Math.min(W * .2, H * .36);
+    bx.fillStyle = "#16130f"; bx.textAlign = "center"; bx.textBaseline = "middle";
+    bx.font = `400 ${fs}px Italiana, Didot, Georgia, serif`;
+    bx.fillText("KLARHEIT", W / 2, H * .47);
+    bx.font = `italic 300 ${fs * .17}px Newsreader, Georgia, serif`; bx.fillStyle = "#96701f";
+    bx.fillText("wie ein Tropfen Glas über Seide", W / 2, H * .47 + fs * .62);
+    bx.strokeStyle = "rgba(22,19,15,.35)"; bx.lineWidth = Math.max(1, W / 1600);
+    for (let i = 0; i < 24; i++) { const x = W * (i + .5) / 24; bx.beginPath(); bx.moveTo(x, H * .12); bx.lineTo(x, H * .16); bx.stroke(); }
+  }
+  const p0 = { x: 0, y: 0 }, p1 = { x: 0, y: 0 }, p2 = { x: 0, y: 0 }; let R = 0, init = false;
+  szenen.push({ el, update(t, dt) {
+    f.groesse(); spielen(vid);
+    zeichneBuehne(t); tex.laden(buehne);
+    const p = fortschritt(el); const d = f.d; const r0 = el.getBoundingClientRect();
+    let zx, zy;
+    if (FEIN && aktivMaus()) { zx = maus.x * d; zy = (innerHeight - (maus.y - Math.max(0, r0.top))) * d; }
+    else { zx = cv.width * (.5 + .3 * Math.sin(t * .55)); zy = cv.height * (.5 + .22 * Math.sin(t * .9 + 1)); }
+    if (!init) { [p0, p1, p2].forEach(q => { q.x = zx; q.y = zy; }); init = true; }
+    p0.x = lerp(p0.x, zx, .2); p0.y = lerp(p0.y, zy, .2);
+    p1.x = lerp(p1.x, p0.x, .1); p1.y = lerp(p1.y, p0.y, .1);
+    p2.x = lerp(p2.x, p1.x, .07); p2.y = lerp(p2.y, p1.y, .07);
+    const basis = Math.min(cv.width, cv.height) * (KLEIN ? .26 : .19);
+    R = lerp(R, basis * (1 + sstep(.6, 1, p) * 4.5), .1);
+    f.gl.uniform2f(f.u("uRes"), cv.width, cv.height);
+    f.gl.uniform2f(f.u("uP0"), p0.x, p0.y); f.gl.uniform2f(f.u("uP1"), p1.x, p1.y); f.gl.uniform2f(f.u("uP2"), p2.x, p2.y);
+    f.gl.uniform1f(f.u("uR"), R); f.gl.uniform1f(f.u("uZeit"), RM ? 0 : t);
+    f.zeichne();
+  }, aus() { vid.pause(); }, zeigerWeg: true });
+}
+
+/* ================= 03 NOTEN: Ink Reveal ================= */
+const NOTEN = [
+  { wort: "Kopf", stoffe: "Bergamotte, Zitrone, rosa Pfeffer", zeit: "Die ersten 15 Minuten" },
+  { wort: "Herz", stoffe: "Jasmin, Iris, Orangenblüte", zeit: "Nach etwa 15 Minuten bis 3 Stunden" },
+  { wort: "Basis", stoffe: "Ambra, Sandelholz, Weihrauch", zeit: "6 Stunden und länger" }
+];
+function initNoten() {
+  const el = $("#noten"), cv = $("#cNoten"), vids = [$("#note0"), $("#note1"), $("#note2")];
+  const f = shaderFlaeche(cv, `precision highp float;
+uniform sampler2D uTex,uMaske; uniform vec2 uRes,uTexRes; uniform float uZeit;
+float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+float n2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){return n2(p)*.55+n2(p*2.1)*.27+n2(p*4.3)*.18;}
+void main(){
+  vec2 uv=gl_FragCoord.xy/uRes;
+  vec2 sc=uRes/uTexRes; float s=max(sc.x,sc.y); vec2 t=(uv-.5)*(uRes/(uTexRes*s))+.5;
+  vec3 v=texture2D(uTex,t).rgb;
+  vec3 vb=(texture2D(uTex,t+vec2(.004,0.)).rgb+texture2D(uTex,t-vec2(.004,0.)).rgb+texture2D(uTex,t+vec2(0.,.006)).rgb+texture2D(uTex,t-vec2(0.,.006)).rgb)*.25;
+  float L=dot(vb,vec3(.299,.587,.114));
+  vec3 papier=vec3(.925,.932,.94); vec3 tusche=vec3(.086,.075,.06);
+  float stufe=smoothstep(.12,.9,L);
+  vec3 wash=mix(tusche,papier,pow(stufe,.7));
+  wash=mix(wash,papier,.35);
+  wash*=.975+.025*n2(gl_FragCoord.xy*.6);
+  float m=texture2D(uMaske,uv).r;
+  vec2 q=uv*vec2(uRes.x/uRes.y,1.);
+  float n=fbm(q*6.+vec2(0.,uZeit*.08));
+  float mm=m+(n-.5)*.55;
+  float zeig=smoothstep(.44,.5,mm);
+  float kante=smoothstep(.36,.43,mm)*(1.-smoothstep(.47,.53,mm));
+  vec3 col=mix(wash,v,zeig);
+  col=mix(col,tusche,kante*.6);
+  gl_FragColor=vec4(col,1.);
+}`, KLEIN ? .8 : .7);
+  if (!f) return;
+  const gl = f.gl;
+  const tex = f.textur(0), maskeTex = f.textur(1, [0, 0, 0]);
+  gl.uniform1i(f.u("uTex"), 0); gl.uniform1i(f.u("uMaske"), 1);
+  const mk = document.createElement("canvas"); const mx = mk.getContext("2d"); let MW = 320, MH = 200;
+  function mg() { MW = 320; MH = Math.round(320 * cv.clientHeight / Math.max(1, cv.clientWidth)); mk.width = MW; mk.height = MH; mx.fillStyle = "#000"; mx.fillRect(0, 0, MW, MH); }
+  mg(); addEventListener("resize", mg);
+  function klecks(x, y, r, a) { const g = mx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(255,255,255,${a})`); g.addColorStop(1, "rgba(255,255,255,0)"); mx.fillStyle = g; mx.beginPath(); mx.arc(x, y, r, 0, 6.283); mx.fill(); }
+  const wort = $("#noteWort"), stoffe = $("#noteStoffe"), zeit = $("#noteZeit"), baender = [$("#band0"), $("#band1"), $("#band2")];
+  let note = -1, lx = -1, ly = -1, auto = 0;
+  szenen.push({ el, update(t, dt) {
+    f.groesse();
+    const p = fortschritt(el); const i = p < .34 ? 0 : p < .67 ? 1 : 2;
+    if (i !== note) {
+      if (note >= 0) vids[note].pause();
+      note = i; spielen(vids[i]);
+      wort.textContent = NOTEN[i].wort; stoffe.textContent = NOTEN[i].stoffe; zeit.textContent = NOTEN[i].zeit;
+      baender.forEach((b, k) => b.classList.toggle("an", k === i));
+      mx.fillStyle = "rgba(0,0,0,.85)"; mx.fillRect(0, 0, MW, MH);
+      if (window.gsap && !RM) gsap.fromTo(wort, { opacity: 0, y: 30, letterSpacing: ".2em" }, { opacity: 1, y: 0, letterSpacing: ".01em", duration: 1, ease: "expo.out" });
+    }
+    spielen(vids[note]);
+    if (vids[note].readyState >= 2) tex.laden(vids[note]);
+    // Maske: langsam verblassen, Maus malt
+    mx.globalCompositeOperation = "source-over"; mx.fillStyle = `rgba(0,0,0,${RM ? 0 : .008})`; mx.fillRect(0, 0, MW, MH);
+    mx.globalCompositeOperation = "lighter";
+    const r0 = el.getBoundingClientRect();
+    if (FEIN && aktivMaus()) {
+      const x = maus.x / innerWidth * MW, y = (maus.y - Math.max(0, r0.top)) / innerHeight * MH;
+      const schritte = lx < 0 ? 1 : Math.ceil(Math.hypot(x - lx, y - ly) / 4) || 1;
+      for (let k = 1; k <= schritte; k++) { const q = k / schritte; klecks(lerp(lx < 0 ? x : lx, x, q), lerp(ly < 0 ? y : ly, y, q), MW * .1, .2); }
+      lx = x; ly = y;
+    } else {
+      auto += dt;
+      const x = MW * (.5 + .32 * Math.sin(auto * .5)), y = MH * (.45 + .25 * Math.sin(auto * .83 + 1));
+      klecks(x, y, MW * .09, .2); lx = -1;
+    }
+    mx.globalCompositeOperation = "source-over";
+    maskeTex.laden(mk);
+    gl.activeTexture(gl.TEXTURE0);
+    const v = vids[note];
+    gl.uniform2f(f.u("uRes"), cv.width, cv.height); gl.uniform2f(f.u("uTexRes"), v.videoWidth || 960, v.videoHeight || 540);
+    gl.uniform1f(f.u("uZeit"), RM ? 0 : t);
+    f.zeichne();
+  }, aus() { vids.forEach(v => v.pause()); } });
+}
+
+/* ================= 04 SPRÜHSTOSS: Teilchen ================= */
+function initSpray() {
+  const el = $("#spray"), cv = $("#cSpray");
+  const N = KLEIN ? 14000 : 30000;
+  $("#sprayZahl").textContent = new Intl.NumberFormat("de-DE").format(N);
+  const r = new THREE.WebGLRenderer({ canvas: cv, antialias: false, powerPreference: "high-performance" });
+  r.setPixelRatio(Math.min(DPR, 1.75));
+  const sc = new THREE.Scene(); sc.background = new THREE.Color(0xeceef0);
+  const cam = new THREE.PerspectiveCamera(40, 1, .1, 100); cam.position.set(0, 0, 10);
+  const A = new Float32Array(N * 3), B = new Float32Array(N * 3), C = new Float32Array(N * 3), R = new Float32Array(N);
+  const prof = [[-1.2, .86], [-1.12, 1.02], [-.95, 1.06], [.62, 1.06], [.82, 1.0], [.98, .62], [1.06, .34], [1.24, .3]];
+  const rad = y => { for (let i = 0; i < prof.length - 1; i++) { const [y0, r0] = prof[i], [y1, r1] = prof[i + 1]; if (y <= y1) return lerp(r0, r1, (y - y0) / (y1 - y0)); } return .3; };
+  const oct = th => { const s = Math.PI / 4; const a = ((th % s) + s) % s - s / 2; return Math.cos(Math.PI / 8) / Math.cos(a); };
+  for (let i = 0; i < N; i++) {
+    R[i] = Math.random();
+    const th = Math.random() * Math.PI * 2;
+    let x, y, z;
+    if (i % 7 === 0) { y = 1.25 + Math.random() * .8; const rr = .46 * (Math.random() < .7 ? 1 : Math.random()); x = Math.cos(th) * rr * oct(th); z = Math.sin(th) * rr * oct(th); }
+    else { y = -1.2 + Math.random() * 2.44; const rr = rad(y) * (Math.random() < .75 ? 1 : Math.sqrt(Math.random())); x = Math.cos(th) * rr * oct(th); z = Math.sin(th) * rr * oct(th); }
+    A[i * 3] = x * 1.5; A[i * 3 + 1] = y * 1.5 - .2; A[i * 3 + 2] = z * 1.5;
+    // Nebel: Kegel ab der Düse nach rechts oben
+    const tt = Math.pow(Math.random(), .55) * 7.5;
+    const ox = Math.random() - .5, oy = Math.random() - .5, oz = Math.random() - .5, ol = Math.hypot(ox, oy, oz) || 1, os = Math.cbrt(Math.random()) * (.15 + tt * .5);
+    B[i * 3] = .6 + tt * .95 + ox / ol * os - 2.5; B[i * 3 + 1] = 2.6 + tt * .18 + oy / ol * os - 1.2; B[i * 3 + 2] = oz / ol * os;
+  }
+  C.set(B);
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(A, 3));
+  geo.setAttribute("aA", new THREE.BufferAttribute(A, 3)); geo.setAttribute("aB", new THREE.BufferAttribute(B, 3));
+  const attC = new THREE.BufferAttribute(C, 3); geo.setAttribute("aC", attC); geo.setAttribute("aR", new THREE.BufferAttribute(R, 1));
+  geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 20);
+  const mat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false,
+    uniforms: { uM: { value: 0 }, uT: { value: 0 }, uMaus: { value: new THREE.Vector3(99, 99, 0) }, uS: { value: 22 * Math.min(DPR, 1.75) }, uDreh: { value: 0 } },
+    vertexShader: `attribute vec3 aA,aB,aC; attribute float aR; uniform float uM,uT,uS,uDreh; uniform vec3 uMaus; varying vec3 vC; varying float vA;
+      vec3 rotY(vec3 p,float a){float c=cos(a),s=sin(a);return vec3(c*p.x+s*p.z,p.y,-s*p.x+c*p.z);}
+      void main(){
+        float m=clamp(uM,0.,2.); float i0=min(floor(m),1.); float f=m-i0;
+        float ff=smoothstep(0.,1.,clamp((f-aR*.4)/.6,0.,1.));
+        vec3 a=i0<.5?rotY(aA,uDreh):aB; vec3 b=i0<.5?aB:aC;
+        vec3 p=mix(a,b,ff);
+        float tu=sin(ff*3.14159);
+        p+=tu*vec3(sin(aR*37.+uT*1.4),cos(aR*23.+uT),sin(aR*11.+uT*.7))*.7;
+        float neb=(1.-abs(m-1.)); p+=neb*.12*vec3(sin(uT*.8+aR*40.),cos(uT*.6+aR*30.),0.);
+        vec3 d=p-uMaus; float l=length(d.xy); p.xy+=normalize(d.xy+1e-4)*exp(-l*l*1.6)*.9;
+        vec4 mv=modelViewMatrix*vec4(p,1.); gl_Position=projectionMatrix*mv;
+        gl_PointSize=uS*(.4+aR*.8)/-mv.z;
+        vC=mix(vec3(.086,.075,.06),vec3(.75,.55,.2),smoothstep(.15,.95,aR));
+        vA=.5+.35*aR;
+      }`,
+    fragmentShader: `varying vec3 vC; varying float vA; void main(){ float d=length(gl_PointCoord-.5); if(d>.5) discard; gl_FragColor=vec4(vC,vA*smoothstep(.5,.2,d)); }`
+  });
+  sc.add(new THREE.Points(geo, mat));
+  async function name() {
+    try { await Promise.race([document.fonts.load('400 200px "Italiana"'), new Promise(r => setTimeout(r, 2500))]); } catch (e) {}
+    const W = 1200, H = 360, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+    x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle"; x.font = '400 300px "Italiana", Didot, Georgia, serif';
+    x.fillText("LUMEN", W / 2, H / 2 + 10); x.lineWidth = 9; x.strokeStyle = "#fff"; x.lineJoin = "round"; x.strokeText("LUMEN", W / 2, H / 2 + 10);
+    const px = x.getImageData(0, 0, W, H).data, pts = [];
+    for (let yy = 0; yy < H; yy += 2) for (let xx = 0; xx < W; xx += 2) if (px[(yy * W + xx) * 4 + 3] > 120) pts.push(xx, yy);
+    if (!pts.length) return; const n = pts.length / 2;
+    for (let i = 0; i < N; i++) { const k = Math.floor(Math.random() * n); C[i * 3] = (pts[k * 2] / W - .5) * 8.4; C[i * 3 + 1] = -(pts[k * 2 + 1] / H - .5) * 8.4 * H / W; C[i * 3 + 2] = (Math.random() - .5) * .3; }
+    attC.needsUpdate = true;
+  }
+  name();
+  function groesse() { const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.position.z = clamp(9.5 / Math.min(1, cam.aspect * 1.1), 9.5, 20); cam.updateProjectionMatrix(); }
+  groesse(); addEventListener("resize", groesse);
+  const li = $$("#stufen li"); let m = 0, aktiv = 0, dreh = 0;
+  const ray = new THREE.Raycaster(), nv = new THREE.Vector2(), ebene = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), ziel = new THREE.Vector3();
+  szenen.push({ el, update(t, dt) {
+    const p = fortschritt(el); const x = p * 2; const i = Math.floor(x); const f = x - i;
+    m = lerp(m, Math.min(2, i + sstep(.2, .8, f)), RM ? 1 : .08);
+    if (!RM) dreh += dt * .4;
+    mat.uniforms.uM.value = m; mat.uniforms.uT.value = RM ? 0 : t; mat.uniforms.uDreh.value = dreh;
+    if (FEIN && aktivMaus()) { const r0 = el.getBoundingClientRect(); nv.set(maus.x / innerWidth * 2 - 1, -((maus.y - Math.max(0, r0.top)) / innerHeight) * 2 + 1); ray.setFromCamera(nv, cam); if (ray.ray.intersectPlane(ebene, ziel)) mat.uniforms.uMaus.value.lerp(ziel, .3); }
+    else mat.uniforms.uMaus.value.set(99, 99, 0);
+    const k = Math.round(m); if (k !== aktiv) { li.forEach((l, j) => l.classList.toggle("an", j === k)); aktiv = k; }
+    r.render(sc, cam);
+  }});
+}
+
+/* ================= 05 PORTAL ================= */
+function initPortal() {
+  const el = $("#portal"), cv = $("#cPortal"), vid = $("#portalVideo"), ende = $("#portalEnde"), ui = $("#portal .portal-ui");
+  const r = rendererMachen(cv, true);
+  const sc = new THREE.Scene(); sc.background = new THREE.Color(0xeceef0); sc.environment = studio(r);
+  sc.fog = new THREE.Fog(0xeceef0, 14, 40);
+  const cam = new THREE.PerspectiveCamera(45, 1, .05, 100);
+  const gold = new THREE.MeshPhysicalMaterial({ color: 0xd6a94e, metalness: 1, roughness: .14, clearcoat: .5 });
+  const goldMatt = new THREE.MeshPhysicalMaterial({ color: 0xc89a45, metalness: 1, roughness: .32 });
+  const ringe = [];
+  const haupt = new THREE.Mesh(new THREE.TorusGeometry(3, .16, 32, 160), gold); sc.add(haupt);
+  [[3.5, .035, .5, 0], [3.9, .05, -.3, 1.1], [2.65, .03, .2, 2.1]].forEach(([R, t, sp, a]) => { const m = new THREE.Mesh(new THREE.TorusGeometry(R, t, 16, 160), goldMatt); m.userData = { sp, a }; sc.add(m); ringe.push(m); });
+  // Facetten-Kugeln auf dem Hauptring
+  for (let i = 0; i < 12; i++) { const k = new THREE.Mesh(new THREE.OctahedronGeometry(.13, 0), gold); const a = i / 12 * Math.PI * 2; k.position.set(Math.cos(a) * 3, Math.sin(a) * 3, 0); haupt.add(k); }
+  const vtex = new THREE.VideoTexture(vid); vtex.encoding = THREE.sRGBEncoding;
+  const scheibe = new THREE.Mesh(new THREE.CircleGeometry(2.86, 128), new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, fog: false,
+    uniforms: { uTex: { value: vtex }, uT: { value: 0 }, uNah: { value: 0 } },
+    vertexShader: "varying vec2 vU;void main(){vU=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
+    fragmentShader: `uniform sampler2D uTex; uniform float uT,uNah; varying vec2 vU;
+      void main(){
+        vec2 p=vU-.5; float r=length(p)*2.; float a=atan(p.y,p.x);
+        float w=a+uT*.35+.9/(r+.25);
+        vec2 q=vec2(cos(w),sin(w))*r*.5+.5;
+        vec3 v=texture2D(uTex,q*.8+.1).rgb;
+        vec3 c=mix(vec3(1.,.95,.84),vec3(.85,.62,.25),smoothstep(0.,1.,r));
+        c+=v*vec3(1.,.85,.5)*1.4;
+        float streifen=.5+.5*sin(w*6.-r*9.+uT*2.);
+        c+=vec3(1.,.88,.6)*streifen*.15*(1.-r);
+        c=mix(c,vec3(1.,.98,.94),smoothstep(.35,0.,r)*.85);
+        float alpha=smoothstep(1.,.92,r);
+        gl_FragColor=vec4(c,alpha);
+      }`
+  }));
+  sc.add(scheibe);
+  // Goldstaub
+  const sg = new THREE.BufferGeometry(); const sp = new Float32Array(1500);
+  for (let i = 0; i < 500; i++) { sp[i * 3] = (Math.random() - .5) * 20; sp[i * 3 + 1] = (Math.random() - .5) * 12; sp[i * 3 + 2] = -10 + Math.random() * 24; }
+  sg.setAttribute("position", new THREE.BufferAttribute(sp, 3));
+  const staub = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xb08a3a, size: .04, transparent: true, opacity: .7 })); sc.add(staub);
+  function groesse() { const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.fov = cam.aspect < 1 ? 62 : 45; cam.updateProjectionMatrix(); }
+  groesse(); addEventListener("resize", groesse);
+  let cz = 16;
+  szenen.push({ el, update(t, dt) {
+    const p = fortschritt(el); spielen(vid);
+    cz = lerp(cz, lerp(16, -1.5, sstep(0, .82, p)), RM ? 1 : .08);
+    cam.position.set(maus.nx * .8 * (cz > 3 ? 1 : .2), maus.ny * .5 * (cz > 3 ? 1 : .2), cz);
+    cam.lookAt(0, 0, cz - 10);
+    const zt = RM ? 0 : t;
+    haupt.rotation.z = zt * .12; haupt.rotation.x = Math.sin(zt * .4) * .05;
+    ringe.forEach(m => { m.rotation.x = m.userData.a + zt * m.userData.sp; m.rotation.y = m.userData.a * .7 + zt * m.userData.sp * .6; });
+    scheibe.material.uniforms.uT.value = zt;
+    staub.rotation.z = zt * .02;
+    const e = sstep(.8, .95, p);
+    ende.style.opacity = e.toFixed(3); ende.style.transform = `scale(${(1.08 - e * .08).toFixed(3)})`;
+    ui.style.opacity = (1 - sstep(.5, .7, p)).toFixed(3);
+    r.toneMappingExposure = 1.05 + sstep(.7, .9, p) * 1.6;
+    r.render(sc, cam);
+  }, aus() { vid.pause(); } });
+}
+
+/* ================= Start ================= */
+const sicher = (n, fn) => { try { fn(); } catch (e) { console.warn(n, e); } };
+if (window.THREE) { sicher("flakon", initFlakon); sicher("spray", initSpray); sicher("portal", initPortal); }
+sicher("glas", initGlas);
+sicher("noten", initNoten);
+$$("video").forEach(v => v.muted = true);
+
+/* ================= HUD und Zeiger ================= */
+const hudSzene = $("#hudSzene"), hudEffekt = $("#hudEffekt"), balken = $("#balken"), abschnitte = $$("main > section");
+const zeiger = $("#zeiger"), ring = $("#zeigerRing"), zp = { x: maus.x, y: maus.y };
+let letzte = "";
+function hud() {
+  const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  balken.style.transform = `scaleX(${clamp(scrollY / max, 0, 1).toFixed(4)})`;
+  const mitte = innerHeight / 2;
+  for (const a of abschnitte) {
+    const r = a.getBoundingClientRect();
+    if (r.top <= mitte && r.bottom >= mitte) {
+      const k = `${a.dataset.nr} — ${a.dataset.name}`;
+      if (k !== letzte) { hudSzene.textContent = k; hudEffekt.textContent = a.dataset.effekt; letzte = k; const weg = a.id === "glas"; zeiger.classList.toggle("weg", weg); ring.classList.toggle("weg", weg); }
+      break;
+    }
+  }
+}
+
+let letzteZeit = performance.now();
+function schleife(jetzt) {
+  requestAnimationFrame(schleife);
+  const dt = Math.min(.05, (jetzt - letzteZeit) / 1000); letzteZeit = jetzt; const t = jetzt / 1000;
+  if (lenis) lenis.raf(jetzt);
+  for (const s of szenen) {
+    if (sichtbar(s.el)) { try { s.update(t, dt); } catch (e) { console.warn(e); s.update = () => {}; } s.lief = true; }
+    else if (s.lief) { s.aus && s.aus(); s.lief = false; }
+  }
+  hud();
+  if (FEIN) {
+    zeiger.style.transform = `translate3d(${maus.x}px,${maus.y}px,0)`;
+    zp.x = lerp(zp.x, maus.x, .16); zp.y = lerp(zp.y, maus.y, .16);
+    ring.style.transform = `translate3d(${zp.x}px,${zp.y}px,0)`;
+  }
+}
+requestAnimationFrame(schleife);
+
+$("#nochmal").addEventListener("click", () => { if (lenis) lenis.scrollTo(0, { duration: 3.2 }); else scrollTo({ top: 0, behavior: RM ? "auto" : "smooth" }); });
+
+/* ================= Auftakt ================= */
+const auftakt = $("#auftakt");
+if (window.gsap && !RM) {
+  const text = $("#aText");
+  let laenge = 2400; try { laenge = text.getComputedTextLength() * 6 || 2400; } catch (e) {}
+  gsap.set(text, { strokeDasharray: laenge, strokeDashoffset: laenge });
+  const tl = gsap.timeline({ onComplete: () => { auftakt.hidden = true; } });
+  tl.to(text, { strokeDashoffset: 0, duration: 1.3, ease: "power2.inOut", delay: .15 })
+    .to(text, { fillOpacity: 1, duration: .5 }, "-=.3")
+    .to("#aStrich", { scaleX: 1, duration: .6, ease: "expo.inOut" }, "-=.2")
+    .to("#aSvg", { opacity: 0, y: -20, duration: .4 })
+    .to("#hOben", { yPercent: -100, duration: 1, ease: "expo.inOut" }, "<")
+    .to("#hUnten", { yPercent: 100, duration: 1, ease: "expo.inOut" }, "<")
+    .to("#aStrich", { opacity: 0, duration: .3 }, "<.5")
+    .from("#flakon .ein", { y: 30, opacity: 0, duration: 1, stagger: .12, ease: "expo.out" }, "-=.6");
+} else auftakt.hidden = true;
+})();
+</script>
+
+<div id="ordeBalken">
+  <a href="../../referenzen.html">&larr; Zur&uuml;ck zu ORD&Eacute;</a>
+  <span>Beispielseite &middot; erfundene Marke &middot; Videos von Mixkit, keine KI-Bilder</span>
+  <a class="ordeCta" href="../../anfrage.html">So eine Seite anfragen</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));font-size:13px}
+  #ordeBalken span{order:3;flex-basis:100%;text-align:center;font-size:11.5px;line-height:1.3}
+}
+@media print{#ordeBalken{display:none}}
+</style>
+</body>
+</html>
