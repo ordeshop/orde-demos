@@ -36,7 +36,9 @@ in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
 - **Gewicht:** `monolith` bringt 11,9 MB Full-HD-Video mit (lädt erst beim
   Hinscrollen), die anderen 0,1 bis 6,3 MB.
 
-Englische Fassungen gibt es noch nicht.
+Jede hat eine englische Fassung `en.html` (Rückkehr-Balken auf `/en/`,
+Monolith mit Fuß und am/pm). Sie stehen in `orde-website/build.py` unter
+`SHOWREELS_EN`.
 
 ## Entwürfe für echte Betriebe
 
