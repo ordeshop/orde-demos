@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en" data-showreel>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Monolith · Architecture Showreel by ORDÉ</title>
+<meta name="description" content="A made-up concrete house rises from its floor plan, a sun study with real shadows, and a section that cuts between working model and built design.">
+<link rel="stylesheet" href="../bibliothek/schriften.css">
+<style>
+/* Layout: ein Plansatz. Ein einziges 3D-Modell trägt drei Kapitel (Grundriss wird Volumen, Sonnenstudie,
+   Arbeitsmodell gegen Ausführung), danach echte Aufnahmen in Fenstern, die sich öffnen, am Ende ein Schriftfeld.
+   Hell wie Zeichenpapier, Linien in Blaupausenblau. Bewusst nur ein heller Look. */
+:root{
+  --papier:#f1f2f0;
+  --papier-tief:#e4e6e3;
+  --graphit:#141515;
+  --stahl:#5d6266;
+  --blau:#2347b6;
+  --linie:rgba(20,21,21,.14);
+  --linie-stark:rgba(20,21,21,.32);
+  --groteske:"Geist","Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+  --serif:"Instrument Serif","Times New Roman",Georgia,serif;
+  --gl:max(16px,env(safe-area-inset-left,0px));
+  --gr:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--papier)}
+body{background:var(--papier);color:var(--graphit);font-family:var(--groteske);font-weight:400;font-size:16px;line-height:1.55;overflow-x:clip;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:var(--papier)}
+::selection{background:var(--blau);color:var(--papier)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:1.5px solid var(--blau);outline-offset:4px}
+.rand{padding-left:var(--gl);padding-right:var(--gr)}
+.klebe{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+canvas{display:block}
+.vollbild{position:absolute;inset:0;width:100%;height:100%}
+.kicker{font:500 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;margin:0;color:var(--stahl);display:flex;gap:12px;align-items:center}
+.kicker b{font-weight:500;color:var(--blau)}
+.kicker::before{content:"";width:18px;height:1px;background:currentColor}
+.fliess{font:400 16px/1.6 var(--groteske);margin:0;max-width:42ch;color:var(--stahl)}
+.titel{margin:0;font:300 clamp(46px,6.6vw,112px)/.95 var(--groteske);letter-spacing:-.035em;text-wrap:balance}
+.titel em{font:italic 400 1.04em/1 var(--serif);letter-spacing:-.01em}
+.mass{font:400 12px/1.5 var(--mono);color:var(--stahl);font-variant-numeric:tabular-nums;margin:0}
+
+/* ---------- Auftakt ---------- */
+.auftakt{position:fixed;inset:0;z-index:100;background:var(--papier);display:grid;place-items:center;animation:notaus 0s 6s forwards}
+@keyframes notaus{to{visibility:hidden;opacity:0}}
+.auftakt svg{width:min(78vw,720px);height:auto;overflow:visible}
+.auftakt .w{fill:none;stroke:var(--blau);stroke-width:1.4}
+.auftakt .d{fill:none;stroke:var(--stahl);stroke-width:.8}
+.auftakt text{font:400 11px var(--mono);fill:var(--stahl);letter-spacing:.06em}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:16px;pointer-events:none;font:500 11px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#fff;mix-blend-mode:difference;padding-left:var(--gl);padding-right:var(--gr)}
+.hud-oben{top:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+.hud-unten{bottom:0;padding-bottom:calc(18px + var(--unten))}
+.hud-marke{font:600 13px/1 var(--groteske);letter-spacing:.32em}
+.hud-plan{display:flex;gap:14px;align-items:center}
+.hud-plan b{font-weight:600}
+.nord{width:30px;height:30px;transition:transform .2s linear}
+.nord circle{fill:none;stroke:currentColor;stroke-width:1}
+.nord path{fill:currentColor}
+.nord text{font:600 8px var(--mono);fill:currentColor}
+.hud-balken{position:fixed;left:0;right:0;bottom:0;height:2px;z-index:51;pointer-events:none}
+.hud-balken i{display:block;height:100%;background:var(--blau);transform-origin:0 50%;transform:scaleX(0)}
+.hud-fps{opacity:.7}
+
+/* ---------- Modell ---------- */
+.s-modell{position:relative;height:1000vh}
+.phase{position:absolute;inset:0;padding-top:calc(76px + env(safe-area-inset-top,0px));padding-bottom:calc(68px + var(--unten));pointer-events:none;opacity:0;display:grid}
+.phase.links{grid-template-columns:minmax(0,560px) 1fr;align-items:end}
+.phase-text{display:grid;gap:18px;align-self:end;text-shadow:0 0 14px rgba(241,242,240,.9),0 0 32px rgba(241,242,240,.7)}
+.uhr{text-shadow:0 0 14px rgba(241,242,240,.9),0 0 32px rgba(241,242,240,.7)}
+.held h1{margin:0;font:200 clamp(84px,14vw,240px)/.82 var(--groteske);letter-spacing:-.06em}
+.held .unter{margin:0;font:italic 400 clamp(24px,2.6vw,38px)/1.1 var(--serif);max-width:20ch}
+.planinfo{justify-self:end;align-self:end;display:grid;min-width:min(100%,280px);border:1px solid var(--linie-stark);background:rgba(241,242,240,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.planinfo div{display:flex;justify-content:space-between;gap:24px;padding:9px 14px;border-bottom:1px solid var(--linie)}
+.planinfo div:last-child{border-bottom:0}
+.planinfo dt{font:500 10px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stahl)}
+.planinfo dd{margin:0;font:500 13px/1.5 var(--mono);font-variant-numeric:tabular-nums}
+.uhr{display:grid;gap:6px;justify-self:end;align-self:end;text-align:right}
+.uhr-zeit{font:200 clamp(72px,10vw,168px)/.85 var(--groteske);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.uhr-skala{position:relative;width:min(70vw,420px);height:22px;justify-self:end}
+.uhr-skala::before{content:"";position:absolute;left:0;right:0;top:10px;height:1px;background:var(--linie-stark)}
+.uhr-skala i{position:absolute;top:4px;width:1px;height:13px;background:var(--graphit)}
+.uhr-skala span{position:absolute;top:0;width:10px;height:10px;margin-left:-5px;margin-top:5px;border-radius:50%;background:var(--blau)}
+.schnitt{position:absolute;top:0;bottom:0;width:0;left:50%;pointer-events:none;opacity:0}
+.schnitt::before{content:"";position:absolute;top:0;bottom:0;left:0;border-left:1px dashed var(--blau)}
+.schnitt b{position:absolute;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:var(--papier);border:1px solid var(--blau);display:grid;place-items:center;font:500 13px var(--mono);color:var(--blau)}
+.schnitt .l,.schnitt .r{position:absolute;top:calc(50% + 36px);font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;background:var(--papier);padding:5px 7px;border:1px solid var(--linie-stark)}
+.schnitt .l{right:14px}.schnitt .r{left:14px}
+
+/* ---------- Realität ---------- */
+.s-real{position:relative;height:520vh;background:var(--graphit)}
+.fenster{position:absolute;inset:0;overflow:hidden;clip-path:inset(50% 50% 50% 50%);will-change:clip-path}
+.fenster video{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.12);will-change:transform}
+.real-ui{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding-top:calc(76px + env(safe-area-inset-top,0px));padding-bottom:calc(68px + var(--unten));pointer-events:none;color:var(--papier)}
+.real-ui .kicker{color:rgba(241,242,240,.8)}
+.real-ui .kicker b{color:#fff}
+.real-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px;text-shadow:0 2px 24px rgba(0,0,0,.45)}
+.real-nr{font:200 clamp(90px,14vw,230px)/.8 var(--groteske);letter-spacing:-.06em;font-variant-numeric:tabular-nums}
+.real-titel{display:grid;gap:10px}
+.real-titel h2{margin:0;font:300 clamp(40px,5.6vw,92px)/.95 var(--groteske);letter-spacing:-.035em}
+.real-titel h2 em{font:italic 400 1.04em/1 var(--serif)}
+.real-titel p{margin:0;font:400 12px/1.5 var(--mono);letter-spacing:.06em;opacity:.85}
+
+/* ---------- Schriftfeld ---------- */
+.s-ende{position:relative;padding-block:clamp(90px,14vh,160px) calc(110px + var(--unten));background-image:linear-gradient(var(--linie) 1px,transparent 1px),linear-gradient(90deg,var(--linie) 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
+.ende-inhalt{display:grid;gap:clamp(36px,6vh,64px)}
+.ende-inhalt .titel{max-width:14ch}
+.schriftfeld{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1.5px solid var(--graphit);background:var(--papier)}
+.schriftfeld div{padding:12px 14px;border-right:1px solid var(--linie-stark);border-bottom:1px solid var(--linie-stark);min-width:0}
+.schriftfeld div:nth-child(4n){border-right:0}
+.schriftfeld dt{font:500 9.5px/1.5 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stahl)}
+.schriftfeld dd{margin:4px 0 0;font:500 14px/1.4 var(--groteske)}
+.schriftfeld .gross{grid-column:span 2}
+.schriftfeld .gross dd{font:300 30px/1.05 var(--groteske);letter-spacing:-.02em}
+.planliste{width:100%;border-collapse:collapse;font:400 14px/1.5 var(--groteske)}
+.planliste th{font:500 10px/1.5 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stahl);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--graphit)}
+.planliste td{padding:10px;border-bottom:1px solid var(--linie-stark);vertical-align:top}
+.planliste td:first-child{font:500 13px var(--mono);color:var(--blau);white-space:nowrap}
+.tabelle{overflow-x:auto}
+.ende-fuss{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px}
+.knopf{display:inline-flex;align-items:center;gap:12px;min-height:52px;padding:0 26px;border:1.5px solid var(--graphit);background:var(--papier);font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background-color .3s,color .3s}
+.knopf:hover,.knopf:focus-visible{background:var(--graphit);color:var(--papier)}
+.hinweis{font:400 13px/1.6 var(--groteske);max-width:62ch;margin:0;color:var(--stahl)}
+
+@media (max-width:760px){
+  .phase.links{grid-template-columns:1fr;align-content:end}
+  .planinfo,.uhr{justify-self:stretch;text-align:left}
+  .uhr-skala{justify-self:start}
+  .phase-text{align-self:start}
+  .hud .lang{display:none}
+  .schriftfeld{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .schriftfeld div:nth-child(4n){border-right:1px solid var(--linie-stark)}
+  .schriftfeld div:nth-child(2n){border-right:0}
+}
+@media (prefers-reduced-motion:reduce){ .nord{transition:none} }
+</style>
+<style>
+/* Platz für den Rückkehr-Balken: alles, was unten am Rand sitzt, rückt über ihn */
+:root{--balkenhoehe:58px;--unten:calc(env(safe-area-inset-bottom,0px) + var(--balkenhoehe))}
+@media (max-width:640px){:root{--balkenhoehe:94px}}
+.hud-balken{bottom:var(--unten)!important}
+</style>
+</head>
+<body>
+<div class="auftakt" id="auftakt" aria-hidden="true">
+  <svg viewBox="0 0 720 420" id="aPlan">
+    <rect class="w" pathLength="1" x="80" y="120" width="560" height="200"/>
+    <rect class="w" pathLength="1" x="110" y="150" width="340" height="150"/>
+    <rect class="w" pathLength="1" x="420" y="190" width="200" height="110"/>
+    <line class="w" pathLength="1" x1="20" y1="80" x2="560" y2="80"/>
+    <line class="d" pathLength="1" x1="80" y1="360" x2="640" y2="360"/>
+    <line class="d" pathLength="1" x1="80" y1="352" x2="80" y2="368"/>
+    <line class="d" pathLength="1" x1="640" y1="352" x2="640" y2="368"/>
+    <text x="360" y="385" text-anchor="middle" id="aMass">72'-2" (22.00 m)</text>
+    <text x="80" y="108">MONOLITH · GROUND FLOOR PLAN · SCALE 1:200</text>
+  </svg>
+</div>
+
+<div class="hud hud-oben" aria-hidden="true">
+  <span class="hud-marke">MONOLITH</span>
+  <span class="hud-plan"><span><b id="hudNr">A-100</b> <span id="hudPlan">Site plan</span></span>
+    <svg class="nord" id="nord" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13"/><path d="M15 4 L19 18 L15 15 L11 18 Z"/><text x="15" y="27" text-anchor="middle">N</text></svg>
+  </span>
+</div>
+<div class="hud hud-unten" aria-hidden="true">
+  <span class="lang">Made-up project · Example site</span>
+  <span><span id="hudMass">Scale 1:200</span> · <span class="hud-fps"><span id="fps">60</span> fps</span></span>
+</div>
+<div class="hud-balken" aria-hidden="true"><i id="balken"></i></div>
+
+<main>
+
+<!-- MODELL: drei Kapitel an einem 3D-Modell -->
+<section class="s-modell" id="modell">
+  <div class="klebe">
+    <canvas class="vollbild" id="c3d" aria-hidden="true"></canvas>
+    <div class="schnitt" id="schnitt" aria-hidden="true"><b>⇆</b><span class="l">Working model</span><span class="r">Built</span></div>
+
+    <div class="phase links rand" data-phase="0" id="ph0" style="opacity:1">
+      <div class="phase-text held">
+        <p class="kicker"><b>01</b> Site plan · made-up house</p>
+        <h1>Monolith</h1>
+        <p class="unter">A house of concrete, glass and light.</p>
+      </div>
+      <dl class="planinfo">
+        <div><dt>Drawing</dt><dd>Ground floor plan</dd></div>
+        <div><dt>Scale</dt><dd>1:200</dd></div>
+        <div><dt>Gross area</dt><dd>3,250 sq ft (302 m²)</dd></div>
+        <div><dt>Cantilever</dt><dd>29.5 ft (9.00 m)</dd></div>
+      </dl>
+    </div>
+
+    <div class="phase links rand" data-phase="1" id="ph1">
+      <div class="phase-text">
+        <p class="kicker"><b>02</b> Massing</p>
+        <h2 class="titel">The plan rises into <em>form.</em></h2>
+        <p class="fliess">Every wall is already fixed in the plan. As you scroll, each line becomes a building element: plinth, glass story, freestanding wall, and finally the exposed-concrete bar that cantilevers 29.5 feet (9 m) over the water.</p>
+      </div>
+    </div>
+
+    <div class="phase links rand" data-phase="2" id="ph2">
+      <div class="phase-text">
+        <p class="kicker"><b>03</b> Sun study</p>
+        <h2 class="titel">A day in <em>one scroll.</em></h2>
+        <p class="fliess">Sun path at the equinox, latitude 48° N, apparent solar time. Shadows computed in real time. After sunset, the lights come on in the glass story.</p>
+      </div>
+      <div class="uhr">
+        <span class="uhr-zeit" id="uhrZeit">5:30 am</span>
+        <p class="mass" id="uhrSonne">Sun below the horizon</p>
+        <div class="uhr-skala" id="uhrSkala"><span id="uhrPunkt"></span></div>
+      </div>
+    </div>
+
+    <div class="phase links rand" data-phase="3" id="ph3">
+      <div class="phase-text">
+        <p class="kicker"><b>04</b> Section</p>
+        <h2 class="titel">Working model vs. <em>built.</em></h2>
+        <p class="fliess">Move your mouse across the house. On the left, the white study model from the studio; on the right, exposed concrete with its formwork pattern, glass and wood.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REALITÄT -->
+<section class="s-real" id="real">
+  <div class="klebe">
+    <div class="fenster" data-i="0"><video data-quelle="media/rohbau.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+    <div class="fenster" data-i="1"><video data-quelle="media/fassade.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+    <div class="fenster" data-i="2"><video data-quelle="media/zeit.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+    <div class="fenster" data-i="3"><video data-quelle="media/raum.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+    <div class="real-ui rand">
+      <p class="kicker"><b>05</b> Reality · windows open as you scroll</p>
+      <span></span>
+      <div class="real-fuss">
+        <div class="real-titel" aria-live="polite">
+          <h2 id="realTitel">The shell, <em>backlit.</em></h2>
+          <p id="realText">1920 × 1080 · 30 fps · Clip: Mixkit</p>
+        </div>
+        <span class="real-nr" id="realNr">01</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHRIFTFELD -->
+<section class="s-ende" id="ende">
+  <div class="ende-inhalt rand">
+    <p class="kicker"><b>06</b> Title block</p>
+    <h2 class="titel">Drawn, computed, <em>built.</em></h2>
+    <dl class="schriftfeld">
+      <div class="gross"><dt>Project</dt><dd>Monolith</dd></div>
+      <div><dt>Drawing type</dt><dd>Showreel</dd></div>
+      <div><dt>Date</dt><dd>November 1, 2026</dd></div>
+      <div><dt>Client</dt><dd>made up</dd></div>
+      <div><dt>Drawn by</dt><dd>ORDÉ</dd></div>
+      <div><dt>Scale</dt><dd>1:200 and 1:1</dd></div>
+      <div><dt>Revision</dt><dd>a</dd></div>
+    </dl>
+    <div class="tabelle">
+      <table class="planliste">
+        <thead><tr><th>Sheet</th><th>Content</th><th>Technique</th></tr></thead>
+        <tbody>
+          <tr><td>A-100</td><td>Site plan</td><td>Three.js, model edges drawn as plan lines</td></tr>
+          <tr><td>A-200</td><td>Massing</td><td>Building elements rise from the floor plan, materials fade in</td></tr>
+          <tr><td>A-300</td><td>Sun study</td><td>Sun position from latitude and hour angle, soft shadows</td></tr>
+          <tr><td>A-400</td><td>Section</td><td>Two section planes separate working model and built design</td></tr>
+          <tr><td>A-500</td><td>Reality</td><td>Four Full HD clips from Mixkit, windows cut with clipping masks</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ende-fuss">
+      <button class="knopf" id="nochmal" type="button">Back to the plan ↑</button>
+      <p class="hinweis">Monolith is a made-up house for this example site, not a real project. The videos are real footage from Mixkit, no AI images. The 3D model is rendered live in your browser, and its resolution adapts to your device. Built by ORDÉ.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../bibliothek/gsap.min.js"></script>
+<script>window.gsap && gsap.ticker.lagSmoothing(0);</script>
+<script src="../bibliothek/three.min.js"></script>
+<script src="../bibliothek/lenis.min.js"></script>
+<script>
+(() => {
+"use strict";
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FEIN = matchMedia("(pointer: fine)").matches;
+const KLEIN = innerWidth < 760;
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const zwei = n => String(n).padStart(2, "0");
+const grad = r => r * 180 / Math.PI;
+
+const maus = { x: innerWidth * .62, y: innerHeight * .5, nx: 0, ny: 0, zuletzt: 0 };
+addEventListener("pointermove", e => { maus.x = e.clientX; maus.y = e.clientY; maus.nx = e.clientX / innerWidth * 2 - 1; maus.ny = -(e.clientY / innerHeight * 2 - 1); maus.zuletzt = performance.now(); }, { passive: true });
+const aktivMaus = () => performance.now() - maus.zuletzt < 3000;
+function fortschritt(el) { const r = el.getBoundingClientRect(); const tot = r.height - innerHeight; return tot > 0 ? clamp(-r.top / tot, 0, 1) : (r.top < 0 ? 1 : 0); }
+function sichtbar(el) { const r = el.getBoundingClientRect(); return r.bottom > -40 && r.top < innerHeight + 40; }
+
+let lenis = null;
+if (!RM && window.Lenis) { try { lenis = new Lenis({ lerp: .08, smoothWheel: true }); } catch (e) { lenis = null; } }
+const szenen = [];
+
+/* ================= Texturen ================= */
+function betonLeinwand() {
+  const W = 1024, H = 512, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+  x.fillStyle = "#a19f99"; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < 900; i++) { const r = 8 + Math.random() * 60; x.fillStyle = `rgba(${Math.random() < .5 ? "255,255,255" : "60,60,58"},${(Math.random() * .05).toFixed(3)})`; x.beginPath(); x.ellipse(Math.random() * W, Math.random() * H, r * 1.6, r, 0, 0, 6.283); x.fill(); }
+  const img = x.getImageData(0, 0, W, H), d = img.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - .5) * 14; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+  x.putImageData(img, 0, 0);
+  // Schalungsstöße (Tafeln 2,50 × 1,25 m bei 5,00 × 2,50 m je Textur)
+  x.strokeStyle = "rgba(70,70,68,.35)"; x.lineWidth = 2;
+  for (let i = 1; i < 2; i++) { x.beginPath(); x.moveTo(i * W / 2, 0); x.lineTo(i * W / 2, H); x.stroke(); }
+  x.beginPath(); x.moveTo(0, H / 2); x.lineTo(W, H / 2); x.stroke();
+  // Ankerlöcher
+  for (let tx = 0; tx < 2; tx++) for (let ty = 0; ty < 2; ty++) for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) {
+    const px = tx * W / 2 + W / 2 * (.25 + i * .5), py = ty * H / 2 + H / 2 * (.25 + j * .5);
+    x.fillStyle = "rgba(255,255,255,.25)"; x.beginPath(); x.arc(px, py, 7, 0, 6.283); x.fill();
+    x.fillStyle = "rgba(40,40,38,.7)"; x.beginPath(); x.arc(px, py, 4.5, 0, 6.283); x.fill();
+  }
+  return c;
+}
+function holzLeinwand() {
+  const W = 512, H = 512, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+  for (let i = 0; i < 16; i++) { const t = .85 + Math.random() * .2; x.fillStyle = `rgb(${Math.round(164 * t)},${Math.round(122 * t)},${Math.round(82 * t)})`; x.fillRect(i * 32, 0, 32, H); x.fillStyle = "rgba(40,25,10,.35)"; x.fillRect(i * 32, 0, 1.5, H); }
+  for (let i = 0; i < 260; i++) { x.strokeStyle = `rgba(60,38,18,${(Math.random() * .12).toFixed(3)})`; x.lineWidth = 1; const px = Math.random() * W; x.beginPath(); x.moveTo(px, 0); x.bezierCurveTo(px + 6, H * .3, px - 6, H * .6, px + 3, H); x.stroke(); }
+  return c;
+}
+function rasterLeinwand() {
+  const W = 2048, c = document.createElement("canvas"); c.width = c.height = W; const x = c.getContext("2d");
+  x.fillStyle = "#ffffff"; x.fillRect(0, 0, W, W);
+  const m = W / 80; // 80 m Gelände
+  for (let i = 0; i <= 80; i++) { x.strokeStyle = i % 5 === 0 ? "rgba(35,71,182,.22)" : "rgba(35,71,182,.08)"; x.lineWidth = i % 5 === 0 ? 2 : 1; x.beginPath(); x.moveTo(i * m, 0); x.lineTo(i * m, W); x.stroke(); x.beginPath(); x.moveTo(0, i * m); x.lineTo(W, i * m); x.stroke(); }
+  return c;
+}
+function figurLeinwand(variante) {
+  const c = document.createElement("canvas"); c.width = 128; c.height = 256; const x = c.getContext("2d");
+  x.fillStyle = "#3a3d40";
+  x.beginPath(); x.arc(64, 30, 15, 0, 6.283); x.fill();
+  x.beginPath(); x.moveTo(42, 52); x.lineTo(86, 52); x.lineTo(80, 150); x.lineTo(48, 150); x.closePath(); x.fill();
+  const schritt = variante % 2 ? 10 : -6;
+  x.fillRect(48, 148, 13, 104); x.save(); x.translate(80, 148); x.rotate(schritt * .02); x.fillRect(-13, 0, 13, 104); x.restore();
+  if (variante === 2) { x.fillRect(84, 60, 9, 70); }
+  return c;
+}
+
+/* ================= DAS MODELL ================= */
+function initModell() {
+  const el = $("#modell"), cv = $("#c3d");
+  const r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: "high-performance" });
+  const MAX_PR = Math.min(devicePixelRatio || 1, 2); let pr = MAX_PR;
+  r.setPixelRatio(pr); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = .95;
+  r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; r.localClippingEnabled = true;
+  const sc = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(32, 1, .5, 600);
+
+  // Umgebung für Spiegelungen
+  (function () {
+    const env = new THREE.Scene();
+    env.add(new THREE.Mesh(new THREE.SphereGeometry(30, 32, 16), new THREE.ShaderMaterial({ side: THREE.BackSide,
+      vertexShader: "varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
+      fragmentShader: "varying vec3 vP;void main(){vec3 c=mix(vec3(.62,.64,.66),vec3(.86,.9,.95),smoothstep(-.2,.7,vP.y));c=mix(vec3(.35,.34,.32),c,smoothstep(-.3,0.,vP.y));gl_FragColor=vec4(c,1.);}" })));
+    const t = (k, pos, w, h) => { const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(0xffffff).multiplyScalar(k), side: THREE.DoubleSide })); p.position.set(...pos); p.lookAt(0, 0, 0); env.add(p); };
+    t(4, [0, 14, 6], 14, 4); t(2, [-12, 4, 4], 4, 10); t(2, [12, 5, -6], 4, 10);
+    const pm = new THREE.PMREMGenerator(r); sc.environment = pm.fromScene(env, .02).texture; pm.dispose();
+  })();
+
+  // Himmel: Papier, Tag, Dämmerung, Nacht
+  const himmelMat = new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false,
+    uniforms: { uSonne: { value: new THREE.Vector3(0, 1, 0) }, uPapier: { value: 1 } },
+    vertexShader: "varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
+    fragmentShader: `uniform vec3 uSonne; uniform float uPapier; varying vec3 vP;
+      void main(){
+        float e=uSonne.y; float y=max(vP.y,0.);
+        vec3 tagZ=vec3(.55,.68,.82), tagH=vec3(.88,.91,.94);
+        vec3 goldH=vec3(.98,.70,.48), goldZ=vec3(.42,.47,.62);
+        vec3 nachtZ=vec3(.035,.06,.12), nachtH=vec3(.12,.15,.24);
+        float tag=smoothstep(.0,.35,e), nacht=smoothstep(.02,-.12,e);
+        vec3 zen=mix(mix(goldZ,tagZ,tag),nachtZ,nacht), hor=mix(mix(goldH,tagH,tag),nachtH,nacht);
+        vec3 c=mix(hor,zen,pow(y,.55));
+        float s=max(dot(normalize(vP),uSonne),0.);
+        c+=vec3(1.,.8,.55)*pow(s,8.)*.35*(1.-nacht)+vec3(1.,.95,.85)*smoothstep(.9992,.9996,s)*(1.-nacht)*2.;
+        c=mix(c,vec3(.945,.95,.94),uPapier);
+        if(vP.y<0.) c=mix(c,mix(vec3(.84,.84,.82),vec3(.945,.95,.94),uPapier)*mix(1.,.3,nacht),smoothstep(0.,-.02,vP.y));
+        gl_FragColor=vec4(c,1.);
+      }` });
+  sc.add(new THREE.Mesh(new THREE.SphereGeometry(400, 48, 24), himmelMat));
+
+  // Licht
+  const sonne = new THREE.DirectionalLight(0xffffff, 3);
+  sonne.castShadow = true; const SM = KLEIN ? 2048 : 4096;
+  sonne.shadow.mapSize.set(SM, SM); Object.assign(sonne.shadow.camera, { left: -32, right: 32, top: 32, bottom: -32, near: 1, far: 160 });
+  sonne.shadow.camera.updateProjectionMatrix(); sonne.shadow.bias = -.0004; sonne.shadow.normalBias = .03; sonne.shadow.radius = 3;
+  sc.add(sonne, sonne.target);
+  const himmelLicht = new THREE.HemisphereLight(0xdfe7ef, 0x8a8780, .45); sc.add(himmelLicht);
+  const innenLicht = new THREE.PointLight(0xffc27a, 0, 22, 1.6); innenLicht.position.set(-3, 2.2, 0); sc.add(innenLicht);
+
+  // Materialien
+  const ebeneL = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 999), ebeneR = new THREE.Plane(new THREE.Vector3(1, 0, 0), 999);
+  const betonTex = new THREE.CanvasTexture(betonLeinwand()); betonTex.encoding = THREE.sRGBEncoding; betonTex.wrapS = betonTex.wrapT = THREE.RepeatWrapping; betonTex.anisotropy = r.capabilities.getMaxAnisotropy();
+  const holzTex = new THREE.CanvasTexture(holzLeinwand()); holzTex.encoding = THREE.sRGBEncoding; holzTex.wrapS = holzTex.wrapT = THREE.RepeatWrapping; holzTex.anisotropy = 8;
+  const fertig = [];
+  function mat(m) { m.clippingPlanes = [ebeneR]; m.transparent = true; m.opacity = 0; fertig.push(m); m.userData.ziel = m.userData.ziel ?? 1; return m; }
+  function beton(w, h) { const t = betonTex.clone(); t.needsUpdate = true; t.repeat.set(Math.max(1, w / 5), Math.max(1, h / 2.5)); return mat(new THREE.MeshStandardMaterial({ map: t, roughness: .86, metalness: 0, envMapIntensity: .32 })); }
+  const glas = mat(new THREE.MeshPhysicalMaterial({ color: 0x9fb2bd, metalness: 0, roughness: .04, envMapIntensity: 1.6, emissive: 0xffb866, emissiveIntensity: 0, clearcoat: 1 })); glas.userData.ziel = .42;
+  const holz = (rx, ry) => { const t = holzTex.clone(); t.needsUpdate = true; t.repeat.set(rx, ry); return mat(new THREE.MeshStandardMaterial({ map: t, roughness: .7 })); };
+  const wasser = mat(new THREE.MeshPhysicalMaterial({ color: 0x23343a, roughness: .03, metalness: .1, envMapIntensity: 1.8, clearcoat: 1 }));
+  const kies = mat(new THREE.MeshStandardMaterial({ color: 0xcfcfca, roughness: .95, envMapIntensity: .2 })); kies.userData.ziel = 1;
+  const gruen = mat(new THREE.MeshStandardMaterial({ color: 0xaab3a4, roughness: .9, envMapIntensity: .4 })); gruen.clippingPlanes = [];
+  const stammMat = new THREE.MeshStandardMaterial({ color: 0xe9e9e5, roughness: .9 });
+  const modellMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f2, roughness: .95, clippingPlanes: [ebeneL] });
+  const linienMat = new THREE.LineBasicMaterial({ color: 0x2347b6, transparent: true, opacity: 1, clippingPlanes: [ebeneL] });
+
+  // Gelände mit Planraster
+  const raster = new THREE.CanvasTexture(rasterLeinwand()); raster.encoding = THREE.sRGBEncoding; raster.anisotropy = r.capabilities.getMaxAnisotropy();
+  const boden = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.MeshStandardMaterial({ map: raster, roughness: .95, color: 0xf3f3f1, envMapIntensity: .18 }));
+  boden.rotation.x = -Math.PI / 2; boden.receiveShadow = true; sc.add(boden);
+  const ferne = new THREE.Mesh(new THREE.CircleGeometry(380, 64), new THREE.MeshStandardMaterial({ color: 0xf3f3f1, roughness: 1, envMapIntensity: .18 }));
+  ferne.rotation.x = -Math.PI / 2; ferne.position.y = -.02; sc.add(ferne);
+
+  // Bauteile: [Name, Breite, Höhe, Tiefe, x, Basis-y, z, Material, Wachstumsfenster]
+  const teile = [];
+  function teil(w, h, d, x, y, z, m, von, bis, opt = {}) {
+    const g = new THREE.BoxGeometry(w, h, d); g.translate(0, h / 2, 0);
+    const mesh = new THREE.Mesh(g, m); mesh.castShadow = opt.schatten !== false; mesh.receiveShadow = true;
+    const modell = new THREE.Mesh(g, modellMat); modell.castShadow = true; modell.receiveShadow = true; modell.visible = false;
+    const linien = new THREE.LineSegments(new THREE.EdgesGeometry(g), linienMat);
+    const grp = new THREE.Group(); grp.add(mesh, modell, linien); grp.position.set(x, y, z);
+    sc.add(grp); teile.push({ grp, mesh, modell, linien, y, von, bis, steigt: opt.steigt || false });
+    return grp;
+  }
+  // Sockel und Terrasse
+  teil(28, .45, 17, 0, 0, 0, beton(28, .45), 0, .25);
+  // Becken
+  teil(9.6, .06, 7.4, 8.2, .45, .4, wasser, .15, .35, { schatten: false });
+  // Erdgeschoss: Glas, Rückwand, Seitenwand, Boden, Decke
+  teil(13.4, 3, 8.4, -3.3, .45, .4, glas, .25, .6, { schatten: false });
+  teil(14, 3, .35, -3.3, .45, -4.0, beton(14, 3), .25, .6);
+  teil(.35, 3, 8.8, -10.2, .45, .2, beton(9, 3), .25, .6);
+  teil(13.2, .04, 8.2, -3.3, .47, .4, holz(4, 3), .25, .45, { schatten: false });
+  teil(15, .35, 9.2, -3.3, 3.45, .2, beton(15, .35), .45, .62);
+  // Wandscheibe nach Westen
+  teil(30, 2.4, .3, -9, .45, -7.2, beton(30, 2.4), .3, .7);
+  // Riegel im Obergeschoss, kragt 9 m aus
+  teil(22, 3.4, 8, 2.5, 3.8, -1, beton(22, 3.4), .5, .95, { steigt: true });
+  teil(16, .9, .06, 3.5, 5.05, 3.02, glas, .7, .98, { steigt: true, schatten: false });
+  teil(21.4, .04, 7.4, 2.5, 3.78, -1, holz(7, 2.5), .7, .98, { steigt: true, schatten: false });
+  // Bäume
+  const baeume = [];
+  [[-18, 9, 3.2], [-15, 12, 2.4], [17, -9, 2.8], [20, 6, 3.6], [-20, -12, 3]].forEach(([x, z, s], i) => {
+    const g = new THREE.Group(); g.position.set(x, 0, z);
+    const stamm = new THREE.Mesh(new THREE.CylinderGeometry(.12, .16, s * .9, 10), stammMat); stamm.position.y = s * .45; stamm.castShadow = true;
+    const krone = new THREE.Mesh(new THREE.IcosahedronGeometry(s * .62, 2), gruen); krone.position.y = s * 1.15; krone.castShadow = true; krone.receiveShadow = true;
+    g.add(stamm, krone); g.scale.setScalar(.001); sc.add(g); baeume.push(g);
+  });
+  // Maßstabsfiguren
+  const figuren = [];
+  [[-1, 5.2, 0], [9.5, 5.6, 1], [-12, 7, 2]].forEach(([x, z, v]) => {
+    const t = new THREE.CanvasTexture(figurLeinwand(v)); t.encoding = THREE.sRGBEncoding;
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, opacity: 0 }));
+    s.scale.set(.88, 1.76, 1); s.position.set(x, .45 + .88, z); sc.add(s); figuren.push(s);
+  });
+
+  // Kamera-Kugelkoordinaten
+  const kam = { rad: 80, polar: .001, azi: 0 };
+  const ziel3 = new THREE.Vector3(0, 0, 0), blick = new THREE.Vector3(0, 0, 0);
+  function groesse() { const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+  groesse(); addEventListener("resize", groesse);
+
+  // Sonnenstand: Tag-und-Nacht-Gleiche, 48° N, wahre Sonnenzeit
+  const PHI = 48 * Math.PI / 180;
+  function sonnenstand(h) {
+    const H = (h - 12) * 15 * Math.PI / 180;
+    const elev = Math.asin(Math.cos(PHI) * Math.cos(H));
+    const az = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(PHI)); // von Süden, positiv nach Westen
+    return { elev, az, dir: new THREE.Vector3(-Math.sin(az) * Math.cos(elev), Math.sin(elev), Math.cos(az) * Math.cos(elev)) };
+  }
+  const himmelsrichtung = a => ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(((a % 360) + 360) % 360 / 45) % 8];
+
+  const phasen = [$("#ph0"), $("#ph1"), $("#ph2"), $("#ph3")];
+  const PLAENE = [["A-100", "Site plan", "Scale 1:200"], ["A-200", "Massing", "Scale 1:200"], ["A-300", "Sun study", "Scale 1:500"], ["A-400", "Section", "Scale 1:100"]];
+  const uhrZeit = $("#uhrZeit"), uhrSonne = $("#uhrSonne"), uhrPunkt = $("#uhrPunkt"), skala = $("#uhrSkala");
+  for (let h = 6; h <= 19; h++) { const i = document.createElement("i"); i.style.left = ((h - 5.5) / 14 * 100) + "%"; if (h % 3) i.style.height = "7px", i.style.top = "7px"; skala.appendChild(i); }
+  const schnitt = $("#schnitt"); let schnittX = 0;
+  const nord = $("#nord"), hudNr = $("#hudNr"), hudPlan = $("#hudPlan"), hudMass = $("#hudMass");
+  let letztePhase = -1, mx = 0, my = 0, stunde = 5.5;
+  const ray = new THREE.Raycaster(), nv = new THREE.Vector2(), bodenEbene = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), treffer = new THREE.Vector3();
+
+  // Leistung: Auflösung anpassen
+  let fpsN = 0, fpsT = performance.now(), gut = 0;
+  const fpsEl = $("#fps");
+  function leistung(jetzt) {
+    fpsN++;
+    if (jetzt - fpsT > 1000) {
+      const fps = fpsN * 1000 / (jetzt - fpsT); fpsEl.textContent = Math.round(fps); fpsN = 0; fpsT = jetzt;
+      if (fps < 45 && pr > 1) { pr = Math.max(1, pr - .25); r.setPixelRatio(pr); groesse(); gut = 0; }
+      else if (fps > 58 && pr < MAX_PR) { if (++gut > 3) { pr = Math.min(MAX_PR, pr + .25); r.setPixelRatio(pr); groesse(); gut = 0; } }
+    }
+  }
+
+  szenen.push({ el, update(t, dt, jetzt) {
+    leistung(jetzt);
+    const p = fortschritt(el);
+    // Phasen: 0 Plan, 1 Volumen, 2 Sonne, 3 Schnitt
+    const a1 = sstep(.06, .30, p);       // Wachsen
+    const mt = sstep(.20, .34, p);       // Materialien
+    const s2 = sstep(.36, .42, p) * (1 - sstep(.70, .75, p)); // Sonnenstudie aktiv
+    const s3 = sstep(.74, .80, p);       // Schnitt aktiv
+    const phase = p < .08 ? 0 : p < .35 ? 1 : p < .73 ? 2 : 3;
+    // Texte
+    const sicht = [1 - sstep(.04, .09, p), sstep(.09, .14, p) * (1 - sstep(.30, .35, p)), sstep(.38, .43, p) * (1 - sstep(.69, .73, p)), sstep(.77, .82, p)];
+    phasen.forEach((ph, i) => { ph.style.opacity = sicht[i].toFixed(3); });
+    if (phase !== letztePhase) { letztePhase = phase; const [n, name, m] = PLAENE[phase]; hudNr.textContent = n; hudPlan.textContent = name; hudMass.textContent = m; }
+
+    // Bauteile wachsen
+    for (const tl of teile) {
+      const e = RM ? (a1 > 0 ? 1 : 0) : sstep(tl.von, tl.bis, a1 * .98 + .02 * (a1 > 0 ? 1 : 0));
+      tl.grp.scale.y = Math.max(.002, e);
+      if (tl.steigt) tl.grp.position.y = lerp(.45, tl.y, sstep(.0, .6, e));
+    }
+    baeume.forEach((b, i) => b.scale.setScalar(Math.max(.001, sstep(.75 + i * .03, .95, a1))));
+    figuren.forEach(f => f.material.opacity = sstep(.85, 1, a1) * (1 - s3 * 0));
+    // Materialien und Linien
+    for (const m of fertig) { m.opacity = m.userData.ziel * mt; const voll = mt > .995 && m.userData.ziel === 1; m.transparent = !voll; m.depthWrite = voll || m.userData.ziel === 1 && mt > .6; }
+    linienMat.opacity = Math.max(1 - sstep(.22, .36, p), s3 * .9);
+    raster.offset.set(0, 0);
+    boden.material.color.setRGB(lerp(.953, .66, mt), lerp(.953, .66, mt), lerp(.945, .64, mt)); ferne.material.color.copy(boden.material.color).multiplyScalar(.97);
+
+    // Sonne
+    const zielStunde = s2 > 0 ? lerp(5.5, 19.5, sstep(.40, .70, p)) : 15.5;
+    stunde = lerp(stunde, s2 > .5 ? zielStunde : 15.5, RM ? 1 : (s2 > .5 ? .12 : .05));
+    const st = sonnenstand(stunde);
+    const nacht = sstep(.04, -.08, Math.sin(st.elev));
+    sonne.position.copy(st.dir).multiplyScalar(60); sonne.target.position.set(0, 0, 0);
+    const tief = 1 - sstep(.02, .5, Math.sin(st.elev));
+    sonne.color.setRGB(1, lerp(1, .72, tief), lerp(1, .5, tief));
+    sonne.intensity = 3.6 * sstep(-.02, .12, Math.sin(st.elev));
+    himmelLicht.intensity = lerp(.45, .12, nacht); himmelLicht.color.setRGB(lerp(.87, .35, nacht), lerp(.9, .42, nacht), lerp(.94, .62, nacht));
+    const abend = s2 * sstep(.12, -.02, Math.sin(st.elev));
+    glas.emissiveIntensity = abend * 1.3; innenLicht.intensity = abend * 26;
+    himmelMat.uniforms.uSonne.value.copy(st.dir);
+    himmelMat.uniforms.uPapier.value = 1 - s2;
+    r.toneMappingExposure = lerp(.95, 1.25, nacht * s2);
+    if (s2 > 0) {
+      const hh = Math.floor(zielStunde), mm = Math.floor((zielStunde - hh) * 60 / 15) * 15;
+      uhrZeit.textContent = `${hh % 12 || 12}:${zwei(mm)} ${hh < 12 ? "am" : "pm"}`;
+      const e = Math.round(grad(sonnenstand(zielStunde).elev)), az = (180 + grad(sonnenstand(zielStunde).az) + 360) % 360;
+      uhrSonne.textContent = e > 0 ? `Sun altitude ${e}° · azimuth ${Math.round(az)}° ${himmelsrichtung(az)}` : "Sun below the horizon";
+      uhrPunkt.style.left = ((zielStunde - 5.5) / 14 * 100) + "%";
+    }
+
+    // Kamera
+    mx = lerp(mx, maus.nx, .05); my = lerp(my, maus.ny, .05);
+    const k0 = { rad: KLEIN ? 118 : 86, polar: .001, azi: 0 };
+    const k1 = { rad: KLEIN ? 92 : 62, polar: 1.0, azi: -.62 };
+    const k2 = { rad: KLEIN ? 100 : 66, polar: 1.33, azi: lerp(-.62, .9, sstep(.38, .72, p)) };
+    const k3 = { rad: KLEIN ? 80 : 54, polar: 1.22, azi: 0 };
+    const w1 = sstep(.06, .32, p), w2 = sstep(.36, .5, p), w3 = sstep(.72, .8, p);
+    const z = { rad: k0.rad, polar: k0.polar, azi: k0.azi };
+    for (const [w, k] of [[w1, k1], [w2, k2], [w3, k3]]) { z.rad = lerp(z.rad, k.rad, w); z.polar = lerp(z.polar, k.polar, w); z.azi = lerp(z.azi, k.azi, w); }
+    kam.rad = lerp(kam.rad, z.rad, .08); kam.polar = lerp(kam.polar, z.polar + my * .06 * w1, .08); kam.azi = lerp(kam.azi, z.azi + mx * .12 * w1 * (1 - s3 * .6), .08);
+    cam.position.set(Math.sin(kam.polar) * Math.sin(kam.azi) * kam.rad, Math.cos(kam.polar) * kam.rad + 1, Math.sin(kam.polar) * Math.cos(kam.azi) * kam.rad);
+    cam.up.set(0, 0, -1).lerp(new THREE.Vector3(0, 1, 0), sstep(.0, .25, kam.polar)).normalize();
+    blick.set(1, lerp(0, 2.4, w1) + 4.5 * w2 * (1 - w3), 0); cam.lookAt(blick);
+    if (!KLEIN) cam.setViewOffset(cv.clientWidth, cv.clientHeight, -cv.clientWidth * .08 * (1 - w3 * .7), 0, cv.clientWidth, cv.clientHeight);
+    nord.style.transform = `rotate(${(-grad(kam.azi)).toFixed(1)}deg)`;
+
+    // Schnitt
+    if (s3 > 0) {
+      const r0 = el.getBoundingClientRect();
+      let sx = FEIN && aktivMaus() ? maus.x : innerWidth * (.5 + .22 * Math.sin(t * .6));
+      nv.set(sx / innerWidth * 2 - 1, 0); ray.setFromCamera(nv, cam);
+      if (ray.ray.intersectPlane(bodenEbene, treffer)) schnittX = lerp(schnittX, clamp(treffer.x, -16, 16), .2);
+      ebeneL.constant = schnittX; ebeneR.constant = -schnittX;
+      const pv = new THREE.Vector3(schnittX, 0, 0).project(cam);
+      schnitt.style.left = ((pv.x * .5 + .5) * 100).toFixed(2) + "%"; schnitt.style.opacity = s3.toFixed(3);
+      teile.forEach(tl => tl.modell.visible = true);
+    } else {
+      ebeneL.constant = 999; ebeneR.constant = 999; schnitt.style.opacity = 0;
+      teile.forEach(tl => tl.modell.visible = false);
+    }
+    r.render(sc, cam);
+  }});
+}
+
+/* ================= WIRKLICHKEIT ================= */
+const REAL = [["The shell, <em>backlit.</em>", "Construction site at sunset"], ["Glass that <em>mirrors the sky.</em>", "Facades seen from below"], ["A day <em>drifts by.</em>", "Clouds in time-lapse"], ["Light through <em>the curtain.</em>", "Interior in the morning"]];
+function initReal() {
+  const el = $("#real"), fenster = $$(".fenster"), vids = fenster.map(f => f.querySelector("video"));
+  const titel = $("#realTitel"), text = $("#realText"), nr = $("#realNr");
+  let geladen = false, aktiv = -1;
+  const lade = new IntersectionObserver(es => { if (es[0].isIntersecting && !geladen) { geladen = true; vids.forEach(v => { v.src = v.dataset.quelle; v.preload = "auto"; }); lade.disconnect(); } }, { rootMargin: "120% 0px" });
+  lade.observe(el);
+  const N = fenster.length;
+  szenen.push({ el, update(t) {
+    const p = fortschritt(el);
+    fenster.forEach((f, i) => {
+      const a = i / N, e = i === 0 ? sstep(.0, .14, p) : sstep(a - .06, a + .1, p);
+      // Fenster öffnet sich aus einem Rechteck im Raster: erst schmal und hoch, dann ganz
+      const iw = lerp(50, 0, sstep(0, .55, e)), ih = lerp(50, 0, sstep(.25, 1, e)) * (i % 2 ? 1 : .9);
+      f.style.clipPath = e >= .999 ? "inset(0 0 0 0)" : `inset(${ih.toFixed(2)}% ${iw.toFixed(2)}% ${ih.toFixed(2)}% ${iw.toFixed(2)}%)`;
+      f.style.zIndex = i;
+      const v = vids[i];
+      v.style.transform = `scale(${(1.12 - .12 * e).toFixed(4)})`;
+      const zeigen = e > .01 && (i === N - 1 || sstep((i + 1) / N - .06, (i + 1) / N + .1, p) < .999);
+      if (zeigen && geladen) { if (v.paused) { const pr = v.play(); pr && pr.catch(() => {}); } } else if (!v.paused) v.pause();
+    });
+    const k = clamp(Math.floor(p * N + .4), 0, N - 1);
+    if (k !== aktiv) { aktiv = k; titel.innerHTML = REAL[k][0]; text.textContent = `${REAL[k][1]} · 1920 × 1080 · 30 fps · Clip: Mixkit`; nr.textContent = zwei(k + 1); }
+  }, aus() { vids.forEach(v => v.pause()); } });
+}
+
+/* ================= Start ================= */
+const sicher = (n, fn) => { try { fn(); } catch (e) { console.warn(n, e); } };
+if (window.THREE) sicher("modell", initModell);
+sicher("real", initReal);
+
+const balken = $("#balken");
+let letzteZeit = performance.now();
+function schleife(jetzt) {
+  requestAnimationFrame(schleife);
+  const dt = Math.min(.05, (jetzt - letzteZeit) / 1000); letzteZeit = jetzt; const t = jetzt / 1000;
+  if (lenis) lenis.raf(jetzt);
+  for (const s of szenen) { if (sichtbar(s.el)) { try { s.update(t, dt, jetzt); } catch (e) { console.warn(e); s.update = () => {}; } s.lief = true; } else if (s.lief) { s.aus && s.aus(); s.lief = false; } }
+  const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  balken.style.transform = `scaleX(${clamp(scrollY / max, 0, 1).toFixed(4)})`;
+}
+requestAnimationFrame(schleife);
+$("#nochmal").addEventListener("click", () => { if (lenis) lenis.scrollTo(0, { duration: 3.2 }); else scrollTo({ top: 0, behavior: RM ? "auto" : "smooth" }); });
+
+/* ================= Auftakt ================= */
+const auftakt = $("#auftakt");
+if (window.gsap && !RM) {
+  const formen = $$("#aPlan .w, #aPlan .d");
+  gsap.set(formen, { strokeDasharray: 1, strokeDashoffset: 1 }); gsap.set("#aPlan text", { opacity: 0 });
+  const tl = gsap.timeline({ onComplete: () => { auftakt.hidden = true; } });
+  tl.to(formen, { strokeDashoffset: 0, duration: 1.1, stagger: .1, ease: "power2.inOut" })
+    .to("#aPlan text", { opacity: 1, duration: .4, stagger: .1 }, "-=.4")
+    .to(auftakt, { opacity: 0, duration: .9, ease: "power2.inOut" }, "+=.5")
+    .from("#ph0 .held > *", { y: 24, opacity: 0, duration: 1, stagger: .08, ease: "expo.out" }, "-=.5")
+    .from("#ph0 .planinfo", { x: 24, opacity: 0, duration: 1, ease: "expo.out" }, "<.1");
+} else auftakt.hidden = true;
+})();
+</script>
+
+<div id="ordeBalken">
+  <a href="../../en/examples.html">&larr; Back to ORD&Eacute;</a>
+  <span>Example site &middot; made-up project &middot; videos from Mixkit, no AI images</span>
+  <a class="ordeCta" href="../../en/contact.html">Request a site like this</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));font-size:13px}
+  #ordeBalken span{order:3;flex-basis:100%;text-align:center;font-size:11.5px;line-height:1.3}
+}
+@media print{#ordeBalken{display:none}}
+</style>
+</body>
+</html>
