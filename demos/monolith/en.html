@@ -239,7 +239,7 @@ canvas{display:block}
       <div class="real-fuss">
         <div class="real-titel" aria-live="polite">
           <h2 id="realTitel">The shell, <em>backlit.</em></h2>
-          <p id="realText">1920 × 1080 · 30 fps · Clip: Mixkit</p>
+          <p id="realText">1920 × 1080 · 30 fps · real footage</p>
         </div>
         <span class="real-nr" id="realNr">01</span>
       </div>
@@ -269,13 +269,13 @@ canvas{display:block}
           <tr><td>A-200</td><td>Massing</td><td>Building elements rise from the floor plan, materials fade in</td></tr>
           <tr><td>A-300</td><td>Sun study</td><td>Sun position from latitude and hour angle, soft shadows</td></tr>
           <tr><td>A-400</td><td>Section</td><td>Two section planes separate working model and built design</td></tr>
-          <tr><td>A-500</td><td>Reality</td><td>Four Full HD clips from Mixkit, windows cut with clipping masks</td></tr>
+          <tr><td>A-500</td><td>Reality</td><td>Four real Full HD clips, windows cut with clipping masks</td></tr>
         </tbody>
       </table>
     </div>
     <div class="ende-fuss">
       <button class="knopf" id="nochmal" type="button">Back to the plan ↑</button>
-      <p class="hinweis">Monolith is a made-up house for this example site, not a real project. The videos are real footage from Mixkit, no AI images. The 3D model is rendered live in your browser, and its resolution adapts to your device. Built by ORDÉ.</p>
+      <p class="hinweis">Monolith is a made-up house for this example site, not a real project. The videos are real footage, no AI images. The 3D model is rendered live in your browser, and its resolution adapts to your device. Built by ORDÉ.</p>
     </div>
   </div>
 </section>
@@ -615,7 +615,7 @@ function initReal() {
       if (zeigen && geladen) { if (v.paused) { const pr = v.play(); pr && pr.catch(() => {}); } } else if (!v.paused) v.pause();
     });
     const k = clamp(Math.floor(p * N + .4), 0, N - 1);
-    if (k !== aktiv) { aktiv = k; titel.innerHTML = REAL[k][0]; text.textContent = `${REAL[k][1]} · 1920 × 1080 · 30 fps · Clip: Mixkit`; nr.textContent = zwei(k + 1); }
+    if (k !== aktiv) { aktiv = k; titel.innerHTML = REAL[k][0]; text.textContent = `${REAL[k][1]} · 1920 × 1080 · 30 fps · real footage`; nr.textContent = zwei(k + 1); }
   }, aus() { vids.forEach(v => v.pause()); } });
 }
 
@@ -654,7 +654,7 @@ if (window.gsap && !RM) {
 
 <div id="ordeBalken">
   <a href="../../en/examples.html">&larr; Back to ORD&Eacute;</a>
-  <span>Example site &middot; made-up project &middot; videos from Mixkit, no AI images</span>
+  <span>Example site &middot; made-up project &middot; real footage, no AI images</span>
   <a class="ordeCta" href="../../en/contact.html">Request a site like this</a>
 </div>
 <style>
