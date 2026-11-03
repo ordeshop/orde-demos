@@ -229,13 +229,14 @@ mark.offen { background: var(--gelb); color: var(--tinte); padding: 0 .2em; box-
 .presse.ruhig .presse-text { opacity: 1; transform: none; padding-bottom: 300px; }
 
 /* Typenschilder */
-.typen { display: grid; grid-template-columns: 1fr 1.15fr 1.35fr 1.8fr; gap: var(--a3); margin-top: var(--a5); align-items: end; }
+.typen { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1.35fr) minmax(0, 1.8fr); gap: var(--a3); margin-top: var(--a5); align-items: end; }
 .typ { display: flex; flex-direction: column; background: var(--stahl); color: var(--tinte); text-decoration: none; position: relative; }
-.typ-bild { margin: 0; padding: var(--a4) var(--a4) 0; aspect-ratio: 1 / 1; display: grid; place-items: end center; }
-.typ-bild img { max-height: 100%; width: auto; mix-blend-mode: multiply; transition: transform var(--mittel) var(--kurve); }
-.typ:hover .typ-bild img { transform: translateY(-6px); }
-.typ:last-child .typ-bild { aspect-ratio: 4 / 3; }
-.typ:last-child .typ-bild img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: normal; }
+/* Bild absolut im quadratischen Rahmen: Safari rechnet die Kartenhöhe sonst falsch (03.11.2026, iPhone) */
+.typ-bild { margin: 0; position: relative; aspect-ratio: 1 / 1; }
+.typ-bild img { position: absolute; left: 50%; bottom: 0; width: auto; height: auto; max-width: calc(100% - 48px); max-height: calc(100% - 24px); transform: translateX(-50%); mix-blend-mode: multiply; transition: transform var(--mittel) var(--kurve); }
+.typ:hover .typ-bild img { transform: translate(-50%, -6px); }
+.typ:last-child .typ-bild { aspect-ratio: auto; }
+.typ:last-child .typ-bild img, .typ:last-child:hover .typ-bild img { position: static; display: block; width: 100%; height: auto; max-width: none; max-height: none; aspect-ratio: 4 / 3; object-fit: cover; transform: none; mix-blend-mode: normal; }
 .typ-schild { padding: var(--a3) var(--a4) var(--a4); border-top: 2px solid var(--tinte); margin: 0 var(--a3) 0; background: var(--stahl); }
 .typ-nr { display: block; font-size: clamp(2.8rem, 4.8vw, 4.6rem); font-stretch: var(--schmal); font-weight: 700; line-height: .9; letter-spacing: -0.02em; }
 .typ:hover .typ-nr { color: var(--blau); font-style: italic; }
@@ -245,13 +246,13 @@ mark.offen { background: var(--gelb); color: var(--tinte); padding: 0 .2em; box-
 .werte dt { font-weight: 700; white-space: nowrap; }
 .werte dd { margin: 0; color: var(--text-2); }
 .typen-unter { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--a3); margin-top: var(--a4); color: var(--text-2); }
-@media (max-width: 1000px) { .typen { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1000px) { .typen { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 @media (max-width: 560px) {
   .typen { grid-template-columns: 1fr; }
   .typ { display: grid; grid-template-columns: minmax(0, 38%) minmax(0, 1fr); align-items: stretch; }
   .typ > * { min-width: 0; }
-  .typ-bild img { max-width: 100%; height: auto; max-height: 220px; }
-  .typ-bild { aspect-ratio: auto; padding: var(--a3); place-items: center; }
+  .typ-bild img, .typ:hover .typ-bild img { position: static; transform: none; max-width: 100%; max-height: 200px; }
+  .typ-bild { aspect-ratio: auto; padding: var(--a3); display: grid; place-items: center; }
   .typ-schild { margin: 0; border-top: 0; border-left: 2px solid var(--tinte); padding: var(--a3); }
   .typ:last-child { grid-template-columns: minmax(0, 1fr); }
   .typ:last-child .typ-bild { padding: 0; }
