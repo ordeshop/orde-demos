@@ -11,4 +11,5 @@ Lokal abgelegt, damit byorde.com nichts von fremden Servern lädt (siehe Datensc
 | `schriften/*.woff2`, `schriften.css` | Google Fonts: Archivo, Bodoni Moda, IBM Plex Mono, Geist, Geist Mono, Instrument Serif, Italiana, Newsreader, Jost, Unbounded, Onest, Fragment Mono | SIL Open Font License 1.1 |
 
 Schriften nur im lateinischen Zeichensatz (Umlaute, ß und € sind enthalten).
-Die Videos der Showreels sind Stockaufnahmen von Mixkit (Mixkit Free License), keine KI-Bilder.
+Die Videos der Showreels sind frei lizenzierte Stockaufnahmen, keine KI-Bilder. Die Lizenznachweise
+liegen im privaten Business-Handbuch.

@@ -22,12 +22,13 @@ zeigen, was technisch geht (WebGL, 3D, Simulationen) und erscheinen auf byorde.c
 in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
 `BRANCHEN`. Abweichend von den sechs Demos:
 
-- **Keine KI-Bilder.** Die Videos sind echte, frei lizenzierte Stockaufnahmen, `spektrum`
-  ist ganz berechnet. Der Rückkehr-Balken sagt deshalb „echte Filmaufnahmen, keine KI-Bilder“
-  statt „Bilder mit KI erzeugt“. Kommt je ein KI-Bild dazu, muss der Hinweis zurück.
-- **Plattform nicht nennen** (Arturs Vorgabe, 03.11.2026): Auf den Seiten steht nicht, woher
-  ein Video stammt (kein „Mixkit“). Die Herkunft steht intern in `bibliothek/LIZENZEN.md`
-  bzw. der `QUELLEN.md` des Projekts. Quellen und Regeln: `Business-Handbuch/werkzeuge/website/VIDEOQUELLEN.md`.
+- **Keine KI-Bilder.** Die Videos sind frei lizenzierte Stockaufnahmen, `spektrum` ist ganz
+  berechnet. Deshalb steht im Rückkehr-Balken kein „Bilder mit KI erzeugt“. Kommt je ein
+  KI-Bild dazu, muss der Hinweis zurück.
+- **Nichts zur Herkunft der Videos schreiben** (Arturs Vorgabe, 03.11.2026): keine Plattform,
+  kein „echte Filmaufnahmen“, kein „frei lizenziert“. Die Lizenznachweise stehen nur im privaten
+  Handbuch (`Business-Handbuch/werkzeuge/website/VIDEOQUELLEN.md` und `quellen/`), nicht in
+  diesem öffentlichen Repo.
 - **Nichts von fremden Servern.** Three.js, GSAP, Lenis und alle Schriften liegen
   in `demos/bibliothek/`. Keine CDN-Links und kein Google Fonts einbauen, sonst
   stimmt die Datenschutzerklärung von byorde.com nicht mehr.
