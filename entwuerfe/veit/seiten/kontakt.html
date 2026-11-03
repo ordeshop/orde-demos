@@ -1,0 +1,43 @@
+<!-- titel: Kontakt – VEIT GmbH, Landsberg am Lech | beschreibung: So erreichen Sie VEIT: Zentrale +49 8191 479 0, Durchwahlen für Vertrieb, Kundendienst und Personal, Anfrageformular und Anfahrt. | nav: -->
+<section class="seitenkopf">
+  <div class="innen zwei">
+    <div>
+      <ol class="brotkrumen"><li><a href="index.html">Start</a></li><li aria-current="page">Kontakt</li></ol>
+      <h1>Kontakt</h1>
+      <p class="lead">Rufen Sie an oder schreiben Sie uns. Für Service und Ersatzteile gibt es eigene Hotlines.</p>
+      <p style="font-size:1.25rem"><strong>VEIT GmbH</strong><br>{{ADRESSE}}</p>
+      <div class="knoepfe">
+        <a class="knopf" href="{{TEL_ZENTRALE_LINK}}">{{ICON:telefon}} {{TEL_ZENTRALE}}</a>
+        <a class="knopf knopf-zwei" href="mailto:{{MAIL}}">{{ICON:mail}} {{MAIL}}</a>
+        <a class="knopf knopf-zwei" href="https://www.openstreetmap.org/search?query=Justus-von-Liebig-Str.%2015%2C%2086899%20Landsberg">{{ICON:route}} Route planen</a>
+      </div>
+    </div>
+    <div>
+      <h2 style="font-size:1.6rem">Durchwahlen</h2>
+      {{DURCHWAHLEN}}
+      <p class="quelle">Service: <a href="mailto:service@veit.de">service@veit.de</a> · Vertrieb: <a href="mailto:vertrieb@veit.de">vertrieb@veit.de</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="abschnitt stahl" id="anfrage" aria-labelledby="f-titel">
+  <div class="innen zwei">
+    <div>
+      <h2 id="f-titel">Anfrage schreiben</h2>
+      <p class="lead">Nennen Sie Ware, Stückzahl oder Maschine. Wir leiten Ihre Anfrage an die richtige Abteilung oder Ihren Vertriebspartner.</p>
+      <p>Für dringende Störungen bitte die <a href="service.html">Service-Hotline</a> anrufen.</p>
+    </div>
+    <form class="formular" action="#" data-attrappe novalidate>
+      <div class="feld"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
+      <div class="feld"><label for="f-firma">Firma</label><input id="f-firma" name="firma" autocomplete="organization" required></div>
+      <div class="feld"><label for="f-mail">E-Mail</label><input id="f-mail" name="mail" type="email" autocomplete="email" required></div>
+      <div class="feld"><label for="f-land">Land</label><input id="f-land" name="land" autocomplete="country-name"></div>
+      <div class="feld breit"><label for="f-thema">Worum geht es?</label>
+        <select id="f-thema" name="thema"><option>Neue Maschine oder Anlage</option><option>Service oder Reparatur</option><option>Ersatzteile</option><option>Wartungsvertrag</option><option>Schulung</option><option>Etwas anderes</option></select></div>
+      <div class="feld breit"><label for="f-text">Nachricht</label><textarea id="f-text" name="text" required></textarea></div>
+      <p class="hinweis breit">Mit dem Absenden stimmen Sie der Verarbeitung Ihrer Angaben laut <a href="#" data-attrappe-link>Datenschutzerklärung</a> zu.</p>
+      <div class="breit"><button class="knopf" type="submit">Anfrage senden {{ICON:pfeil}}</button></div>
+      <p class="formular-ergebnis breit partner-ergebnis" role="status" aria-live="polite" hidden></p>
+    </form>
+  </div>
+</section>
