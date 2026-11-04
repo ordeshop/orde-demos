@@ -342,6 +342,11 @@ figcaption { font-size: .875rem; color: var(--text-2); margin-top: 8px; }
 .liste li::before { content: ""; position: absolute; left: 0; top: 1.05em; width: 12px; height: 8px; background: var(--blau); clip-path: polygon(30% 0, 100% 0, 70% 100%, 0 100%); }
 .blau .liste li { border-color: rgba(255,255,255,.35); }
 .blau .liste li::before { background: var(--weiss); }
+/* Unterpunkte: eingerückt, kleineres helleres Zeichen, ohne Browser-Kreis, letzte Linie entfällt */
+.liste ul, .liste ol { margin: 6px 0 -10px; padding: 0 0 0 4px; list-style: none; }
+.liste li li { padding: 8px 0 8px 24px; }
+.liste li li::before { width: 9px; height: 6px; top: 1.05em; opacity: .5; }
+.liste li li:last-child { border-bottom: 0; }
 
 /* Produktseite */
 .produktkopf { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--a6); align-items: center; padding-block: clamp(40px, 6vw, 88px); }
