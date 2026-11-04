@@ -1,6 +1,12 @@
 # VEIT GmbH – Entwurf für einen Relaunch von veit.de
 
-Stand 03.11.2026. Vorschau: https://ordeshop.github.io/orde-demos/veit/
+Stand 04.11.2026. **Vorschau: https://ordeshop.github.io/orde-demos/veit/komplett/**
+(die ganze Seite in neuer Gestaltung, Deutsch und Englisch, ein Link mit Sprachwahl).
+
+**Abgelöst:** Der erste Entwurf mit acht Seiten (Quelle `seiten/`, `build.py`) ist
+durch die komplette Vorschau ersetzt. `demos/entwuerfe/veit/*.html` leiten nur noch
+auf die passende Seite in `komplett/` weiter. `build.py` würde diese Weiterleitungen
+überschreiben und bricht deshalb ab; `seiten/` bleibt als Gestaltungsquelle stehen.
 
 Gestaltungsvorschlag vor einem Auftrag, `noindex`, Formulare sind Attrappen.
 Betrieb: VEIT GmbH, Landsberg am Lech, Bügel-, Fixier- und Finishtechnik.
@@ -9,9 +15,7 @@ zeigt acht Seiten: Start, Produkte, Tunnelfinisher TF 57, Anwendungen,
 Service, Unternehmen, Karriere, Kontakt.
 
 ```bash
-python3 entwuerfe/veit/build.py        # seiten/ -> demos/entwuerfe/veit/
-python3 entwuerfe/veit/pdf.py          # Entwurf-veit.pdf
-python3 entwuerfe/veit/einzeldatei.py  # eine HTML-Datei zum Durchklicken ohne Internet
+python3 entwuerfe/veit/build.py --alt  # nur noch bewusst: seiten/ -> demos/entwuerfe/veit/
 ```
 
 Relaunch-Plan, Inventar der alten Adressen und Weiterleitungen liegen nicht hier.

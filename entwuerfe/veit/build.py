@@ -13,6 +13,11 @@ Platzhalter im Inhalt:
   {{ICON:name}}       Strich-Icon (pfeil, extern, telefon, mail, route, download, play)
 Alle Kontaktdaten stehen nur in FIRMA und HOTLINES.
 """
+import sys as _sys
+if "--alt" not in _sys.argv:
+    _sys.exit("Abgelöst: Die Vorschau ist jetzt demos/entwuerfe/veit/komplett/. "
+              "build.py würde die Weiterleitungen überschreiben. Nur mit --alt ausführen.")
+
 import hashlib
 import pathlib
 import re
