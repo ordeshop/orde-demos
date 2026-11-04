@@ -202,35 +202,69 @@ mark.offen { background: var(--gelb); color: var(--tinte); padding: 0 .2em; box-
   .branche-teile { grid-column: 1 / -1; grid-row: 2; }
 }
 
-/* Die Presse: Seitenansicht. Stoff liegt unten auf dem Tisch, der Kopf fährt darauf. */
-.presse { position: relative; height: 230vh; background: var(--blau-tief); color: var(--weiss); }
-.presse-buehne { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; background: linear-gradient(180deg, #003a6a 0%, var(--blau-tief) 70%); }
-.presse-buehne > * { grid-area: 1 / 1; }
-.tisch { position: absolute; left: 0; right: 0; bottom: 0; height: 32%; background: #26323f; }
-.tisch::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 10px; background: linear-gradient(180deg, #c3cbd4, #8e99a6); }
-.stoff { position: absolute; left: 0; right: 0; top: 10px; height: 46%; background: center / cover no-repeat; }
-.stoff-glatt { background-image: linear-gradient(100deg, #00559c 0%, #0a68b8 40%, #3b8bd0 50%, #0a68b8 60%, #00559c 100%); }
-.stoff-knitter { background-image: url(../bilder/stoff-knitter.webp); }
-.pressenkopf {
-  position: absolute; z-index: 1; left: 4%; right: 4%; top: 0; height: 40%;
-  transform: translateY(-105%);
-  background: linear-gradient(180deg, #dfe4ea 0%, #f7f8fa 40%, #c3cbd4 86%, #8e99a6 100%);
-  box-shadow: 0 22px 30px -14px rgba(0, 10, 25, .6);
-}
-.pressenkopf::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14%; background: linear-gradient(180deg, #7b8794, #59636e); }
-.pressenkopf::after { content: ""; position: absolute; left: 5%; bottom: 28%; width: 20%; height: 30%; background: var(--blau); clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%); }
-.pressenkopf img { position: absolute; right: 6%; bottom: 32%; width: clamp(96px, 11vw, 160px); }
-.dampf { position: absolute; left: 0; right: 0; bottom: 32%; height: 0; pointer-events: none; z-index: 2; }
-.dampf span { position: absolute; bottom: -6vmax; width: 30vmax; height: 16vmax; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,.8), rgba(255,255,255,0)); opacity: 0; }
-.presse-text { position: relative; z-index: 3; align-self: start; padding: clamp(72px, 16vh, 160px) var(--rand) 0; max-width: var(--breite); width: 100%; margin-inline: auto; opacity: 0; }
-.presse-text h2 { font-size: clamp(3rem, 9vw, 8.5rem); margin-bottom: var(--a3); letter-spacing: -0.02em; }
+/* Die Presse: Seitenansicht einer Bügelpresse. Die Bühne klebt beim Scrollen fest, der Kopf fährt auf
+   den zerknitterten Stoff, Dampf steigt auf, der Stoff ist glatt. Überschrift und Maschine sind von Anfang an
+   zu sehen, drei Schritte und ein Balken unten zeigen, wie weit es ist. Nur transform und opacity. */
+.presse { position: relative; height: 280vh; background: var(--blau-tief); color: var(--weiss); }
+.presse-buehne { position: sticky; top: 0; height: 100vh; min-height: 560px; overflow: hidden; background: radial-gradient(120% 70% at 50% 100%, #0a4f8f 0%, var(--blau-tief) 55%, #002a50 100%); }
+.presse-text { position: relative; z-index: 3; padding: clamp(84px, 13vh, 140px) var(--rand) 0; max-width: var(--breite); margin-inline: auto; }
+.presse-text h2 { font-size: clamp(2.8rem, 7vw, 6.5rem); margin-bottom: var(--a3); letter-spacing: -0.02em; }
 .presse-text h2 em { color: var(--weiss); }
-.presse-text p { color: var(--auf-blau-2); font-size: clamp(1.1rem, 1.6vw, 1.35rem); max-width: 46ch; }
-@media (max-width: 760px) { .presse { height: 200vh; } .pressenkopf { height: 30%; left: 0; right: 0; } .tisch { height: 28%; } .dampf { bottom: 28%; } }
+.presse-text p { color: var(--auf-blau-2); font-size: clamp(1.05rem, 1.5vw, 1.3rem); max-width: 46ch; margin-bottom: var(--a4); }
+.presse-schritte { display: flex; flex-wrap: wrap; gap: var(--a2) var(--a5); margin: 0; padding: 0; list-style: none; font-weight: 600; }
+.presse-schritte li { display: flex; align-items: center; gap: 10px; opacity: .45; transition: opacity .3s; }
+.presse-schritte li.an { opacity: 1; }
+.presse-schritte span { display: inline-grid; place-items: center; width: 30px; height: 30px; font-stretch: var(--schmal); font-weight: 700; border: 1.5px solid currentColor; clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%); }
+.presse-schritte li.an span { background: var(--weiss); color: var(--blau-tief); border-color: var(--weiss); }
+.maschine { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; height: 52%; }
+.tisch { position: absolute; left: 6%; right: 6%; bottom: 0; height: 38%; background: linear-gradient(180deg, #33414f, #1d2732); }
+.tisch::before { content: ""; position: absolute; left: -2%; right: -2%; top: 0; height: 12px; background: linear-gradient(180deg, #d5dbe2, #8e99a6); }
+.stoff { position: absolute; left: 3%; right: 3%; bottom: 100%; height: clamp(54px, 10vh, 110px); background: center / cover no-repeat; transform-origin: 0 100%; }
+.stoff-glatt { background-image: linear-gradient(100deg, #00559c 0%, #0a68b8 42%, #2f83cc 50%, #0a68b8 58%, #00559c 100%); }
+.stoff-knitter { background-image: url(../bilder/stoff-knitter.webp); }
+.glanz { position: absolute; left: 3%; right: 3%; bottom: 100%; height: clamp(54px, 10vh, 110px); overflow: hidden; opacity: 0; }
+.glanz::before { content: ""; position: absolute; top: 0; bottom: 0; left: -30%; width: 30%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent); transform: translateX(var(--glanz, 0%)); }
+.pressenkopf {
+  position: absolute; z-index: 2; left: 12%; right: 12%; top: 44px; height: 27%;
+  background: linear-gradient(180deg, #eef1f4 0%, #fdfdfe 35%, #c9d0d8 80%, #98a3af 100%);
+  box-shadow: 0 26px 34px -18px rgba(0, 8, 20, .75);
+}
+.pressenkopf::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 16%; background: linear-gradient(180deg, #6f7b88, #4b5560); }
+.pressenkopf::after { content: ""; position: absolute; left: 0; right: 0; bottom: 16%; height: 3px; background: var(--blau); }
+/* Rahmen: Querträger oben, zwei Säulen bis zum Tisch, zwei Stangen bis zum Kopf (wachsen mit scaleY) */
+.rahmen { position: absolute; inset: 0; pointer-events: none; }
+.traverse { position: absolute; left: 4%; right: 4%; top: 0; height: 20px; background: linear-gradient(180deg, #e3e8ee, #8e99a6); box-shadow: 0 8px 16px -8px rgba(0,8,20,.7); }
+.saeule { position: absolute; top: 20px; bottom: 38%; width: clamp(14px, 1.4vw, 22px); background: linear-gradient(90deg, #6f7b88, #c9d0d8 45%, #6f7b88); }
+.saeule.s1 { left: 5%; } .saeule.s2 { right: 5%; }
+.stange { position: absolute; top: 20px; height: 100px; width: clamp(16px, 1.8vw, 28px); transform-origin: 50% 0; transform: scaleY(.24); background: linear-gradient(90deg, #7b8794, #eef1f4 45%, #8e99a6); }
+.stange.s1 { left: 30%; } .stange.s2 { right: 30%; }
+.schild { position: absolute; left: 5%; top: 22%; bottom: 30%; width: clamp(120px, 20%, 260px); display: grid; place-items: center; background: var(--blau); clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%); }
+.schild img { width: 62%; filter: brightness(0) invert(1); }
+.lampe { position: absolute; right: 6%; top: 34%; width: 14px; height: 14px; border-radius: 50%; background: #9fe0ff; box-shadow: 0 0 14px 4px rgba(159,224,255,.8); opacity: .15; }
+.dampf { position: absolute; z-index: 3; left: 6%; right: 6%; bottom: 38%; height: 0; pointer-events: none; }
+.dampf span { position: absolute; bottom: -5vmax; width: 26vmax; height: 14vmax; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,.85), rgba(255,255,255,0)); opacity: 0; }
+.presse-fortschritt { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,.15); }
+.presse-fortschritt span { display: block; height: 100%; background: var(--weiss); transform: scaleX(0); transform-origin: 0 50%; }
+@media (max-width: 760px) {
+  .presse { height: 240vh; }
+  .presse-text { padding-top: 88px; }
+  .presse-text p { font-size: 1rem; margin-bottom: var(--a3); }
+  .presse-schritte { gap: 8px 18px; font-size: .9375rem; }
+  .presse-schritte span { width: 26px; height: 26px; }
+  .maschine { height: 52%; }
+  .tisch, .dampf { left: 0; right: 0; }
+  .pressenkopf { left: 9%; right: 9%; height: 26%; top: 34px; }
+  .traverse { left: 0; right: 0; height: 14px; } .saeule { top: 14px; } .saeule.s1 { left: 2%; } .saeule.s2 { right: 2%; } .stange { top: 14px; }
+  .schild { width: 44%; }
+}
+@media (max-height: 640px) and (min-width: 761px) { .presse-text p { display: none; } }
+/* Bewegung reduzieren: Endbild ohne Kleben, alle drei Schritte sichtbar */
 .presse.ruhig { height: auto; }
-.presse.ruhig .presse-buehne { position: relative; height: auto; min-height: 640px; }
-.presse.ruhig .stoff-knitter, .presse.ruhig .dampf, .presse.ruhig .pressenkopf { display: none; }
-.presse.ruhig .presse-text { opacity: 1; transform: none; padding-bottom: 300px; }
+.presse.ruhig .presse-buehne { position: relative; height: auto; min-height: 0; padding-bottom: 320px; }
+.presse.ruhig .presse-schritte li { opacity: 1; }
+.presse.ruhig .maschine { height: 300px; }
+.presse.ruhig .stange { transform: scaleY(.24); }
+.presse.ruhig .stoff-knitter, .presse.ruhig .dampf, .presse.ruhig .glanz, .presse.ruhig .presse-fortschritt { display: none; }
 
 /* Typenschilder */
 .typen { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1.35fr) minmax(0, 1.8fr); gap: var(--a3); margin-top: var(--a5); align-items: end; }

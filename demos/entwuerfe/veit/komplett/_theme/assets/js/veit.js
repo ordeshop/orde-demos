@@ -18,17 +18,20 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menue.hidden) auf(false); });
   }
 
-  /* Die Presse: Fortschritt 0..1 über den Abschnitt, nur transform/opacity */
+  /* Die Presse: Fortschritt 0..1 über die Strecke, in der die Bühne klebt. Nur transform/opacity.
+     0–.18 Stoff wird aufgelegt · .18–.46 Kopf fährt herunter · .46–.70 Dampf, Stoff wird glatt · .70–.86 Kopf hoch · danach Glanz */
   const presse = document.querySelector('.presse');
   if (!presse) return;
-  const kopf = presse.querySelector('.pressenkopf');
-  const text = presse.querySelector('.presse-text');
+  const $ = (s) => presse.querySelector(s);
+  const kopf = $('.pressenkopf'), maschine = $('.maschine'), tisch = $('.tisch'), knitter = $('.stoff-knitter'),
+    glatt = $('.stoff-glatt'), glanz = $('.glanz'), lampe = $('.lampe'), balken = $('.presse-fortschritt span');
   const wolken = [...presse.querySelectorAll('.dampf span')];
-  const knitter = presse.querySelector('.stoff-knitter');
-  const buehne = presse.querySelector('.presse-buehne');
-  const tisch = presse.querySelector('.tisch');
+  const stangen = [...presse.querySelectorAll('.stange')];
+  const schritte = [...presse.querySelectorAll('.presse-schritte li')];
   const clamp = (v) => Math.min(1, Math.max(0, v));
   const ease = (t) => 1 - Math.pow(1 - t, 3);
+  const inout = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const ab = (p, von, bis) => clamp((p - von) / (bis - von));
   let sichtbar = false, laeuft = false;
 
   const zeichnen = () => {
@@ -36,29 +39,41 @@
     const r = presse.getBoundingClientRect();
     const weg = presse.offsetHeight - innerHeight;
     const p = clamp(-r.top / weg);
-    // Hub: 0 = oben, 1 = aufgesetzt
-    let hub;
-    if (p < .4) hub = ease(p / .4);
-    else if (p < .55) hub = 1;
-    else hub = 1 - ease(clamp((p - .55) / .25));
-    // Kopf fährt von oberhalb der Bühne bis auf die Oberkante des Stoffs
-    const H = buehne.clientHeight, kh = kopf.offsetHeight, kontakt = H - tisch.offsetHeight + 10 - kh;
-    const oben = -kh * 1.05;
-    kopf.style.transform = `translateY(${oben + hub * (kontakt - oben)}px)`;
-    knitter.style.opacity = String(1 - clamp((p - .4) / .15));
+    // 1. Stoff auflegen: der zerknitterte Stoff gleitet von links auf den Tisch
+    const auf = ease(ab(p, 0, .18));
+    knitter.style.transform = glatt.style.transform = `translateX(${(1 - auf) * -105}%)`;
+    // 2. Kopf: oben in der Maschine → auf den Stoff → wieder hoch
+    const hub = p < .46 ? inout(ab(p, .18, .46)) : p < .70 ? 1 : 1 - inout(ab(p, .70, .86));
+    const kontakt = maschine.clientHeight - tisch.offsetHeight - knitter.offsetHeight * .35 - kopf.offsetHeight - kopf.offsetTop;
+    kopf.style.transform = `translateY(${hub * kontakt}px)`;
+    const luecke = kopf.offsetTop - stangen[0].offsetTop;
+    stangen.forEach((st) => { st.style.transform = `scaleY(${(luecke + hub * kontakt) / 100})`; });
+    lampe.style.opacity = String(.15 + .85 * (p > .44 && p < .72 ? 1 : 0));
+    // 3. Dampf beim Aufsetzen, Stoff wird glatt
+    knitter.style.opacity = String(1 - ab(p, .48, .66));
     wolken.forEach((w, i) => {
-      const s = clamp((p - .42 - (i % 3) * .02) / .32);
-      w.style.opacity = String(s < .35 ? s / .35 : (1 - s) / .65);
-      w.style.transform = `translateY(${-s * 34}vh) scale(${.5 + s * .9})`;
+      const s = ab(p, .46 + (i % 3) * .025, .80);
+      w.style.opacity = String(s <= 0 ? 0 : s < .3 ? s / .3 : (1 - s) / .7);
+      w.style.transform = `translateY(${-s * 30}vh) scale(${.45 + s})`;
     });
-    const t = ease(clamp((p - .72) / .14));
-    text.style.opacity = String(t);
-    text.style.transform = `translateY(${(1 - t) * 24}px)`;
+    // 4. Glanz zieht über den glatten Stoff
+    const g = ab(p, .84, 1);
+    glanz.style.opacity = String(g > 0 && g < 1 ? 1 : 0);
+    glanz.style.setProperty('--glanz', `${g * 440}%`);
+    // Schritte und Balken
+    const nr = p < .18 ? 0 : p < .78 ? 1 : 2;
+    schritte.forEach((li, i) => li.classList.toggle('an', i === nr));
+    balken.style.transform = `scaleX(${p})`;
   };
   const anfordern = () => { if (sichtbar && !laeuft) { laeuft = true; requestAnimationFrame(zeichnen); } };
 
   const einrichten = () => {
-    if (ruhig.matches) { presse.classList.add('ruhig'); kopf.style.transform = ''; text.style.cssText = ''; return; }
+    if (ruhig.matches) {
+      presse.classList.add('ruhig');
+      [kopf, knitter, glatt, lampe, glanz, balken, ...wolken, ...stangen].forEach((el) => { el.style.cssText = ''; });
+      schritte.forEach((li) => li.classList.add('an'));
+      return;
+    }
     presse.classList.remove('ruhig');
     zeichnen();
   };
