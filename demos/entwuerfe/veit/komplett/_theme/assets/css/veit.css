@@ -150,11 +150,15 @@ mark.offen { background: var(--gelb); color: var(--tinte); padding: 0 .2em; box-
 .menue ul { margin: 0; padding: 0; }
 .menue li a { display: block; padding: 10px 0; font-size: 2.2rem; font-stretch: var(--schmal); font-weight: 700; line-height: 1.1; color: var(--tinte); text-decoration: none; border-bottom: 1px solid var(--blech); }
 .menue li a[aria-current] { color: var(--blau); }
+/* Sprachwahl im Handy-Menü: zwei gleich breite Felder, die aktive Sprache blau */
+.sprache-menue { display: grid; grid-template-columns: 1fr 1fr; margin: 0; border: 1px solid var(--blau); font-size: 1rem; }
+.sprache-menue a { min-height: 48px; font-weight: 600; color: var(--blau); }
+.sprache-menue a[aria-current] { background: var(--blau); color: #fff; font-weight: 700; }
 .menue-unten { color: var(--text-2); }
 .menue-unten a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
 
 @media (max-width: 1080px) {
-  .hauptnav, .kopf-shop, .sprache { display: none; }
+  .hauptnav, .kopf-shop, .kopf-rechts .sprache { display: none; }
   .kopf-rechts { margin-left: auto; }
   .menue-knopf { display: inline-flex; }
 }
