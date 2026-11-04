@@ -290,7 +290,7 @@ mark.offen { background: var(--gelb); color: var(--tinte); padding: 0 .2em; box-
   .typ { display: grid; grid-template-columns: minmax(0, 38%) minmax(0, 1fr); align-items: stretch; }
   .typ > * { min-width: 0; }
   .typ-bild img, .typ:hover .typ-bild img { position: static; transform: none; max-width: 100%; max-height: 200px; }
-  .typ-bild { aspect-ratio: auto; padding: var(--a3); display: grid; place-items: center; }
+  .typ-bild { aspect-ratio: auto; padding: var(--a3); display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; }
   .typ-schild { margin: 0; border-top: 0; border-left: 2px solid var(--tinte); padding: var(--a3); }
   .typen:not(.typen-raster) .typ:last-child { grid-template-columns: minmax(0, 1fr); }
   .typen:not(.typen-raster) .typ:last-child .typ-bild { padding: 0; }
@@ -529,6 +529,21 @@ ul.fahrplan, ul.zahlen, ul.zeitleiste, ul.personen { list-style: none; padding-l
 .gruppe-titel a:hover { color: var(--blau); }
 .treffer { color: var(--text-2); }
 .adresse { font-size: 1.2rem; }
+
+/* Unterseiten einer Sammelseite (Unternehmen, Service, Events) */
+.unterseiten-band { padding-top: var(--a5); }
+.unterseiten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--a4); margin: 0; padding: 0; list-style: none; }
+.unterseite { position: relative; display: flex; flex-direction: column; height: 100%; background: var(--stahl); color: var(--tinte); text-decoration: none; border-top: 3px solid var(--blau); }
+.unterseite-bild { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: var(--weiss); }
+.unterseite-bild img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.unterseite:hover .unterseite-bild img { transform: scale(1.04); }
+.unterseite-text { display: grid; gap: 6px; padding: var(--a4) var(--a4) 64px; }
+.unterseite-text strong { font-size: clamp(1.4rem, 2vw, 1.8rem); font-stretch: var(--schmal); line-height: 1.1; }
+.unterseite-text span { color: var(--text-2); }
+.unterseite:hover strong { color: var(--blau); }
+.unterseite-pfeil { position: absolute; left: var(--a4); bottom: var(--a4); display: inline-grid; place-items: center; width: 36px; height: 36px; background: var(--blau); color: var(--weiss); clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+@media (max-width: 960px) { .unterseiten { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .unterseiten { grid-template-columns: 1fr; } }
 
 /* News */
 .beitraege { margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--tinte); }
