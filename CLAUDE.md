@@ -3,6 +3,8 @@
 Die sechs Beispielseiten, mit denen ORDÉ zeigt, wie eine Seite aussehen kann.
 Keine echten Betriebe. Arbeitssprache Deutsch.
 
+**Wegweiser:** Welche Datei, welcher Skill und welches Beispiel zu welcher Aufgabe gehört, steht in `CLAUDE.md` im Repo `ordeshop/Business-Handbuch` (lokal meist `../Business-Handbuch/CLAUDE.md`). Werkzeuge kommen von dort.
+
 | Ordner | Betrieb | Branche |
 |---|---|---|
 | `cafe/` | MØRK, mehrseitig | Restaurant, Café |
