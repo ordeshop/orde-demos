@@ -24,9 +24,9 @@ Fünf Seiten ohne Branche: `monolith/`, `spektrum/`, `lumen/`, `lichtfeld/`,
 in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
 `BRANCHEN`. Abweichend von den sechs Demos:
 
-- **KI nur in `halvo`:** echte Fotos, die eine KI-Tiefenschätzung
-  (Depth Anything V2, `halvo/quelle/tiefe.py`) räumlich bewegt. Deshalb steht dort im
-  Rückkehr-Balken „Fotos mit KI-Tiefenschätzung räumlich bewegt“.
+- **`halvo`:** echte Fotos, die eine KI-Tiefenschätzung (Depth Anything V2,
+  `halvo/quelle/tiefe.py`) räumlich bewegt. Ein Hinweis darauf steht bewusst nicht im
+  Balken (Arturs Entscheidung, 16.11.2026).
 - **Sonst keine KI-Bilder.** Die Videos sind frei lizenzierte Stockaufnahmen, `spektrum` ist ganz
   berechnet. Deshalb steht im Rückkehr-Balken kein „Bilder mit KI erzeugt“. Kommt je ein
   KI-Bild dazu, muss der Hinweis zurück.

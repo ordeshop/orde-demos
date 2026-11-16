@@ -12,5 +12,5 @@ Lokal abgelegt, damit byorde.com nichts von fremden Servern lädt (siehe Datensc
 | `schriften/*.woff2`, `schriften.css` | Google Fonts: Archivo, Bodoni Moda, IBM Plex Mono, Geist, Geist Mono, Instrument Serif, Italiana, Newsreader, Jost, Unbounded, Onest, Fragment Mono; für `halvo` aus Fontsource: Big Shoulders Display, Familjen Grotesk, JetBrains Mono, Playfair Display (kursiv) | SIL Open Font License 1.1 |
 
 Schriften nur im lateinischen Zeichensatz (Umlaute, ß und € sind enthalten).
-Die Videos der Showreels sind frei lizenzierte Stockaufnahmen, keine KI-Bilder. In `halvo` werden echte Fotos mit einer KI-Tiefenschätzung (Depth Anything V2) räumlich bewegt; das steht im Rückkehr-Balken. Die Lizenznachweise
+Die Videos der Showreels sind frei lizenzierte Stockaufnahmen, keine KI-Bilder. In `halvo` werden echte Fotos mit einer KI-Tiefenschätzung (Depth Anything V2) räumlich bewegt. Die Lizenznachweise
 liegen im privaten Business-Handbuch.
