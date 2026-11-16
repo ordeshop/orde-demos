@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en" data-showreel>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Halvø · Showreel by ORDÉ</title>
+<meta name="description" content="Build log in six scenes: photos of a cabin under the aurora, moved in 3D, while a terminal builds the website.">
+<link rel="stylesheet" href="../bibliothek/schriften.css">
+<style>
+
+/* Layout: a fixed film stage (footage and photos lifted into 3D with depth maps) under sticky captions,
+   a glass terminal that writes along, and the finished site rising over everything like a curtain.
+   One committed world, polar night, so a single dark theme on purpose. */
+:root{
+  --night:#06080C;   /* polar night */
+  --deep:#0C1118;
+  --ice:#DCE8EE;     /* snow under starlight */
+  --frost:#8497A5;   /* quiet detail */
+  --ember:#FFB25E;   /* cabin window light */
+  --line:rgba(220,232,238,.14);
+  --display:"Big Shoulders Display","Arial Narrow",sans-serif;
+  --text:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --serif:"Playfair Display",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --gut-l:max(16px,env(safe-area-inset-left,0px));
+  --gut-r:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:dark;
+}
+html{background:var(--night)}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--night);color:var(--ice);font:400 17px/1.55 var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--ember);color:var(--night)}
+:focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:2px}
+html{scrollbar-color:#2a3542 var(--night)}
+a{color:inherit}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+em.s{font:italic 400 1.04em/1 var(--serif);letter-spacing:-.01em;color:var(--ember)}
+
+/* ---------- Stage ---------- */
+#stage{position:fixed;inset:0;z-index:0;width:100%;height:100%;display:block}
+.fallback{position:fixed;inset:0;z-index:0;background:linear-gradient(90deg,var(--night) 20%,rgba(6,8,12,.35)),url(media/p01.jpg) 30% center/cover}
+.gl .fallback{display:none}
+
+/* contact sheet on a light table */
+.sheet{position:fixed;left:50%;top:58%;z-index:1;width:min(1500px,128vw);aspect-ratio:10/8;pointer-events:none;opacity:0;
+  transform:translate(-50%,-50%) perspective(1600px) rotateX(calc(var(--tilt,56) * 1deg)) scale(var(--sc,1));transform-style:preserve-3d;
+  display:grid;grid-template-columns:repeat(10,1fr);gap:.55%;}
+.sheet i{display:block;border-radius:2px;background:url(media/kontakt.jpg) 0 0/1000% 800% no-repeat;box-shadow:0 6px 18px rgba(0,0,0,.45);
+  transition:none;opacity:calc(1 - var(--drop,0) * .82);filter:grayscale(calc(var(--drop,0))) brightness(calc(1 - var(--drop,0) * .55))}
+.sheet i.k{opacity:1;filter:none;transform:translateZ(calc(var(--drop,0) * 70px)) scale(calc(1 + var(--drop,0) * .12));
+  box-shadow:0 0 0 calc(var(--drop,0) * 2px) var(--ember),0 18px 40px rgba(0,0,0,.6)}
+
+/* loupes on the real photo */
+.loupe{position:fixed;z-index:3;left:0;top:0;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;pointer-events:none;opacity:0;
+  border:2px solid var(--ember);box-shadow:0 0 0 6px rgba(6,8,12,.35),0 14px 30px rgba(0,0,0,.5);background:url(media/p01.jpg) no-repeat;background-color:#000}
+.loupe b{position:absolute;left:104px;top:50%;transform:translateY(-50%);white-space:nowrap;font:500 11.5px/1.45 var(--mono);letter-spacing:.06em;color:var(--ice);
+  background:rgba(6,8,12,.72);padding:7px 10px;border-radius:6px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.loupe b span{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:-1px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.loupe.l b{left:auto;right:104px}
+
+/* devices over the drone footage */
+.devices{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;display:grid;place-items:center}
+.dv{position:relative;display:flex;align-items:flex-end;gap:2.6vw;transform:perspective(1800px) rotateY(-12deg) rotateX(4deg) translate(-7vw,19vh)}
+.laptop{width:min(27vw,500px)}
+.laptop .scr{border:10px solid #10151b;border-bottom-width:14px;border-radius:14px 14px 0 0;background:#000;aspect-ratio:16/10;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.65)}
+.laptop .scr img,.phone .scr img{width:100%;height:100%;object-fit:cover;display:block}
+.laptop .base{height:14px;margin:0 -6%;background:linear-gradient(#2a323b,#11161c);border-radius:0 0 18px 18px;box-shadow:0 20px 40px rgba(0,0,0,.6)}
+.phone{width:min(7.6vw,130px)}
+.phone .scr{border:7px solid #10151b;border-radius:26px;aspect-ratio:9/19.5;overflow:hidden;background:#000;box-shadow:0 26px 60px rgba(0,0,0,.65)}
+.tag{position:absolute;top:-44px;left:0;font:500 12px/1 var(--mono);letter-spacing:.08em;color:var(--ice);background:rgba(6,8,12,.7);
+  border:1px solid rgba(255,178,94,.7);padding:8px 12px;border-radius:999px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.tag::after{content:"  ✓";color:var(--ember)}
+
+/* glass terminal */
+.term{position:fixed;z-index:4;right:max(var(--gut-r),4vw);top:50%;width:min(500px,34vw);transform:translateY(-50%);opacity:0;pointer-events:none;
+  background:rgba(7,11,15,.5);-webkit-backdrop-filter:blur(22px) saturate(1.25);backdrop-filter:blur(22px) saturate(1.25);
+  border:1px solid rgba(220,232,238,.16);border-radius:14px;box-shadow:0 40px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
+  font:450 13px/1.75 var(--mono);color:var(--ice);overflow:hidden}
+.term header{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid rgba(220,232,238,.1);color:#9db0bd;font-size:11.5px}
+.term header i{width:9px;height:9px;border-radius:50%;background:rgba(157,176,189,.4)}
+.term header i:first-child{background:var(--ember)}
+.term header span{margin-left:auto;margin-right:auto;padding-right:40px}
+.term .body{height:calc(1.75em * 15);display:flex;flex-direction:column;justify-content:flex-end;padding:8px 18px;overflow:hidden;white-space:pre}
+.term .st{display:flex;justify-content:space-between;padding:9px 18px;border-top:1px solid rgba(220,232,238,.1);font-size:11.5px;color:#9db0bd}
+.term .st b{color:var(--ember);font-weight:450}
+.c-u,.c-e{color:var(--ember)} .c-o{color:#9db0bd} .c-d{color:#5d6d79} .c-k{color:#a8d4e6} .c-s{color:#f0d1a8}
+.cur{display:inline-block;width:.6em;height:1.15em;vertical-align:-.2em;background:var(--ember);margin-left:1px}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;top:0;left:0;right:0;z-index:6;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;
+  padding:calc(env(safe-area-inset-top,0px) + 16px) var(--gut-r) 16px var(--gut-l);transition:opacity .5s var(--ease);
+  font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--frost);font-variant-numeric:tabular-nums}
+.hud.gone,.foot.gone{opacity:0;pointer-events:none}
+.hud .l{display:flex;gap:18px;align-items:center}
+.hud .l b{font:800 20px/1 var(--display);letter-spacing:.06em;color:var(--ice)}
+.hud .c{text-align:center;white-space:nowrap}
+.hud .c b{color:var(--ice);font-weight:500}
+.hud .r{display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.rec{display:inline-flex;align-items:center;gap:8px}
+.rec i{width:7px;height:7px;border-radius:50%;background:var(--ember);box-shadow:0 0 10px var(--ember)}
+.pause{appearance:none;border:1px solid var(--line);background:rgba(12,17,24,.55);color:var(--ice);border-radius:999px;
+  height:30px;padding:0 12px;display:flex;align-items:center;gap:8px;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:border-color .3s}
+.pause:hover{border-color:rgba(255,178,94,.6)}
+.pause svg{width:10px;height:10px}
+.foot{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:space-between;gap:16px;
+  padding:14px var(--gut-r) calc(env(safe-area-inset-bottom,0px) + 14px) var(--gut-l);
+  font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--frost);transition:opacity .5s;pointer-events:none}
+.bar{position:absolute;left:0;right:0;top:0;height:1px;background:rgba(220,232,238,.08)}
+.bar i{display:block;height:100%;background:var(--ember);transform-origin:left;transform:scaleX(var(--p,0))}
+
+/* ---------- Captions ---------- */
+#reel{position:relative;z-index:5}
+.ch{position:relative;height:calc(var(--h) * 1vh)}
+.cap{position:sticky;top:34vh;width:min(31rem,36vw);margin-left:max(var(--gut-l),4.5vw);display:grid;gap:18px;padding-block:20px}
+.cap::before{content:"";position:absolute;inset:-30% -50% -30% -70%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(6,8,12,.72),rgba(6,8,12,0))}
+.cap .meta{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--frost);display:flex;gap:14px}
+.cap .meta b{color:var(--ember);font-weight:500}
+.cap h2{font:600 clamp(2.3rem,3.9vw,3.9rem)/.98 var(--text);letter-spacing:-.035em}
+.cap p{color:#c3cfd6;max-width:30em}
+.cap p em{font-style:normal;color:var(--ice)}
+.cap .spec{font:450 11.5px/1.7 var(--mono);color:var(--frost);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:12px}
+
+.hero-cap{top:0;min-height:100vh;min-height:100svh;align-content:end;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 90px);width:min(60rem,86vw)}
+.hero-cap::before{inset:-10% -30% -20% -30%;background:radial-gradient(60% 70% at 30% 75%,rgba(6,8,12,.7),rgba(6,8,12,0))}
+.hero-cap h1{font:600 clamp(3.2rem,8.2vw,8rem)/.9 var(--text);letter-spacing:-.045em}
+.hero-cap h1 em.s{font-size:1.02em}
+.hero-cap p{font-size:clamp(16px,1.25vw,19px);color:#c9d6dd;max-width:34em}
+.hint{display:flex;align-items:center;gap:12px;font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--frost)}
+.hint i{display:block;width:56px;height:1px;background:rgba(132,151,165,.5);position:relative;overflow:hidden}
+.hint i::after{content:"";position:absolute;inset:0;background:var(--ember);transform:translateX(-100%);animation:sweep 2.4s var(--ease) infinite}
+@keyframes sweep{to{transform:translateX(100%)}}
+
+/* ---------- Halvø: the finished site ---------- */
+#site{position:relative;z-index:7;background:var(--night);box-shadow:0 -40px 80px rgba(0,0,0,.6)}
+.wrap{padding-left:var(--gut-l);padding-right:var(--gut-r)}
+.inner{max-width:1240px;margin:0 auto}
+.h-hero{position:relative;min-height:min(100vh,900px);display:grid;align-items:end;overflow:hidden;isolation:isolate}
+.h-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.h-hero::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(0deg,rgba(6,8,12,.92) 0%,rgba(6,8,12,.35) 45%,rgba(6,8,12,.1) 70%,rgba(6,8,12,.55) 100%),
+             linear-gradient(90deg,rgba(6,8,12,.6),rgba(6,8,12,0) 60%)}
+.h-nav{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:28px;padding-block:calc(env(safe-area-inset-top,0px) + 22px) 22px;z-index:2}
+.mark{font:800 30px/1 var(--display);letter-spacing:.04em;text-decoration:none;text-transform:uppercase}
+.h-nav nav{margin-left:auto;display:flex;gap:26px;font-weight:500}
+.h-nav nav a{text-decoration:none;color:#c9d6dd;transition:color .25s}
+.h-nav nav a:hover{color:var(--ember)}
+.btn{appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:10px;background:var(--ember);color:var(--night);
+  font:600 16px/1 var(--text);padding:14px 20px;border-radius:999px;text-decoration:none;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(255,178,94,.55)}
+.btn svg{width:16px;height:16px}
+.h-hero-in{padding-block:0 clamp(40px,7vw,88px);display:grid;gap:22px;max-width:1240px;width:100%;margin:0 auto;box-sizing:border-box}
+.h-hero h1{font:600 clamp(2.5rem,5.6vw,5.2rem)/.96 var(--text);letter-spacing:-.035em;max-width:13em}
+.h-hero .lead{font-size:clamp(17px,1.5vw,21px);color:#c9d6dd;max-width:30em}
+.coord{font:500 13px/1 var(--mono);color:var(--frost);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.h-sec{padding-block:clamp(72px,11vw,150px)}
+.h-sec h2{font:600 clamp(2rem,4vw,3.4rem)/1 var(--text);letter-spacing:-.03em}
+.h-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px 64px;align-items:end;margin-bottom:clamp(36px,5vw,64px)}
+.h-head p{color:#b9c7cf;max-width:32em}
+.h-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.h-grid figure{margin:0;display:grid;gap:14px}
+.h-grid .ph{overflow:hidden;border-radius:6px;aspect-ratio:4/5;background:var(--deep)}
+.h-grid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.1s var(--ease)}
+.h-grid figure:hover img{transform:scale(1.045)}
+.h-grid figure:nth-child(2){margin-top:56px}
+.h-grid figcaption{color:#b9c7cf;font-size:16px;max-width:26em}
+.h-grid figcaption strong{display:block;color:var(--ice);font-weight:600;font-size:18px;margin-bottom:4px}
+.h-nights{position:relative;min-height:min(92vh,820px);display:grid;align-items:center;overflow:hidden;isolation:isolate}
+.h-nights>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.h-nights::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(6,8,12,.88) 0%,rgba(6,8,12,.5) 45%,rgba(6,8,12,0) 75%)}
+.h-nights .txt{display:grid;gap:20px;max-width:30rem}
+.h-nights p{color:#c9d6dd}
+.season{display:flex;gap:2px;margin-top:8px;font:500 12px/1 var(--mono);color:var(--frost)}
+.season span{flex:1;padding-top:10px;border-top:2px solid rgba(220,232,238,.18);text-align:center}
+.season span.on{border-color:var(--ember);color:var(--ice)}
+.h-days{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:20px;align-items:end}
+.h-days .a{display:grid;gap:22px;align-content:start}
+.h-days .a p{color:#b9c7cf;max-width:28em}
+.h-days img{width:100%;height:auto;display:block;border-radius:6px;object-fit:cover}
+.h-days .a img{aspect-ratio:4/3}
+.h-days .b img{aspect-ratio:16/11}
+.h-visit{border-top:1px solid var(--line)}
+.h-visit .inner{display:grid;gap:26px;max-width:46rem;margin-left:max(0px,calc((100% - 1240px)/2))}
+.h-visit p{color:#b9c7cf}
+.credits{border-top:1px solid var(--line);padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));color:var(--frost);font-size:14px}
+.credits .inner{display:flex;flex-wrap:wrap;gap:8px 28px;justify-content:space-between}
+
+/* ---------- Phone ---------- */
+@media (max-width:760px){
+  .hud{grid-template-columns:1fr auto}
+  .hud .c,.rec{display:none}
+  .ch{display:flex;flex-direction:column;justify-content:flex-end}
+  .cap{width:auto;margin-right:var(--gut-r);position:sticky;top:auto;bottom:0;padding-block:24px calc(56px + env(safe-area-inset-bottom,0px));gap:12px}
+  .cap::before{inset:-35% -20px 0 -20px;background:linear-gradient(0deg,rgba(6,8,12,.96) 58%,rgba(6,8,12,0))}
+  .cap h2{font-size:2.2rem}
+  .cap p{font-size:15.5px}
+  .cap .spec{display:none}
+  .hero-cap{width:auto;min-height:auto}
+  .hero-cap h1{font-size:3.3rem}
+  .term{left:var(--gut-l);right:var(--gut-r);width:auto;top:calc(env(safe-area-inset-top,0px) + 58px);transform:none;font-size:10.5px}
+  .term .body{height:calc(1.75em * 9)}
+  .term header span{padding-right:0}
+  .loupe{width:64px;height:64px;margin:-32px 0 0 -32px}
+  .loupe b{left:74px;font-size:10px}
+  .loupe.l b{right:74px}
+  .dv{transform:translateY(-6vh);gap:12px}
+  .laptop{width:62vw}
+  .phone{width:22vw}
+  .foot .fr{display:none}
+  .h-nav nav{display:none}
+  .h-nav .btn{margin-left:auto;padding:11px 16px;font-size:15px}
+  .h-head{grid-template-columns:minmax(0,1fr)}
+  .h-grid{grid-template-columns:minmax(0,1fr)}
+  .h-grid figure:nth-child(2){margin-top:0}
+  .h-grid .ph{aspect-ratio:4/3}
+  .h-days{grid-template-columns:minmax(0,1fr)}
+  .h-nights::after{background:linear-gradient(0deg,rgba(6,8,12,.92) 20%,rgba(6,8,12,.2) 80%)}
+  .h-nights{align-items:end;padding-block:72px}
+}
+@media (prefers-reduced-motion:reduce){
+  .hint i::after{animation:none;transform:none}
+  .btn,.h-grid img{transition:none}
+}
+</style>
+<style>
+/* Grundeinstellungen, die sonst der Artifact-Rahmen setzt */
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Platz für den Rückkehr-Balken: alles, was unten am Rand sitzt, rückt über ihn */
+:root{--balkenhoehe:58px;--unten:calc(env(safe-area-inset-bottom,0px) + var(--balkenhoehe))}
+@media (max-width:640px){:root{--balkenhoehe:94px}}
+.foot{bottom:var(--unten)!important;padding-bottom:14px!important}
+.hero-cap{padding-bottom:calc(90px + var(--unten))!important}
+.credits{padding-bottom:calc(28px + var(--unten))!important}
+@media (max-width:760px){.cap{padding-bottom:calc(56px + var(--unten))!important}}
+</style>
+</head>
+<body>
+<div class="fallback" aria-hidden="true"></div>
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="sheet" id="sheet" aria-hidden="true"></div>
+<div id="loupes" aria-hidden="true"></div>
+<div class="devices" id="devices" aria-hidden="true">
+  <div class="dv">
+    <div class="laptop"><span class="tag">1440 × 900</span><div class="scr"><img id="shotDesk" alt=""></div><div class="base"></div></div>
+    <div class="phone"><span class="tag">390 × 844</span><div class="scr"><img id="shotPhone" alt=""></div></div>
+  </div>
+</div>
+<div class="term" id="term" aria-hidden="true">
+  <header><i></i><i></i><i></i><span>claude — ~/ORDE/Demos/demos/halvo</span></header>
+  <div class="body" id="termBody"></div>
+  <div class="st"><span><b>●</b> <span id="termStep">0/6 ready</span></span><span id="termState">waiting for input</span></div>
+</div>
+
+<header class="hud" id="hud">
+  <div class="l"><b>Halvø</b><span>Build log</span></div>
+  <div class="c" id="scene">Scene <b>00</b> / 06 · Ready</div>
+  <div class="r">
+    <span class="rec"><i></i><span id="tc">00:00:00:00</span></span>
+    <button class="pause" id="pause" type="button" aria-pressed="false">
+      <svg viewBox="0 0 12 12" aria-hidden="true" id="pauseIcon"><rect x="2" y="1.5" width="2.6" height="9" rx=".6" fill="currentColor"/><rect x="7.4" y="1.5" width="2.6" height="9" rx=".6" fill="currentColor"/></svg>
+      <span id="pauseLabel">Pause</span>
+    </button>
+  </div>
+</header>
+<div class="foot" id="foot">
+  <div class="bar"><i id="barI"></i></div>
+  <span id="stepName">00 · Ready</span>
+  <span class="fr">68° N · 13° E · Lofoten</span>
+</div>
+
+<main id="reel">
+  <section class="ch" data-ch="0" style="--h:130">
+    <div class="cap hero-cap">
+      <h1>How a website <em class="s">gets built.</em></h1>
+      <p>A build log from the terminal. The client is Halvø, five cabins on the Lofoten coast, invented for this reel.</p>
+      <div class="hint"><i></i>Scroll to start</div>
+    </div>
+  </section>
+  <section class="ch" data-ch="1" style="--h:150">
+    <div class="cap">
+      <div class="meta"><b>01</b><span>Brief</span></div>
+      <h2>It starts with a sentence, <em class="s">then the rules.</em></h2>
+      <p>The brief goes into the terminal in plain words. Before touching a file, Claude reads the project’s handbook and style guide.</p>
+      <p class="spec">HANDBUCH.md · 243 lines<br>ORDE-STIL.md · 4 required skills</p>
+    </div>
+  </section>
+  <section class="ch" data-ch="2" style="--h:160">
+    <div class="cap">
+      <div class="meta"><b>02</b><span>Photos</span></div>
+      <h2>Eighty photos on the table, <em class="s">ten kept.</em></h2>
+      <p>Every search result lands on one contact sheet. Anything that looks AI-made, sunny or generic is dropped.</p>
+      <p class="spec">8 searches · 80 results · 10 kept · 2.5 MB</p>
+    </div>
+  </section>
+  <section class="ch" data-ch="3" style="--h:160">
+    <div class="cap">
+      <div class="meta"><b>03</b><span>Design</span></div>
+      <h2>The palette is already <em class="s">in the photo.</em></h2>
+      <p>Night sky, aurora, blue snow and one warm colour: the light behind the window. The loupes read the real pixels.</p>
+      <p class="spec">--night #06080C · --ice #DCE8EE<br>--frost #8497A5 · --ember #FFB25E</p>
+    </div>
+  </section>
+  <section class="ch" data-ch="4" style="--h:190">
+    <div class="cap">
+      <div class="meta"><b>04</b><span>Build</span></div>
+      <h2>A real house, <em class="s">rebuilt in depth.</em></h2>
+      <p>A depth model reads how far away every pixel is. The photo becomes a surface the camera can move around, first as edges, then as the picture itself.</p>
+      <p class="spec">Depth Anything V2 · 1280 × 853 · 64,521 vertices</p>
+    </div>
+  </section>
+  <section class="ch" data-ch="5" style="--h:170">
+    <div class="cap">
+      <div class="meta"><b>05</b><span>Check</span></div>
+      <h2>Checked the way <em class="s">a visitor sees it.</em></h2>
+      <p>Laptop and phone size in a real browser, the console read for errors, contrast measured, animation switched off once.</p>
+      <p class="spec">0 errors · text contrast 16.1 : 1</p>
+    </div>
+  </section>
+  <section class="ch" data-ch="6" style="--h:180">
+    <div class="cap">
+      <div class="meta"><b>06</b><span>Ship</span></div>
+      <h2>Then the <em class="s">lights go on.</em></h2>
+      <p>The page goes live. Keep scrolling: the Halvø site is right below, live and clickable.</p>
+    </div>
+  </section>
+</main>
+
+<div id="site">
+  <section class="h-hero" id="halvo">
+    <img src="media/p01.jpg" width="1280" height="853" alt="A wooden cabin with lit windows in deep snow under green northern lights" decoding="async">
+    <header class="h-nav wrap">
+      <a class="mark" href="#halvo">Halvø</a>
+      <nav aria-label="Halvø"><a href="#cabins">Cabins</a><a href="#nights">Nights</a><a href="#visit">Visit</a></nav>
+      <a class="btn" href="#visit">Plan a stay</a>
+    </header>
+    <div class="h-hero-in wrap">
+      <h1>Five cabins at the edge of the Norwegian Sea.</h1>
+      <p class="lead">Wood stove, wide windows, no neighbours. In winter the sky does most of the work.</p>
+      <p class="coord">68° N · LOFOTEN, NORWAY</p>
+    </div>
+  </section>
+
+  <section class="h-sec wrap" id="cabins">
+    <div class="inner">
+      <div class="h-head">
+        <h2>Built for long nights</h2>
+        <p>Each cabin sleeps two. There is one room, one stove and one window that takes up most of a wall. Bring a book; the rest is here.</p>
+      </div>
+      <div class="h-grid">
+        <figure>
+          <div class="ph"><img src="media/p05.jpg" width="1280" height="1280" alt="A wood stove burning beside a floor-to-ceiling window onto snow" loading="lazy" decoding="async"></div>
+          <figcaption><strong>The stove</strong>Every cabin heats with birch. A full basket waits by the door each afternoon.</figcaption>
+        </figure>
+        <figure>
+          <div class="ph"><img src="media/p06.jpg" width="1280" height="853" alt="A person sitting at a large window looking out at snowy pine forest" loading="lazy" decoding="async"></div>
+          <figcaption><strong>The window</strong>As wide as the room, facing the trees. The bed is pushed right up to it.</figcaption>
+        </figure>
+        <figure>
+          <div class="ph"><img src="media/p02.jpg" width="1280" height="853" alt="Red fishing huts on a rocky shore under a mountain and the aurora" loading="lazy" decoding="async"></div>
+          <figcaption><strong>The harbour</strong>The red fishing huts are a short walk along the shore.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="h-nights wrap" id="nights">
+    <img src="media/p03.jpg" width="1280" height="853" alt="Northern lights over a frozen lake and dark forest" loading="lazy" decoding="async">
+    <div class="inner" style="width:100%">
+      <div class="txt">
+        <h2 class="h2x" style="font:600 clamp(2rem,4vw,3.4rem)/1 var(--text);letter-spacing:-.03em">When the sky starts, we knock.</h2>
+        <p>Aurora season in northern Norway runs from late September to late March. On clear nights, whoever is on duty watches the sky and knocks on your door when it begins.</p>
+        <div class="season" aria-label="Aurora season: September to March">
+          <span>A</span><span>S</span><span class="on">S</span><span class="on">O</span><span class="on">N</span><span class="on">D</span><span class="on">J</span><span class="on">F</span><span class="on">M</span><span>A</span><span>M</span><span>J</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="h-sec wrap">
+    <div class="inner h-days">
+      <div class="a">
+        <h2>Short days, long light</h2>
+        <p>In January the sun stays low. For a few hours everything turns blue, then gold, then blue again. Good weather for walking the shore and doing nothing else.</p>
+        <img src="media/p08.jpg" width="1280" height="720" alt="Snowy rocks on the Lofoten shore in blue winter light" loading="lazy" decoding="async">
+      </div>
+      <div class="b"><img src="media/p07.jpg" width="1280" height="853" alt="Snow-covered mountains above a small harbour in Lofoten" loading="lazy" decoding="async"></div>
+    </div>
+  </section>
+
+  <section class="h-sec h-visit wrap" id="visit">
+    <div class="inner">
+      <h2>Halvø is made up. The site is real.</h2>
+      <p>The brand was invented for the reel above, so there is nothing to book. Every part of this page was planned, written, checked and published by Claude in one terminal session.</p>
+      <div><button class="btn" id="again" type="button">Watch the build again
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5L8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+    </div>
+  </section>
+
+  <footer class="credits wrap">
+    <div class="inner">
+      <span>Built with Claude Code · 15 November 2026</span>
+      <span>three.js · Depth Anything V2 · Familjen Grotesk · Playfair Display · JetBrains Mono</span>
+    </div>
+  </footer>
+</div>
+
+<script src="../bibliothek/lenis.min.js"></script>
+<script type="importmap">
+{"imports":{"three":"../bibliothek/three-0.160/three.module.min.js","three/addons/":"../bibliothek/three-0.160/addons/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* ================= helpers ================= */
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = t => (t = clamp(t), t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const k = (a, b, t) => ease((t - a) / (b - a));
+const lerp = (a, b, t) => a + (b - a) * t;
+function track(keys, t) {
+  if (t <= keys[0].t) return keys[0].v;
+  for (let i = 0; i < keys.length - 1; i++) { const A = keys[i], B = keys[i + 1]; if (t <= B.t) { const u = ease((t - A.t) / (B.t - A.t)); return A.v.map((x, j) => x + (B.v[j] - x) * u); } }
+  return keys[keys.length - 1].v;
+}
+const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+let paused = reduceMQ.matches;
+const PHONE = () => innerWidth / innerHeight < .9;
+
+/* ================= smooth scroll ================= */
+let lenis = null;
+if (!reduceMQ.matches && window.Lenis) { try { lenis = new Lenis({ lerp: .085, smoothWheel: true }); } catch (e) { lenis = null; } }
+
+/* ================= HUD ================= */
+const $ = id => document.getElementById(id);
+const videos = [];
+function syncPause() {
+  $('pause').setAttribute('aria-pressed', String(paused)); $('pauseLabel').textContent = paused ? 'Play' : 'Pause';
+  $('pauseIcon').innerHTML = paused ? '<path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/>' : '<rect x="2" y="1.5" width="2.6" height="9" rx=".6" fill="currentColor"/><rect x="7.4" y="1.5" width="2.6" height="9" rx=".6" fill="currentColor"/>';
+  if (paused) videos.forEach(v => v.pause());
+}
+$('pause').addEventListener('click', () => { paused = !paused; syncPause(); });
+syncPause();
+$('again').addEventListener('click', () => { if (lenis) lenis.scrollTo(0, { duration: 2.4 }); else window.scrollTo(0, 0); });
+
+const sections = [...document.querySelectorAll('#reel .ch')];
+const site = $('site'), hud = $('hud'), foot = $('foot');
+const NAMES = ['Ready', 'Brief', 'Photos', 'Design', 'Build', 'Check', 'Ship'];
+function scrollT() {
+  const y = lenis ? lenis.scroll : scrollY, probe = y + innerHeight * .6;
+  for (let i = sections.length - 1; i >= 0; i--) { const s = sections[i]; if (probe >= s.offsetTop) return clamp(i + (probe - s.offsetTop) / s.offsetHeight, 0, sections.length); }
+  return 0;
+}
+let lastStep = -1;
+function hudUpdate(T, clock) {
+  $('barI').style.setProperty('--p', (T / 7).toFixed(4));
+  const step = clamp(Math.floor(T) || 0, 0, 6);
+  if (step !== lastStep) { lastStep = step; const n = String(step).padStart(2, '0'); $('scene').innerHTML = `Scene <b>${n}</b> / 06 · ${NAMES[step]}`; $('stepName').textContent = `${n} · ${NAMES[step]}`; $('termStep').textContent = `${step}/6 ${NAMES[step].toLowerCase()}`; }
+  const f = Math.floor(clock * 24), s = Math.floor(clock), p2 = v => String(v).padStart(2, '0');
+  $('tc').textContent = `${p2(Math.floor(s / 3600))}:${p2(Math.floor(s / 60) % 60)}:${p2(s % 60)}:${p2(f % 24)}`;
+  const top = site.getBoundingClientRect().top, over = top < innerHeight * .2;
+  hud.classList.toggle('gone', over); foot.classList.toggle('gone', over);
+  return top;
+}
+
+/* ================= terminal (DOM) ================= */
+const script = [];
+function seq(s, e, lines) {
+  const lens = lines.map(l => Math.max(4, l.reduce((n, sg) => n + sg[0].length, 0))), tot = lens.reduce((a, b) => a + b, 0); let acc = s;
+  lines.forEach((l, i) => { const d = (e - s) * lens[i] / tot; script.push({ segs: l, s: acc, e: acc + d }); acc += d; });
+}
+const B = [['', 't']];
+seq(-1, -.9, [[['✻ ', 'e'], ['Claude Code', 't']], [['  ~/ORDE/Demos/demos/halvo', 'o']], B]);
+seq(.75, 1.4, [[['› ', 'u'], ['Build a site for Halvø: five cabins', 't']], [['  on the Lofoten coast. Dark, quiet,', 't']], [['  lit from inside.', 't']], B]);
+seq(1.45, 1.95, [[['● ', 't'], ['Read ', 't'], ['HANDBUCH.md', 'k']], [['  ⎿ ', 'd'], ['243 lines', 'o']], [['● ', 't'], ['Read ', 't'], ['ORDE-STIL.md', 'k']], [['  ⎿ ', 'd'], ['4 required skills', 'o']],
+  [['● ', 'e'], ['Plan ', 't'], ['brief → photos → design', 'o']], [['       → build → check → ship', 'o']], B]);
+seq(2.0, 2.8, [[['● ', 't'], ['Search photos ', 't'], ['"aurora cabin" +7', 's']], [['  ⎿ ', 'd'], ['8 searches · 80 results', 'o']],
+  [['● ', 't'], ['Contact sheet ', 't'], ['80 thumbnails', 'o']], [['  ⎿ ', 'd'], ['dropped 70: AI-looking, sunny', 'o']], [['  ⎿ ', 'd'], ['kept 10 · 2.5 MB', 'e']], B]);
+seq(2.95, 3.8, [[['● ', 't'], ['Sample colours ', 't'], ['p01.jpg', 'k']], [['  ⎿ ', 'd'], ['window, aurora, sky, snow', 'o']],
+  [['● ', 't'], ['Write ', 't'], ['tokens', 'k']], [['  --night  ', 'k'], ['#06080C', 's']], [['  --ice    ', 'k'], ['#DCE8EE', 's']], [['  --frost  ', 'k'], ['#8497A5', 's']], [['  --ember  ', 'k'], ['#FFB25E', 'e']], B]);
+seq(3.95, 4.85, [[['● ', 't'], ['Depth map ', 't'], ['p01.jpg', 'k']], [['  ⎿ ', 'd'], ['Depth Anything V2 · 1280 × 853', 'o']],
+  [['● ', 't'], ['Write ', 't'], ['index.html', 'k']], [['  <section class="hero">', 'k']], [['    <img src="media/p01.jpg">', 'k']],
+  [['    <h1>', 'k'], ['Five cabins at the edge', 't']], [['        ', 'k'], ['of the Norwegian Sea.', 't'], ['</h1>', 'k']], [['  </section>', 'k']], [['  ⎿ ', 'd'], ['hero · cabins · nights · visit', 'o']], B]);
+seq(4.95, 5.8, [[['● ', 't'], ['Browser  1440 × 900   ', 'o'], ['✓', 'e']], [['● ', 't'], ['Browser   390 × 844   ', 'o'], ['✓', 'e']], [['● ', 't'], ['Console  0 errors     ', 'o'], ['✓', 'e']],
+  [['● ', 't'], ['Contrast 16.1 : 1     ', 'o'], ['✓', 'e']], [['● ', 't'], ['Reduced motion        ', 'o'], ['✓', 'e']], B]);
+seq(5.9, 6.4, [[['● ', 't'], ['Upload ', 't'], ['demos/halvo', 'k']], [['  ⎿ ', 'd'], ['live · byorde.com', 'e']], [['✻ ', 'e'], ['Done. Lights on.', 't']]]);
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+let termKey = '';
+function drawTerminal(T, blink) {
+  const vis = []; let typing = null;
+  for (const L of script) { if (T < L.s) break; const tot = L.segs.reduce((n, s) => n + s[0].length, 0); vis.push({ segs: L.segs, chars: T >= L.e ? tot : Math.floor(tot * clamp((T - L.s) / (L.e - L.s))) }); if (T < L.e) typing = vis.length - 1; }
+  const key = vis.length + ':' + vis.map(v => v.chars).join(',') + blink;
+  if (key === termKey) return; termKey = key;
+  const lines = vis.slice(-17).map((L, i, arr) => {
+    let left = L.chars, h = '';
+    for (const [txt, c] of L.segs) { if (left <= 0) break; h += `<span class="c-${c}">${esc(txt.slice(0, left))}</span>`; left -= txt.length; }
+    if (typing !== null && L === vis[typing]) h += '<i class="cur"></i>';
+    return `<div>${h || ' '}</div>`;
+  });
+  if (typing === null) lines.push(`<div><span class="c-u">› </span>${blink ? '<i class="cur"></i>' : ''}</div>`);
+  $('termBody').innerHTML = lines.join('');
+  $('termState').textContent = typing !== null ? 'working…' : 'waiting for input';
+}
+
+/* ================= contact sheet ================= */
+const KEPT = [23, 51, 64, 61, 68, 46, 63, 36, 5, 18];
+{
+  const sh = $('sheet');
+  for (let i = 0; i < 80; i++) { const t = document.createElement('i'); t.style.backgroundPosition = `${(i % 10) / 9 * 100}% ${Math.floor(i / 10) / 7 * 100}%`; if (KEPT.includes(i)) t.className = 'k'; sh.appendChild(t); }
+}
+
+/* ================= renderer ================= */
+const canvas = $('stage');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' }); } catch (e) { renderer = null; }
+if (renderer) start().catch(err => { console.error(err); document.documentElement.classList.remove('gl'); });
+else (function loop(now) { requestAnimationFrame(loop); if (lenis) lenis.raf(now); hudUpdate(scrollT(), now / 1000); drawTerminal(scrollT(), true); })(0);
+
+async function start() {
+  await Promise.all(['600 100px "Familjen Grotesk"', '500 100px "Familjen Grotesk"', 'italic 400 100px "Playfair Display"', '800 100px "Big Shoulders Display"', '400 30px "JetBrains Mono"'].map(f => document.fonts.load(f))).catch(() => {});
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
+  renderer.setSize(innerWidth, innerHeight, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NoToneMapping;
+
+  const loadImg = u => new Promise((res, rej) => { const im = new Image(); im.decoding = 'async'; im.onload = () => res(im); im.onerror = rej; im.src = u; });
+  const [p01, p02, d01, d02, imgsSite] = await Promise.all([
+    loadImg('media/p01.jpg'), loadImg('media/p02.jpg'), loadImg('media/tiefe/p01.png'), loadImg('media/tiefe/p02.png'),
+    Promise.resolve(null),
+  ]);
+  const tex = (im, srgb = true) => { const t = new THREE.Texture(im); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.minFilter = THREE.LinearMipmapLinearFilter; t.anisotropy = 4; t.needsUpdate = true; return t; };
+
+  /* ---------- video layers (orthographic, cover-fit) ---------- */
+  const bgScene = new THREE.Scene(), ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  function videoLayer(src, poster) {
+    const v = document.createElement('video');
+    Object.assign(v, { src, muted: true, loop: true, playsInline: true, preload: src.includes('drohne') ? 'none' : 'auto' }); v.setAttribute('playsinline', ''); v.setAttribute('muted', '');
+    videos.push(v);
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { map: { value: null }, uAspect: { value: 16 / 9 }, uScreen: { value: 1 }, uZoom: { value: 1 }, uOp: { value: 0 }, uPan: { value: new THREE.Vector2() }, uNight: { value: 0 } },
+      transparent: true, depthTest: false, depthWrite: false,
+      vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }',
+      fragmentShader: `uniform sampler2D map; uniform float uAspect,uScreen,uZoom,uOp,uNight; uniform vec2 uPan; varying vec2 vUv;
+        void main(){ vec2 uv=vUv-.5; if(uScreen>uAspect) uv.y*=uAspect/uScreen; else uv.x*=uScreen/uAspect; uv=uv/uZoom+.5+uPan;
+          vec4 c=texture2D(map,uv); vec3 n=pow(c.rgb,vec3(1.9))*vec3(.3,.4,.62); gl_FragColor=vec4(mix(c.rgb,n,uNight),uOp); }`
+    });
+    loadImg(poster).then(im => { if (!mat.uniforms.map.value) mat.uniforms.map.value = tex(im); });
+    v.addEventListener('playing', () => { const vt = new THREE.VideoTexture(v); vt.colorSpace = THREE.SRGBColorSpace; mat.uniforms.map.value = vt; }, { once: true });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat); m.frustumCulled = false; bgScene.add(m);
+    return { v, mat, m };
+  }
+  const vidAurora = videoLayer('media/nordlicht.mp4', 'media/nordlicht.jpg');
+  const vidDrone = videoLayer('media/drohne.mp4', 'media/drohne.jpg'); vidDrone.mat.uniforms.uNight.value = 1;
+
+  /* ---------- real photos lifted into 3D with their depth maps ---------- */
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, .05, 50);
+  const SEG_X = 320, SEG_Y = 200;
+  const photoVS = `uniform sampler2D depthMap; uniform float uDepth; varying vec2 vUv; varying float vD;
+    void main(){ vUv=uv; float d=texture2D(depthMap,uv).r; vD=d; vec3 p=position; p.z+= (d-.32)*uDepth;
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.); }`;
+  const photoFS = `uniform sampler2D map; uniform sampler2D depthMap; uniform vec2 uTexel; uniform float uOp,uScan,uEdge,uLights,uTime,uWarmBoost;
+    varying vec2 vUv; varying float vD;
+    float lum(vec3 c){ return dot(c,vec3(.299,.587,.114)); }
+    void main(){
+      vec3 col=texture2D(map,vUv).rgb;
+      // warm, bright pixels are lamp light: dim them when the lights are off, lift them when on
+      float warm=smoothstep(.08,.35,col.r-col.b)*smoothstep(.35,.8,col.r);
+      col=mix(col*vec3(.10,.10,.14),col,mix(1.,uLights,warm));
+      col+=col*warm*uLights*uWarmBoost;
+      // edges from photo and depth
+      float l=lum(texture2D(map,vUv+vec2(uTexel.x,0.)).rgb)-lum(texture2D(map,vUv-vec2(uTexel.x,0.)).rgb);
+      float m=lum(texture2D(map,vUv+vec2(0.,uTexel.y)).rgb)-lum(texture2D(map,vUv-vec2(0.,uTexel.y)).rgb);
+      float dl=texture2D(depthMap,vUv+vec2(uTexel.x,0.)).r-texture2D(depthMap,vUv-vec2(uTexel.x,0.)).r;
+      float dm=texture2D(depthMap,vUv+vec2(0.,uTexel.y)).r-texture2D(depthMap,vUv-vec2(0.,uTexel.y)).r;
+      float e=clamp(length(vec2(l,m))*7.+length(vec2(dl,dm))*22.,0.,1.); e=smoothstep(.12,.6,e);
+      vec3 lines=vec3(.008,.011,.016)+vec3(1.,.66,.36)*e*(.45+.55*vD);
+      // scan from the ground up
+      float rev=smoothstep(uScan-.015,uScan,vUv.y);
+      float band=exp(-pow((vUv.y-uScan)*60.,2.))*step(.0,uScan)*step(uScan,1.);
+      vec3 c=mix(col,mix(col,lines,uEdge),rev)+vec3(1.,.6,.25)*band*uEdge*.7;
+      gl_FragColor=vec4(c,uOp);
+    }`;
+  function photoMesh(img, depthImg) {
+    const aspect = img.width / img.height;
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { map: { value: tex(img) }, depthMap: { value: tex(depthImg, false) }, uDepth: { value: .95 }, uTexel: { value: new THREE.Vector2(1.2 / img.width, 1.2 / img.height) },
+        uOp: { value: 0 }, uScan: { value: 1.2 }, uEdge: { value: 0 }, uLights: { value: 1 }, uTime: { value: 0 }, uWarmBoost: { value: .55 } },
+      vertexShader: photoVS, fragmentShader: photoFS, transparent: true, depthWrite: true
+    });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(2 * aspect, 2, SEG_X, SEG_Y), mat);
+    m.userData.aspect = aspect; m.visible = false; scene.add(m);
+    return m;
+  }
+  const mHarbour = photoMesh(p02, d02);
+  const mCabin = photoMesh(p01, d01);
+
+  // depth samples for projecting loupes onto the displaced surface
+  const dCv = document.createElement('canvas'); dCv.width = d01.width; dCv.height = d01.height;
+  const dCtx = dCv.getContext('2d', { willReadFrequently: true }); dCtx.drawImage(d01, 0, 0);
+  const pCv = document.createElement('canvas'); pCv.width = p01.width; pCv.height = p01.height;
+  const pCtx = pCv.getContext('2d', { willReadFrequently: true }); pCtx.drawImage(p01, 0, 0);
+  const depthAt = (u, v) => dCtx.getImageData(Math.floor(u * (dCv.width - 1)), Math.floor((1 - v) * (dCv.height - 1)), 1, 1).data[0] / 255;
+  function sampleHex(u, v) {
+    const d = pCtx.getImageData(Math.floor(u * pCv.width) - 2, Math.floor((1 - v) * pCv.height) - 2, 5, 5).data; let r = 0, g = 0, b = 0;
+    for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; }
+    const n = d.length / 4, h = x => Math.round(x / n).toString(16).padStart(2, '0').toUpperCase();
+    return '#' + h(r) + h(g) + h(b);
+  }
+  const LOUPES = [
+    { u: .272, v: .215, name: 'window light' }, { u: .34, v: .62, name: 'aurora' },
+    { u: .72, v: .86, name: 'night sky' }, { u: .6, v: .2, name: 'snow' },
+  ].map((L, i) => {
+    const el = document.createElement('div'); el.className = 'loupe' + (L.u > .5 && !PHONE() ? ' l' : '');
+    const hex = sampleHex(L.u, L.v);
+    el.innerHTML = `<b><span style="background:${hex}"></span>${L.name} · ${hex}</b>`;
+    $('loupes').appendChild(el); return { ...L, el };
+  });
+
+  /* ---------- snowfall in front of the photo (soft, out of focus) ---------- */
+  const SN = PHONE() ? 220 : 420, sg = new THREE.BufferGeometry(), sp = new Float32Array(SN * 3), sv = new Float32Array(SN);
+  for (let i = 0; i < SN; i++) { sp[i * 3] = (Math.random() - .5) * 5; sp[i * 3 + 1] = (Math.random() - .5) * 3.4; sp[i * 3 + 2] = .4 + Math.random() * 2.2; sv[i] = .05 + Math.random() * .12; }
+  sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  const snowMat = new THREE.ShaderMaterial({
+    uniforms: { uSize: { value: 9 * renderer.getPixelRatio() }, uOp: { value: 0 } }, transparent: true, depthWrite: false, depthTest: false,
+    vertexShader: `uniform float uSize; varying float vA; void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv; float d=-mv.z; gl_PointSize=clamp(uSize/d,1.,7.); vA=smoothstep(.6,1.4,d); }`,
+    fragmentShader: `uniform float uOp; varying float vA; void main(){ float r=length(gl_PointCoord-.5); float a=smoothstep(.5,.0,r); gl_FragColor=vec4(.9,.94,.97,a*vA*.6*uOp); }`
+  });
+  const snow = new THREE.Points(sg, snowMat); snow.frustumCulled = false; snow.renderOrder = 10; scene.add(snow);
+
+  /* ---------- composer: footage → depth photos → glow → film ---------- */
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(bgScene, ortho));
+  const rp = new RenderPass(scene, camera); rp.clear = false; composer.addPass(rp);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .42, .5, .86); composer.addPass(bloom);
+  const film = new ShaderPass({
+    uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(innerWidth, innerHeight) } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime; uniform vec2 uRes; varying vec2 vUv;
+      float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
+      void main(){ vec2 d=vUv-.5; float r=length(d);
+        vec3 c; c.r=texture2D(tDiffuse,vUv+d*.0035).r; c.g=texture2D(tDiffuse,vUv).g; c.b=texture2D(tDiffuse,vUv-d*.0035).b;
+        c*=1.-.42*smoothstep(.3,.9,r);
+        c+=(h(vUv*uRes+fract(uTime*7.)*100.)-.5)*.045;
+        gl_FragColor=vec4(c,1.); }`
+  });
+  composer.addPass(film);
+  composer.addPass(new OutputPass());
+
+  /* ---------- the finished page, rendered for the device frames ---------- */
+  {
+    const draw = (W, H, phone) => {
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+      const ia = p01.width / p01.height, ra = W / H; let sw, sh, sx, sy;
+      if (ia > ra) { sh = p01.height; sw = sh * ra; sx = (p01.width - sw) * (phone ? .27 : .5); sy = 0; } else { sw = p01.width; sh = sw / ra; sx = 0; sy = (p01.height - sh) * .5; }
+      c.drawImage(p01, sx, sy, sw, sh, 0, 0, W, H);
+      const g = c.createLinearGradient(0, H, 0, 0); g.addColorStop(0, 'rgba(6,8,12,.92)'); g.addColorStop(.45, 'rgba(6,8,12,.35)'); g.addColorStop(.7, 'rgba(6,8,12,.1)'); g.addColorStop(1, 'rgba(6,8,12,.55)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      const s = W / (phone ? 720 : 1760), pad = (phone ? 44 : 84) * s;
+      c.fillStyle = '#DCE8EE'; c.font = `800 ${(phone ? 52 : 64) * s}px "Big Shoulders Display"`; c.fillText('HALVØ', pad, (phone ? 104 : 94) * s);
+      if (!phone) { c.font = `500 ${30 * s}px "Familjen Grotesk"`; c.fillStyle = '#c9d6dd'; c.fillText('Cabins', W - 660 * s, 82 * s); c.fillText('Nights', W - 532 * s, 82 * s); c.fillText('Visit', W - 408 * s, 82 * s); }
+      c.fillStyle = '#FFB25E'; c.beginPath(); c.roundRect(W - (phone ? 236 : 290) * s, (phone ? 54 : 42) * s, (phone ? 192 : 214) * s, (phone ? 64 : 62) * s, 32 * s); c.fill();
+      c.fillStyle = '#06080C'; c.font = `600 ${(phone ? 26 : 27) * s}px "Familjen Grotesk"`; c.textAlign = 'center'; c.fillText('Plan a stay', W - (phone ? 140 : 183) * s, (phone ? 95 : 83) * s); c.textAlign = 'left';
+      const fs = (phone ? 76 : 104) * s; c.font = `600 ${fs}px "Familjen Grotesk"`; c.fillStyle = '#DCE8EE';
+      const words = 'Five cabins at the edge of the Norwegian Sea.'.split(' '), lines = []; let ln = '';
+      for (const w of words) { const t = ln ? ln + ' ' + w : w; if (c.measureText(t).width > (phone ? W - 100 * s : 1100 * s) && ln) { lines.push(ln); ln = w; } else ln = t; } lines.push(ln);
+      const base = H - (phone ? 300 : 224) * s;
+      lines.forEach((l, i) => c.fillText(l, pad, base - (lines.length - 1 - i) * fs * .96));
+      c.font = `400 ${(phone ? 30 : 36) * s}px "Familjen Grotesk"`; c.fillStyle = '#c9d6dd';
+      c.fillText(phone ? 'Wood stove, wide windows,' : 'Wood stove, wide windows, no neighbours. In winter the sky does most of the work.', pad, H - (phone ? 220 : 168) * s);
+      if (phone) c.fillText('no neighbours.', pad, H - 180 * s);
+      c.font = `500 ${24 * s}px "JetBrains Mono"`; c.fillStyle = '#8497A5'; c.fillText('68° N · LOFOTEN, NORWAY', pad, H - (phone ? 110 : 100) * s);
+      return cv.toDataURL('image/jpeg', .86);
+    };
+    $('shotDesk').src = draw(1440, 900, false); $('shotPhone').src = draw(720, 1560, true);
+  }
+
+  /* ---------- choreography ---------- */
+  // per-scene camera, in plane units: [x, y, z, lookX, lookY]
+  const CAM_HARBOUR = [{ t: .85, v: [-.35, .05, 4.1, -.15, 0] }, { t: 2.1, v: [.3, -.05, 3.55, .1, 0] }];
+  const CAM_CABIN = [
+    { t: 2.85, v: [.1, .1, 4.1, -.25, -.1] }, { t: 3.9, v: [.25, .05, 3.75, -.3, -.15] },
+    { t: 4.05, v: [.55, .2, 3.9, -.35, -.18] }, { t: 4.9, v: [-.55, .02, 3.45, -.35, -.18] },
+    { t: 5.75, v: [.3, .12, 4.0, -.45, -.25] }, { t: 6.92, v: [-1.0, -.55, 1.9, -1.05, -.57] },
+  ];
+  let fitScale = 1;
+  function fit() {
+    const a = innerWidth / innerHeight, visH = 2 * 4 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), visW = visH * a;
+    fitScale = Math.max(visH * 1.22 / 2, visW * 1.22 / (2 * mCabin.userData.aspect));
+    for (const m of [mHarbour, mCabin]) m.scale.setScalar(fitScale);
+  }
+  const look = new THREE.Vector3(), v3 = new THREE.Vector3();
+  let mx = 0, my = 0, tmx = 0, tmy = 0;
+  addEventListener('pointermove', e => { tmx = e.clientX / innerWidth - .5; tmy = -(e.clientY / innerHeight - .5); }, { passive: true });
+  const sheet = $('sheet'), term = $('term'), devices = $('devices');
+  function playIf(layer, on) { if (on && !paused && layer.v.paused) layer.v.play().catch(() => {}); if (!on && !layer.v.paused) layer.v.pause(); }
+
+  function update(T, time) {
+    const phone = PHONE();
+    /* opacities */
+    const opAur = 1 - k(.85, 1.15, T);
+    const opHar = k(.85, 1.15, T) * (1 - k(1.9, 2.15, T));
+    const opSheet = k(1.95, 2.2, T) * (1 - k(2.8, 3.0, T));
+    const opCab = Math.max(k(2.85, 3.1, T) * (1 - k(4.85, 5.05, T)), k(5.72, 5.95, T));
+    const opDrone = k(4.85, 5.05, T) * (1 - k(5.72, 5.95, T));
+    vidAurora.mat.uniforms.uOp.value = opAur; vidDrone.mat.uniforms.uOp.value = opDrone;
+    vidAurora.mat.uniforms.uZoom.value = 1.04 + T * .06; vidDrone.mat.uniforms.uZoom.value = 1.05 + (T - 5) * .05;
+    vidAurora.m.visible = opAur > .002; vidDrone.m.visible = opDrone > .002;
+    playIf(vidAurora, opAur > .002); playIf(vidDrone, opDrone > .002);
+    mHarbour.visible = opHar > .002; mHarbour.material.uniforms.uOp.value = opHar;
+    mCabin.visible = opCab > .002; mCabin.material.uniforms.uOp.value = opCab;
+    snowMat.uniforms.uOp.value = Math.max(opHar, opCab) * (1 - k(6.4, 6.8, T));
+
+    /* camera */
+    const keys = T < 2.5 ? CAM_HARBOUR : CAM_CABIN, cv = track(keys, T), s = fitScale;
+    const anchorX = phone ? (T < 2.5 ? .05 : -.42) : 0, anchorY = phone ? (T < 2.5 ? -.15 : -.62) : 0;
+    camera.position.set((cv[0] + anchorX) * s * .5 + (paused ? 0 : mx * .12), (cv[1] + anchorY) * s * .5 + (paused ? 0 : my * .06), cv[2]);
+    look.set((cv[3] + anchorX) * s * .5, (cv[4] + anchorY) * s * .5, 0);
+    if (T > 5.8) { // final push toward the window
+      const p = k(6.0, 6.92, T), win = v3.set((.272 - .5) * 2 * mCabin.userData.aspect * s, (.215 - .5) * 2 * s, (depthAt(.272, .215) - .32) * .95 * s);
+      camera.position.lerp(v3.clone().add(new THREE.Vector3(.04 * s, .02 * s, 1.5)), p); look.lerp(win, p);
+    }
+    camera.lookAt(look);
+
+    /* cabin shader: colours → edges → scan → dark → lights on */
+    const u = mCabin.material.uniforms;
+    const toLines = k(3.88, 4.02, T), scan = k(4.08, 4.8, T), linesOut = k(4.78, 4.92, T);
+    u.uEdge.value = toLines * (1 - linesOut);
+    u.uScan.value = toLines > 0 && linesOut < 1 ? lerp(0, 1.02, scan) : 1.2;
+    u.uLights.value = T < 3.9 ? 1 : k(6.0, 6.35, T);
+    u.uWarmBoost.value = T > 5.9 ? .55 + .9 * k(6.0, 6.35, T) : .4;
+
+    /* loupes */
+    const opL = k(3.05, 3.3, T) * (1 - k(3.75, 3.9, T));
+    LOUPES.forEach((L, i) => {
+      const a = clamp(opL * 1.4 - i * .1);
+      L.el.style.opacity = a.toFixed(3);
+      if (a <= 0) return;
+      const asp = mCabin.userData.aspect;
+      v3.set((L.u - .5) * 2 * asp * s, (L.v - .5) * 2 * s, (depthAt(L.u, L.v) - .32) * .95 * s).project(camera);
+      const x = (v3.x * .5 + .5) * innerWidth, y = (-v3.y * .5 + .5) * innerHeight, size = phone ? 64 : 92, zoom = 5;
+      L.el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
+      L.el.style.backgroundSize = `${size * zoom * asp}px ${size * zoom}px`;
+      L.el.style.backgroundPosition = `${(-L.u * size * zoom * asp + size / 2).toFixed(1)}px ${(-(1 - L.v) * size * zoom + size / 2).toFixed(1)}px`;
+    });
+
+    /* contact sheet */
+    sheet.style.opacity = opSheet.toFixed(3);
+    sheet.style.setProperty('--drop', k(2.25, 2.6, T).toFixed(3));
+    sheet.style.setProperty('--tilt', lerp(58, 44, k(1.95, 2.8, T)).toFixed(2));
+    sheet.style.setProperty('--sc', lerp(1.08, .92, k(1.95, 2.8, T)).toFixed(3));
+
+    /* devices + terminal */
+    devices.style.opacity = (k(5.0, 5.25, T) * (1 - k(5.65, 5.8, T))).toFixed(3);
+    devices.firstElementChild.style.translate = `0 ${lerp(30, 0, k(5.0, 5.3, T)).toFixed(1)}px`;
+    term.style.opacity = (k(.55, .8, T) * (1 - k(6.4, 6.6, T))).toFixed(3);
+    drawTerminal(T, Math.floor(time * 2.2) % 2 === 0);
+  }
+
+  /* ---------- loop ---------- */
+  function resize() {
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false); composer.setSize(w, h);
+    camera.aspect = w / h; camera.fov = w / h < .9 ? 44 : 35; camera.updateProjectionMatrix();
+    bloom.resolution.set(w / 2, h / 2); film.uniforms.uRes.value.set(w, h);
+    for (const L of [vidAurora, vidDrone]) L.mat.uniforms.uScreen.value = w / h;
+    fit();
+  }
+  vidAurora.v.addEventListener('loadedmetadata', () => vidAurora.mat.uniforms.uAspect.value = vidAurora.v.videoWidth / vidAurora.v.videoHeight);
+  vidDrone.v.addEventListener('loadedmetadata', () => vidDrone.mat.uniforms.uAspect.value = vidDrone.v.videoWidth / vidDrone.v.videoHeight);
+  addEventListener('resize', resize); resize();
+  document.documentElement.classList.add('gl');
+  let sT = scrollT(), last = performance.now(), time = 0, clock = 0, running = true;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (lenis) lenis.raf(now);
+    const dt = clamp((now - last) / 1000, 0, .05); last = now; clock += dt;
+    const T = scrollT(), top = hudUpdate(T, clock), show = top > 0;
+    if (show !== running) { running = show; canvas.style.visibility = show ? 'visible' : 'hidden'; if (!show) videos.forEach(v => v.pause()); }
+    if (!running) return;
+    if (!paused) time += dt;
+    sT += (T - sT) * (1 - Math.exp(-dt * 7));
+    mx += (tmx - mx) * .04; my += (tmy - my) * .04;
+    if (!paused) {
+      const p = sg.attributes.position.array;
+      for (let i = 0; i < SN; i++) { p[i * 3 + 1] -= sv[i] * dt; p[i * 3] += Math.sin(time * .5 + i) * .0008; if (p[i * 3 + 1] < -1.8) p[i * 3 + 1] = 1.8; }
+      sg.attributes.position.needsUpdate = true;
+    }
+    snow.position.copy(camera.position).setZ(camera.position.z - 2.6); snow.position.x *= .3;
+    film.uniforms.uTime.value = paused ? 0 : time;
+    update(sT, time);
+    composer.render();
+  }
+  requestAnimationFrame(frame);
+  window.__reel = { scrollT, lenis, get sT() { return sT; }, set sT(v) { sT = v; } };
+}
+</script>
+
+<div id="ordeBalken">
+  <a href="../../en/examples.html">&larr; Back to ORD&Eacute;</a>
+  <span>Example site &middot; not a real business &middot; photos moved in 3D with AI depth estimation</span>
+  <a class="ordeCta" href="../../en/contact.html">Request a site like this</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+</style>
+</body>
+</html>
