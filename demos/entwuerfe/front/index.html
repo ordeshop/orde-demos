@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="de" data-showreel>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Front · Showreel von ORDÉ</title>
+<meta name="description" content="Ein Gewitter zieht auf, während du scrollst: Hitze, Aufbau, Böe, Blitz, Regen und danach die Farbe.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#121110">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M18 2 7 18h7l-3 12 12-17h-7z' fill='%23e9e4da'/%3E%3C/svg%3E">
+<link rel="preload" href="lib/epilogue-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="medien/hitze.webp" as="image">
+<script>
+/* Starthilfe für Filme am Handy (Baustein video-starthilfe) */
+(function () {
+  var alle = [], knopf = null, frei = false;
+  function freigeben() {
+    frei = true; if (knopf) knopf.remove();
+    alle.concat([].slice.call(document.querySelectorAll('video'))).forEach(function (v) {
+      v.muted = true; var p = spielen.call(v);
+      if (p && p.then) p.then(function () { if (!v.__gewollt) anhalten.call(v); }).catch(function () {});
+    });
+  }
+  function knopfZeigen() {
+    if (knopf || frei) return;
+    knopf = document.createElement('button'); knopf.type = 'button'; knopf.textContent = '▶  Filme starten';
+    knopf.style.cssText = 'position:fixed;z-index:99999;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);min-height:52px;padding:0 26px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(15,15,18,.82);color:#fff;font:600 16px/1 system-ui,sans-serif;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)';
+    knopf.addEventListener('click', freigeben); document.body.appendChild(knopf);
+  }
+  var spielen = HTMLMediaElement.prototype.play, anhalten = HTMLMediaElement.prototype.pause;
+  HTMLMediaElement.prototype.pause = function () { this.__gewollt = false; return anhalten.apply(this, arguments); };
+  HTMLMediaElement.prototype.play = function () {
+    this.__gewollt = true; var p = spielen.apply(this, arguments);
+    if (p && p.catch) p.catch(function (e) { if (e && e.name === 'NotAllowedError') knopfZeigen(); });
+    return p;
+  };
+  ['touchend', 'click'].forEach(function (t) { addEventListener(t, function erst() { if (!frei) freigeben(); removeEventListener(t, erst, true); }, true); });
+})();
+</script>
+<style>
+@font-face{font-family:'Epilogue';font-style:normal;font-weight:100 900;font-display:swap;src:url(lib/epilogue-latin-wght-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Mono';font-style:normal;font-weight:400;font-display:swap;src:url(lib/dm-mono-latin-400-normal.woff2) format('woff2')}
+:root{
+  --knochen:#e9e4da;--leise:rgba(233,228,218,.72);--nacht:#121110;
+  --rand:clamp(18px,4.6vw,72px);
+  --schrift:'Epilogue','Arial Black',system-ui,sans-serif;--mono:'DM Mono',ui-monospace,monospace;
+  --balkenhoehe:58px;--unten:calc(env(safe-area-inset-bottom,0px) + var(--balkenhoehe));
+  --kurve:cubic-bezier(.16,1,.3,1);
+}
+@media (max-width:640px){:root{--balkenhoehe:94px}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--nacht);-webkit-text-size-adjust:100%}
+body{background:var(--nacht);color:var(--knochen);font:400 17px/1.55 var(--schrift);overflow-x:hidden}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#leinwand{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;touch-action:pan-y}
+.filme{position:fixed;width:2px;height:2px;overflow:hidden;opacity:.01;pointer-events:none;left:0;top:0}
+
+/* Laden */
+.lader{position:fixed;left:var(--rand);right:var(--rand);top:50%;transform:translateY(-50%);z-index:6;display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;transition:opacity .6s}
+.lader.weg{opacity:0}
+
+/* HUD */
+.hud{position:fixed;left:var(--rand);right:var(--rand);z-index:5;display:flex;justify-content:space-between;align-items:baseline;pointer-events:none;mix-blend-mode:difference;color:#fff;font-family:var(--mono);font-size:12px;letter-spacing:.08em}
+.hud-oben{top:max(18px,env(safe-area-inset-top))}
+.hud-marke{font:800 15px/1 var(--schrift);letter-spacing:.24em}
+.hud-unten{bottom:calc(var(--unten) + 14px)}
+.fortschritt{position:fixed;left:0;right:0;bottom:var(--unten);height:2px;z-index:5;pointer-events:none;mix-blend-mode:difference}
+.fortschritt i{display:block;height:100%;background:#fff;opacity:.6;transform-origin:0 50%;transform:scaleX(0)}
+
+/* Zeiger */
+.zeiger{position:fixed;left:0;top:0;z-index:7;pointer-events:none;mix-blend-mode:difference}
+.zeiger i{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff}
+.zeiger b{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:1px solid rgba(255,255,255,.7);transition:width .3s var(--kurve),height .3s var(--kurve),margin .3s var(--kurve)}
+.zeiger span{position:absolute;left:30px;top:-6px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#fff;white-space:nowrap}
+.zeiger.halten b{width:76px;height:76px;margin:-38px 0 0 -38px}
+@media (hover:none),(pointer:coarse){.zeiger{display:none}}
+
+/* Szenen */
+main{position:relative;z-index:2;-webkit-user-select:none;user-select:none}
+.szene{position:relative}
+.klebt{position:sticky;top:0;height:100vh;height:100svh}
+.tafel{position:absolute;left:var(--rand);right:var(--rand);bottom:calc(var(--unten) + 56px)}
+.klebt::after{content:"";position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(transparent,rgba(8,8,8,.55));pointer-events:none;z-index:-1}
+.klebt{z-index:0}
+.rechts .tafel{left:auto;right:var(--rand);text-align:right}
+.tafel h2{font:800 clamp(64px,11.5vw,210px)/.84 var(--schrift);letter-spacing:-.045em;text-transform:uppercase;margin-bottom:.16em;overflow:hidden;padding:.14em 0 .04em;white-space:nowrap}
+.tafel h2 span{display:block;transform:translateY(105%);transition:transform .9s var(--kurve)}
+.tafel p{color:var(--leise);font-size:clamp(16px,1.25vw,19px);max-width:36ch;opacity:0;transform:translateY(12px);transition:opacity .7s .15s,transform .7s .15s var(--kurve)}
+.rechts .tafel p{margin-left:auto}
+.tafel .hinweis{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--knochen);opacity:0;transition:opacity .7s .35s}
+.szene.an h2 span{transform:none}
+.szene.an p,.szene.an .hinweis{opacity:1;transform:none}
+.tafel p,.tafel h2{text-shadow:0 2px 30px rgba(0,0,0,.35)}
+#hitze{height:270vh}
+#hitze .tafel{bottom:calc(var(--unten) + 34px)}
+#aufbau{height:320vh}
+#boee{height:250vh}
+#blitz{height:290vh}
+#regen{height:300vh}
+#danach{height:310vh}
+
+/* Ohne WebGL: Standbilder */
+.statisch .szene .klebt{background:center/cover no-repeat var(--bild)}
+.statisch #leinwand,.statisch .zeiger{display:none}
+
+/* Abspann */
+#abspann{position:relative;z-index:3;background:#e9e4da;color:#151413;padding:16vh var(--rand) calc(var(--unten) + 64px)}
+#abspann h2{font:800 clamp(56px,8vw,140px)/.86 var(--schrift);letter-spacing:-.045em;text-transform:uppercase;margin-bottom:.55em}
+#abspann .liste{display:grid;grid-template-columns:minmax(130px,220px) 1fr;gap:12px 32px;max-width:940px;border-top:2px solid currentColor;padding-top:22px}
+#abspann dt{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding-top:4px}
+#abspann dd{color:rgba(21,20,19,.74)}
+.fuss{display:flex;gap:28px;align-items:center;flex-wrap:wrap;margin-top:44px}
+.fuss p{max-width:52ch;color:rgba(21,20,19,.74);font-size:15px}
+.knopf{font:600 16px/1 var(--schrift);color:var(--knochen);background:#151413;border:0;border-radius:999px;padding:16px 26px;min-height:48px;cursor:pointer;transition:transform .25s var(--kurve),background .25s}
+.knopf:hover{background:#34302c;transform:translateY(-2px)}
+.knopf:focus-visible,a:focus-visible{outline:2px solid #e8b04a;outline-offset:3px}
+
+@media (max-width:760px){
+  .tafel,.rechts .tafel{left:var(--rand);right:var(--rand);text-align:left;bottom:calc(var(--unten) + 30px)}
+  .rechts .tafel p{margin-left:0}
+  .tafel h2{font-size:clamp(54px,17vw,96px)}
+  .hud-unten{display:none}
+  #abspann .liste{grid-template-columns:1fr;gap:2px 0}
+  #abspann dd{margin-bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){.tafel h2 span,.tafel p,.tafel .hinweis{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="leinwand" aria-hidden="true"></canvas>
+<div class="filme" aria-hidden="true">
+  <video id="vHitze" muted playsinline loop preload="auto" poster="medien/hitze.webp"><source src="medien/hitze.mp4" type="video/mp4"><source src="medien/hitze.webm" type="video/webm"></video>
+  <video id="vBoee" muted playsinline loop preload="none" poster="medien/boee.webp"><source data-src="medien/boee.mp4" type="video/mp4"><source data-src="medien/boee.webm" type="video/webm"></video>
+  <video id="vBlitz" muted playsinline loop preload="none" poster="medien/blitz.webp"><source data-src="medien/blitz.mp4" type="video/mp4"><source data-src="medien/blitz.webm" type="video/webm"></video>
+  <video id="vRegen" muted playsinline loop preload="none" poster="medien/regen.webp"><source data-src="medien/regen.mp4" type="video/mp4"><source data-src="medien/regen.webm" type="video/webm"></video>
+</div>
+
+<div class="lader" id="lader" aria-hidden="true"><span>Front</span><span id="laderZahl">0 %</span></div>
+<div class="hud hud-oben" aria-hidden="true"><span class="hud-marke">FRONT</span><span id="hudSzene">Szene 01 / 06 — Hitze</span></div>
+<div class="hud hud-unten" aria-hidden="true"><span id="hudEffekt">Effekt: Film in Schrift</span><span id="hudHinweis"></span></div>
+<div class="fortschritt" aria-hidden="true"><i id="balken"></i></div>
+<div class="zeiger" id="zeiger" aria-hidden="true"><b></b><i></i><span id="zeigerText"></span></div>
+
+<main>
+<h1 class="sr">Front – ein Gewitter zum Scrollen</h1>
+<section class="szene" id="hitze" data-name="Hitze" data-effekt="Film in Schrift" style="--bild:url(medien/hitze.webp)">
+  <div class="klebt"><div class="tafel">
+    <p>Ein Sommernachmittag, kein Wind. Scroll weiter und hol dir das Gewitter.</p>
+    <span class="hinweis">Scrollen ↓</span>
+  </div></div>
+</section>
+<section class="szene rechts" id="aufbau" data-name="Aufbau" data-effekt="Radar" style="--bild:url(folgen/aufbau/048.webp)">
+  <div class="klebt"><div class="tafel">
+    <h2><span>Aufbau.</span></h2>
+    <p>Warme Luft steigt, kühlt ab und türmt sich zur Gewitterwolke, oft mehr als zehn Kilometer hoch.</p>
+  </div></div>
+</section>
+<section class="szene" id="boee" data-name="Böe" data-effekt="Wind" data-hinweis="Maus bewegen: du bist der Wind" style="--bild:url(medien/boee.webp)">
+  <div class="klebt"><div class="tafel">
+    <h2><span>Böe.</span></h2>
+    <p>Kurz vor dem Regen fällt kalte Luft aus der Wolke und drückt alles flach.</p>
+    <span class="hinweis" data-handy="Übers Bild wischen">Maus bewegen: du bist der Wind</span>
+  </div></div>
+</section>
+<section class="szene rechts" id="blitz" data-name="Blitz" data-effekt="Entladung" data-hinweis="Gedrückt halten, loslassen" style="--bild:url(medien/blitz.webp)">
+  <div class="klebt"><div class="tafel">
+    <h2><span>Blitz.</span></h2>
+    <p>Ein Blitzkanal wird rund fünfmal heißer als die Oberfläche der Sonne.</p>
+    <span class="hinweis">Gedrückt halten, loslassen</span>
+  </div></div>
+</section>
+<section class="szene" id="regen" data-name="Regen" data-effekt="Regen auf Glas" data-hinweis="Über die Scheibe wischen" style="--bild:url(medien/regen.webp)">
+  <div class="klebt"><div class="tafel">
+    <h2><span>Regen.</span></h2>
+    <p>Die Scheibe beschlägt. Wisch sie frei, sie beschlägt wieder.</p>
+    <span class="hinweis">Über die Scheibe wischen</span>
+  </div></div>
+</section>
+<section class="szene rechts" id="danach" data-name="Danach" data-effekt="Farbe" style="--bild:url(folgen/danach/048.webp)">
+  <div class="klebt"><div class="tafel">
+    <h2><span>Danach.</span></h2>
+    <p>Die Sonne kommt zurück, und mit ihr die Farbe.</p>
+  </div></div>
+</section>
+
+<section id="abspann">
+  <h2>Sechs Effekte,<br>ein Gewitter.</h2>
+  <dl class="liste">
+    <dt>Film in Schrift</dt><dd>Der Himmel läuft nur in den Buchstaben. Beim Scrollen fliegt man durch das O hinein. Vorher flimmert beim Laden die Hitze über demselben Bild.</dd>
+    <dt>Radar</dt><dd>Die Gewitterzelle wächst Bild für Bild mit dem Scrollen. Ein Strahl kreist und färbt nur die Wolke, nicht den Himmel.</dd>
+    <dt>Wind</dt><dd>Die Mausbewegung schiebt das Feld zur Seite und zieht es in Schlieren, die Scrollgeschwindigkeit legt eine Böe darüber.</dd>
+    <dt>Entladung</dt><dd>Halten lädt die Wolke auf, Loslassen schlägt ein. Der Blitz verästelt sich aus Rauschen und blitzt nach, wie ein echter.</dd>
+    <dt>Regen auf Glas</dt><dd>Tropfen wirken als Linsen und zeigen das Bild dahinter scharf. Der Beschlag lässt sich wegwischen und kommt langsam zurück.</dd>
+    <dt>Farbe</dt><dd>Bis hierher wird alles grauer. Erst nach dem Regen kommt die volle Farbe, mit dem Regenbogen.</dd>
+    <dt>Übergänge</dt><dd>Hitzeschliere, Radar-Wischer, Wolkenkante, Blitzschnitt, Tropfenkreis. Kein Bild blendet weich über ein anderes.</dd>
+    <dt>Schrift</dt><dd>Epilogue, DM Mono</dd>
+  </dl>
+  <div class="fuss">
+    <button class="knopf" id="nochmal" type="button">Noch ein Gewitter ↑</button>
+    <p>Front ist ein Showreel von ORDÉ, kein echter Betrieb. Gebaut als eine einzige HTML-Datei, alles läuft in einem Bild auf der Grafikkarte.</p>
+  </div>
+</section>
+</main>
+
+<script src="lib/lenis.min.js"></script>
+<script>
+(() => {
+'use strict';
+const T = { szene: 'Szene', effekt: 'Effekt', laedt: 'lädt', bild: 'Bild' };
+const $ = s => document.querySelector(s);
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TOUCH = matchMedia('(hover: none), (pointer: coarse)').matches;
+const HANDY = innerWidth <= 760;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+
+const canvas = $('#leinwand');
+const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, preserveDrawingBuffer: false, powerPreference: 'high-performance' });
+const szenenEl = ['hitze', 'aufbau', 'boee', 'blitz', 'regen', 'danach'].map(id => document.getElementById(id));
+const abspann = $('#abspann');
+if (TOUCH) document.querySelectorAll('[data-handy]').forEach(e => e.textContent = e.dataset.handy);
+
+/* ---------- Scrollen ---------- */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+scrollTo(0, 0);
+let lenis = null;
+if (!RM && window.Lenis) { try { lenis = new Lenis({ lerp: .09, smoothWheel: true }); } catch (e) { lenis = null; } }
+$('#nochmal').addEventListener('click', () => { if (lenis) lenis.scrollTo(0, { duration: 3.2 }); else scrollTo({ top: 0, behavior: RM ? 'auto' : 'smooth' }); });
+
+/* Text-Auftritte */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('an'); }), { threshold: .25 });
+szenenEl.forEach(s => io.observe(s));
+
+if (!gl) { document.documentElement.classList.add('statisch'); szenenEl.forEach(s => s.classList.add('an')); $('#lader').classList.add('weg'); if (lenis) { (function r(t) { lenis.raf(t); requestAnimationFrame(r); })(0); } return; }
+
+/* ---------- WebGL-Werkzeug ---------- */
+const VS = `#version 300 es
+in vec2 a; out vec2 vUv; void main(){ vUv = a * .5 + .5; gl_Position = vec4(a, 0., 1.); }`;
+const KOPF = `#version 300 es
+precision highp float;
+in vec2 vUv; out vec4 o;
+uniform vec2 uRes; uniform float uTime, uP;
+uniform sampler2D uTex; uniform vec2 uTexRes;
+uniform vec2 uMouse, uVel; uniform float uHold; uniform vec2 uFokus;
+float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y); }
+float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.03; a *= .5; } return v; }
+float luma(vec3 c){ return dot(c, vec3(.2126, .7152, .0722)); }
+vec2 cover(vec2 uv, vec2 tr){ float sa = uRes.x / uRes.y, ta = tr.x / tr.y; vec2 s = sa > ta ? vec2(1., ta / sa) : vec2(sa / ta, 1.); return (uv - .5) * s + .5 + (uFokus - .5) * (1. - s); }
+`;
+function shader(typ, src) { const s = gl.createShader(typ); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) + '\n' + src.slice(0, 200)); return s; }
+function programm(fs) {
+  const p = gl.createProgram(); gl.attachShader(p, shader(gl.VERTEX_SHADER, VS)); gl.attachShader(p, shader(gl.FRAGMENT_SHADER, KOPF + fs));
+  gl.bindAttribLocation(p, 0, 'a'); gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+  const orte = {}; p.u = n => (n in orte ? orte[n] : (orte[n] = gl.getUniformLocation(p, n)));
+  return p;
+}
+const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+function textur(mip = false) {
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mip ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([20, 18, 16, 255]));
+  t.w = 16; t.h = 9; t.mip = mip; return t;
+}
+function laden(t, quelle, w, h) {
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, quelle);
+  if (t.mip) gl.generateMipmap(gl.TEXTURE_2D);
+  t.w = w; t.h = h;
+}
+function ziel(w, h) {
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  const f = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+  return { t, f, w, h };
+}
+
+/* ---------- Szenen-Shader ---------- */
+const P_HITZE = programm(`
+uniform sampler2D uSchrift; uniform vec2 uO; uniform float uLaden, uIntro;
+void main(){
+  vec2 uv = vUv;
+  float z = exp(uP * uP * 6.2);
+  vec2 su = (uv - uO) / z + uO;
+  float m = texture(uSchrift, su).r;
+  float flimmer = mix(.012, .0035, uIntro) * (1. - smoothstep(.6, 1., uP));
+  vec2 d = vec2(noise(vec2(uv.x * 7., uv.y * 26. - uTime * 2.2)), noise(vec2(uv.x * 8. + 3., uv.y * 24. - uTime * 2.6))) - .5;
+  d *= smoothstep(.0, .55, 1. - uv.y) + .4;
+  vec3 film = texture(uTex, cover(uv + d * flimmer, uTexRes)).rgb;
+  film = mix(vec3(luma(film)), film, mix(.3, 1., uLaden)) * mix(.55, 1., uLaden);
+  vec3 aussen = vec3(.072, .066, .06) + film * .05;
+  float maske = mix(1., m, uIntro);
+  maske = max(maske, smoothstep(.72, .98, uP));
+  o = vec4(mix(aussen, film, maske), 1.);
+}`);
+const P_AUFBAU = programm(`
+void main(){
+  vec2 uv = vUv;
+  vec3 c = texture(uTex, cover(uv, uTexRes)).rgb;
+  float L = luma(c);
+  float wolke = smoothstep(.5, .85, L - (c.b - c.r) * .6);
+  vec2 mitte = vec2(.5, -.2);
+  vec2 q = (uv - mitte) * vec2(uRes.x / uRes.y, 1.);
+  float r = length(q), w = atan(q.x, q.y);
+  float strahl = mod(uTime * 1.15, 6.2832) - 3.1416;
+  float hinter = mod(strahl - w + 6.2832, 6.2832);
+  float spur = exp(-hinter * 1.8);
+  vec3 grau = vec3(L) * vec3(.94, .97, 1.);
+  vec3 echo = mix(vec3(.12, .55, .42), vec3(.78, 1., .86), smoothstep(.55, 1., L));
+  vec3 col = mix(grau, echo * (.6 + L), spur * wolke);
+  float ringe = 1. - smoothstep(0., .004 * uRes.y / 900., abs(fract(r * 3.2) - .5) / 3.2);
+  col += vec3(.55, 1., .8) * ringe * .12;
+  col += vec3(.6, 1., .82) * (smoothstep(.025, 0., hinter) * .75 + exp(-hinter * 6.) * .12);
+  o = vec4(col, 1.);
+}`);
+const P_BOEE = programm(`
+uniform float uBoe;
+void main(){
+  vec2 uv = vUv;
+  vec2 m = uMouse;
+  float a = uRes.x / uRes.y;
+  float dist = length((uv - m) * vec2(a, 1.));
+  float einfluss = exp(-dist * dist * 5.);
+  float oben = smoothstep(.05, .75, uv.y);
+  vec2 stoss = (uVel * einfluss * .06 + vec2(uBoe * .025, 0.)) * mix(.25, 1., oben);
+  stoss.x += sin(uv.y * 10. + uTime * 2.6 + uv.x * 3.) * .0025 * oben;
+  vec3 col = vec3(0.);
+  for (int i = 0; i < 7; i++) { float k = float(i) / 6.; col += texture(uTex, cover(uv - stoss * k, uTexRes)).rgb; }
+  col /= 7.;
+  col *= mix(1., .82, uP);
+  o = vec4(col, 1.);
+}`);
+const P_BLITZ = programm(`
+uniform float uBlitz, uBlitzX, uSaat;
+float kanalX(float y, float x0, float s){ return x0 + (fbm(vec2(y * 4.5, s)) - .5) * .32 * (1.1 - y) + (fbm(vec2(y * 26., s + 9.)) - .5) * .05; }
+float kanal(vec2 uv, float x, float y0, float y1, float dicke){
+  if (uv.y < y0 || uv.y > y1) return 0.;
+  float d = abs(uv.x - x) * uRes.x / uRes.y;
+  return smoothstep(dicke, 0., d) + exp(-d * 60.) * .55 + exp(-d * 11.) * .16;
+}
+void main(){
+  vec2 uv = vUv;
+  float a = uRes.x / uRes.y;
+  vec3 c = texture(uTex, cover(uv, uTexRes)).rgb;
+  float L = luma(c);
+  vec3 col = vec3(L) * vec3(.82, .88, 1.05) * .78;
+  float dm = length((uv - uMouse) * vec2(a, 1.));
+  col += vec3(.55, .65, 1.) * uHold * exp(-dm * 3.5) * (.18 + .25 * noise(uv * 24. + uTime * 9.)) * (.4 + L);
+  if (uBlitz > .001) {
+    float x = kanalX(uv.y, uBlitzX, uSaat);
+    float k = kanal(uv, x, .1, 1.05, .0032);
+    float y0 = .66, xa = kanalX(y0, uBlitzX, uSaat);
+    float seite = hash(vec2(uSaat, 2.)) > .5 ? 1. : -1.;
+    float xb = xa + (y0 - uv.y) * seite * .45 + (fbm(vec2(uv.y * 9., uSaat + 4.)) - .5) * .07;
+    k += kanal(uv, xb, .34, y0, .0022) * .7;
+    float yc = .42, xc0 = kanalX(yc, uBlitzX, uSaat);
+    float xc = xc0 - (yc - uv.y) * seite * .3 + (fbm(vec2(uv.y * 11., uSaat + 7.)) - .5) * .05;
+    k += kanal(uv, xc, .2, yc, .0018) * .5;
+    col += vec3(.86, .9, 1.) * k * uBlitz * 1.6;
+    col += vec3(.62, .66, .8) * uBlitz * (.18 + L * .9);
+  }
+  o = vec4(col, 1.);
+}`);
+const P_REGEN = programm(`
+uniform sampler2D uWisch;
+vec3 tropfen(vec2 uv, float dichte, float groesse, float saat){
+  vec2 g = uv * vec2(uRes.x / uRes.y, 1.) * dichte;
+  vec2 id = floor(g), f = fract(g) - .5;
+  float h = hash(id + saat);
+  vec2 p = (vec2(hash(id + saat + 1.7), hash(id + saat + 3.1)) - .5) * .6;
+  float r = groesse * (.35 + .65 * hash(id + saat + 5.3));
+  vec2 dv = f - p; dv.y *= 1.18;
+  float m = smoothstep(r, r * .72, length(dv)) * step(.42, h);
+  return vec3(dv / max(r, 1e-3) * m, m);
+}
+vec3 laufend(vec2 uv, float t){
+  float spalten = 7.;
+  float x = uv.x * spalten * uRes.x / uRes.y;
+  float sp = floor(x), h = hash(vec2(sp, 3.7));
+  if (h < .45) return vec3(0.);
+  float fx = fract(x) - .5 + .06 * sin(uv.y * 17. + h * 6.);
+  float yd = 1.15 - fract(t * (.05 + .1 * h) + h) * 1.3;
+  float dy = (uv.y - yd) * spalten;
+  vec2 dv = vec2(fx, dy * .9);
+  float m = smoothstep(.17, .11, length(dv));
+  float perlen = smoothstep(.09, .03, length(vec2(fx, fract(dy * 3.) - .5) * vec2(1., .7))) * step(0., dy) * smoothstep(2.6, 0., dy);
+  vec2 off = m > 0. ? dv / .17 * m : vec2(fx, fract(dy * 3.) - .5) * perlen * .6;
+  return vec3(off, max(m, perlen * .85));
+}
+void main(){
+  vec2 uv = vUv;
+  vec2 cu = cover(uv, uTexRes);
+  vec3 d1 = tropfen(uv, 13., .34, 1.), d2 = tropfen(uv, 30., .3, 7.), d3 = tropfen(uv, 60., .26, 11.), lr = laufend(uv, uTime);
+  vec2 off = d1.xy * .04 + d2.xy * .022 + d3.xy * .012 + lr.xy * .05;
+  float dm = max(max(d1.z, d2.z), max(d3.z * .9, lr.z));
+  vec3 scharf = texture(uTex, cu - off).rgb;
+  vec3 weich = textureLod(uTex, cu, 4.5).rgb;
+  float wisch = texture(uWisch, uv).r;
+  float beschlag = (1. - wisch) * smoothstep(.0, .3, uP + .04);
+  vec3 hinten = mix(scharf, weich * 1.05 + .07, beschlag * .92);
+  vec3 col = mix(hinten, scharf * 1.08 + .02, dm);
+  col += dm * .05 * (1. - beschlag * .5);
+  o = vec4(col * vec3(.92, .97, 1.04), 1.);
+}`);
+const P_DANACH = programm(`
+void main(){
+  vec2 uv = vUv;
+  vec3 col = texture(uTex, cover(uv, uTexRes)).rgb;
+  o = vec4(col, 1.);
+}`);
+const P_WISCH = programm(`
+uniform sampler2D uAlt; uniform vec2 uA, uB; uniform float uR, uDt, uAktiv;
+void main(){
+  float alt = texture(uAlt, vUv).r;
+  vec2 asp = vec2(uRes.x / uRes.y, 1.);
+  vec2 p = vUv * asp, a = uA * asp, b = uB * asp, pa = p - a, ba = b - a;
+  float h = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0., 1.);
+  float d = length(pa - ba * h);
+  float pinsel = smoothstep(uR, uR * .55, d) * uAktiv;
+  o = vec4(max(alt - uDt * .055, pinsel), 0., 0., 1.);
+}`);
+const P_MISCH = programm(`
+uniform sampler2D uA, uB; uniform float uT, uArt, uSat, uWarm, uKorn, uWeiss;
+void main(){
+  vec2 uv = vUv;
+  float a = uRes.x / uRes.y;
+  float w = 0.;
+  vec2 ua = uv, ub = uv;
+  if (uT > 0.) {
+    if (uArt < .5) {
+      float n = noise(vec2(uv.x * 2.5, uv.y * 34.));
+      float s = (n - .5) * .22;
+      ua.x += s * uT; ub.x -= s * (1. - uT);
+      w = smoothstep(.015, -.015, n - (uT * 1.3 - .15));
+    } else if (uArt < 1.5) {
+      vec2 q = (uv - vec2(.5, -.2)) * vec2(a, 1.);
+      float g = (atan(q.x, q.y) + 1.5708) / 3.1416;
+      w = smoothstep(.006, -.006, g - (uT * 1.12 - .06));
+    } else if (uArt < 2.5) {
+      float kante = 1.08 - uT * 1.35 + (fbm(vec2(uv.x * 3.2, uT * 2.)) - .5) * .32;
+      w = smoothstep(-.006, .006, uv.y - kante);
+    } else if (uArt < 3.5) {
+      w = step(.5, uT);
+    } else {
+      float r = length((uv - .5) * vec2(a, 1.));
+      float n = fbm(uv * 7.) * .22;
+      w = smoothstep(.01, -.01, r + n - uT * (a * .6 + .75));
+    }
+  }
+  vec3 ca = texture(uA, ua).rgb, cb = texture(uB, ub).rgb;
+  vec3 col = mix(ca, cb, w);
+  float L = luma(col);
+  col = mix(vec3(L), col, uSat);
+  col *= mix(vec3(1.), vec3(1.08, 1., .88), uWarm);
+  col += uWeiss * vec3(.85, .88, 1.);
+  col *= mix(1., smoothstep(1.25, .25, length((uv - .5) * vec2(1., .85))), .42);
+  col += (hash(uv * uRes + fract(uTime * 7.31) * 113.) - .5) * uKorn;
+  o = vec4(col, 1.);
+}`);
+
+/* ---------- Medien ---------- */
+const filmEl = { hitze: $('#vHitze'), boee: $('#vBoee'), blitz: $('#vBlitz'), regen: $('#vRegen') };
+const tex = { hitze: textur(), aufbau: textur(), boee: textur(), blitz: textur(), regen: textur(true), danach: textur(), schrift: textur() };
+const filmBereit = {};
+function filmLaden(name) {
+  const v = filmEl[name]; if (v.dataset.geladen) return; v.dataset.geladen = 1;
+  v.querySelectorAll('source[data-src]').forEach(s => s.src = s.dataset.src);
+  v.preload = 'auto'; v.load();
+}
+function posterLaden(name, url) {
+  const img = new Image(); img.decoding = 'async'; img.src = url;
+  return img.decode().then(() => { if (!filmBereit[name]) laden(tex[name], img, img.naturalWidth, img.naturalHeight); }).catch(() => {});
+}
+class Folge {
+  constructor(name, n) {
+    this.name = name; this.n = n; this.bilder = []; this.schritt = HANDY ? 2 : 1; this.ist = 0; this.gezeigt = -1; this.geladen = false;
+  }
+  laden(bis = this.n) {
+    for (let i = 0; i < Math.min(bis, this.n); i += this.schritt) {
+      if (this.bilder[i]) continue;
+      const img = new Image(); img.decoding = 'async';
+      img.src = `folgen/${this.name}/${String(i + 1).padStart(3, '0')}.webp`;
+      this.bilder[i] = img;
+    }
+  }
+  zeigen(p, dt) {
+    const ziel = clamp(p, 0, 1) * (this.n - 1);
+    this.ist = RM ? ziel : lerp(this.ist, ziel, 1 - Math.pow(.002, dt));
+    let i = Math.round(this.ist / this.schritt) * this.schritt;
+    for (let k = 0; k < this.n; k++) {
+      for (const j of [i - k, i + k]) {
+        const b = this.bilder[j];
+        if (b && b.complete && b.naturalWidth) {
+          if (j !== this.gezeigt) { this.gezeigt = j; laden(tex[this.name], b, b.naturalWidth, b.naturalHeight); }
+          return;
+        }
+      }
+    }
+  }
+}
+const folgen = { aufbau: new Folge('aufbau', 48), danach: new Folge('danach', 48) };
+
+/* Schrift-Maske „FRONT“ */
+let oMitte = [.5, .5];
+function schriftZeichnen() {
+  const c = document.createElement('canvas');
+  const W = c.width = Math.round(innerWidth * Math.min(devicePixelRatio, 1.5)), H = c.height = Math.round(innerHeight * Math.min(devicePixelRatio, 1.5));
+  const g = c.getContext('2d');
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  g.font = `900 100px Epilogue, 'Arial Black', sans-serif`;
+  const breite100 = g.measureText('FRONT').width;
+  const groesse = Math.min(W * .94 / breite100 * 100, H * .62 / .72);
+  g.font = `900 ${groesse}px Epilogue, 'Arial Black', sans-serif`;
+  const gesamt = g.measureText('FRONT').width, oM = g.measureText('O');
+  const asc = oM.actualBoundingBoxAscent || groesse * .72;
+  const x0 = (W - gesamt) / 2 - groesse * .01, grund = H / 2 + asc / 2;
+  g.fillStyle = '#fff'; g.textBaseline = 'alphabetic';
+  g.save(); g.translate(x0, grund); g.scale(1, 1); g.fillText('FRONT', 0, 0); g.restore();
+  const oX = x0 + g.measureText('FR').width + oM.width / 2;
+  const reihe = g.getImageData(0, Math.round(H / 2), W, 1).data;
+  let x = Math.round(oX), a1 = -1, a2 = -1;
+  while (x > 0 && reihe[x * 4] < 128) x--;
+  a2 = x; while (x > 0 && reihe[x * 4] >= 128) x--; a1 = x;
+  oMitte = [((a1 + a2) / 2) / W, .5];
+  laden(tex.schrift, c, W, H);
+}
+
+/* ---------- Ziele ---------- */
+let A, B, wischA, wischB, BW, BH;
+function groesse() {
+  const d = Math.min(devicePixelRatio, 1.5) * (HANDY ? .8 : 1);
+  BW = Math.round(innerWidth * d); BH = Math.round(innerHeight * d);
+  canvas.width = BW; canvas.height = BH;
+  [A, B].forEach(z => { if (z) { gl.deleteTexture(z.t); gl.deleteFramebuffer(z.f); } });
+  A = ziel(BW, BH); B = ziel(BW, BH);
+  const mw = 320, mh = Math.round(320 * innerHeight / innerWidth);
+  [wischA, wischB].forEach(z => { if (z) { gl.deleteTexture(z.t); gl.deleteFramebuffer(z.f); } });
+  wischA = ziel(mw, mh); wischB = ziel(mw, mh);
+  if (document.fonts && document.fonts.status === 'loaded') schriftZeichnen();
+}
+addEventListener('resize', () => { groesse(); });
+groesse();
+
+/* ---------- Eingabe ---------- */
+const maus = { x: .5, y: .5, vx: 0, vy: 0, altX: .5, altY: .5, unten: false, bewegt: false, px: innerWidth / 2, py: innerHeight / 2 };
+const zeiger = $('#zeiger'), zeigerText = $('#zeigerText');
+let ring = { x: maus.px, y: maus.py };
+addEventListener('pointermove', e => { maus.px = e.clientX; maus.py = e.clientY; maus.x = e.clientX / innerWidth; maus.y = 1 - e.clientY / innerHeight; maus.bewegt = true; }, { passive: true });
+addEventListener('pointerdown', e => { if (e.target.closest('#abspann, a, button')) return; maus.unten = true; maus.px = e.clientX; maus.py = e.clientY; maus.x = e.clientX / innerWidth; maus.y = 1 - e.clientY / innerHeight; });
+addEventListener('pointerup', () => { if (maus.unten) loslassen(); maus.unten = false; });
+addEventListener('pointercancel', () => { maus.unten = false; });
+addEventListener('contextmenu', e => { if (aktiv === 3) e.preventDefault(); });
+
+/* ---------- Blitz ---------- */
+const blitz = { ladung: 0, t: 9, x: .5, saat: 1, sperre: 0, schonmal: false };
+function einschlag(x) {
+  if (RM || blitz.sperre > 0) return;
+  blitz.t = 0; blitz.x = clamp(x, .12, .88); blitz.saat = Math.random() * 100; blitz.sperre = 1.4; blitz.ladung = 0; blitz.schonmal = true;
+}
+function loslassen() { if (aktiv === 3 && blitz.ladung > .12) einschlag(maus.x); }
+function blitzWert(t) {
+  if (t < .05) return 1; if (t < .1) return .2; if (t < .17) return .75; if (t < .2) return .1;
+  return Math.max(0, .55 * Math.exp(-(t - .2) * 7));
+}
+
+/* ---------- Laden ---------- */
+const lader = $('#lader'), laderZahl = $('#laderZahl');
+let ladeAnteil = 0, ladenFertig = false, intro = 0;
+const pflicht = [];
+pflicht.push(posterLaden('hitze', 'medien/hitze.webp'));
+pflicht.push((document.fonts ? document.fonts.load('900 100px Epilogue') : Promise.resolve()).then(() => schriftZeichnen()));
+pflicht.push(new Promise(r => { const v = filmEl.hitze; if (v.readyState >= 3) r(); else { v.addEventListener('canplaythrough', r, { once: true }); v.addEventListener('error', r, { once: true }); setTimeout(r, 3500); } }));
+folgen.aufbau.laden(12);
+let erledigt = 0; pflicht.forEach(p => p.then(() => erledigt++));
+const ladeStart = performance.now();
+Promise.all(pflicht).then(() => { ladenFertig = true; });
+['boee', 'blitz', 'regen'].forEach(n => posterLaden(n, `medien/${n}.webp`));
+
+/* ---------- Zustand ---------- */
+const SAT = [.82, .42, .36, .1, .14, 0];
+let aktiv = 0, altY = scrollY, scrollTempo = 0, zeit = 0, alt = performance.now(), wischWechsel = false;
+const hudSzene = $('#hudSzene'), hudEffekt = $('#hudEffekt'), hudHinweis = $('#hudHinweis'), balken = $('#balken');
+
+function lage() {
+  const y = scrollY, vh = innerHeight;
+  for (let i = 0; i < szenenEl.length; i++) {
+    const s = szenenEl[i], top = s.offsetTop, span = Math.max(1, s.offsetHeight - vh);
+    if (y < top + span || i === szenenEl.length - 1) {
+      const p = clamp((y - top) / span, 0, 1);
+      const t = i < szenenEl.length - 1 ? smooth(.8, 1, p) : 0;
+      return { i, p: clamp(p / .8, 0, 1), t, roh: p };
+    }
+  }
+}
+
+function szeneZeichnen(i, p, ziel, dt) {
+  gl.bindFramebuffer(gl.FRAMEBUFFER, ziel.f); gl.viewport(0, 0, ziel.w, ziel.h);
+  const prog = [P_HITZE, P_AUFBAU, P_BOEE, P_BLITZ, P_REGEN, P_DANACH][i];
+  gl.useProgram(prog);
+  const name = ['hitze', 'aufbau', 'boee', 'blitz', 'regen', 'danach'][i];
+  if (name === 'aufbau') folgen.aufbau.zeigen(p, dt);
+  if (name === 'danach') folgen.danach.zeigen(.06 + smooth(0, .8, p) * .36, dt);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex[name]); gl.uniform1i(prog.u('uTex'), 0);
+  gl.uniform2f(prog.u('uTexRes'), tex[name].w, tex[name].h);
+  gl.uniform2f(prog.u('uRes'), ziel.w, ziel.h);
+  gl.uniform1f(prog.u('uTime'), zeit);
+  gl.uniform1f(prog.u('uP'), p);
+  gl.uniform2f(prog.u('uMouse'), maus.x, maus.y);
+  gl.uniform2f(prog.u('uVel'), maus.vx, maus.vy);
+  gl.uniform1f(prog.u('uHold'), blitz.ladung);
+  const fokus = { danach: [.8, .5], hitze: [.5, .5], boee: [.42, .5] }[name] || [.5, .5];
+  gl.uniform2f(prog.u('uFokus'), fokus[0], fokus[1]);
+  if (i === 0) {
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, tex.schrift); gl.uniform1i(prog.u('uSchrift'), 1);
+    gl.uniform2f(prog.u('uO'), oMitte[0], oMitte[1]);
+    gl.uniform1f(prog.u('uLaden'), ladeAnteil); gl.uniform1f(prog.u('uIntro'), intro);
+  }
+  if (i === 2) gl.uniform1f(prog.u('uBoe'), clamp(scrollTempo * .02, -1.5, 1.5));
+  if (i === 3) { gl.uniform1f(prog.u('uBlitz'), blitzWert(blitz.t)); gl.uniform1f(prog.u('uBlitzX'), blitz.x); gl.uniform1f(prog.u('uSaat'), blitz.saat); }
+  if (i === 4) { gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, wischA.t); gl.uniform1i(prog.u('uWisch'), 1); }
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+function filmAktualisieren(name, an) {
+  const v = filmEl[name]; if (!v) return;
+  if (an && !RM) { if (v.paused) v.play(); } else if (!v.paused) v.pause();
+  if (v.readyState >= 2 && (!v.paused || !filmBereit[name])) {
+    laden(tex[name], v, v.videoWidth, v.videoHeight); filmBereit[name] = true;
+  }
+}
+
+function bild(jetzt) {
+  const dt = Math.min(.05, (jetzt - alt) / 1000); alt = jetzt;
+  if (!RM) zeit += dt;
+  if (lenis) lenis.raf(jetzt);
+
+  /* Laden und Auftakt */
+  const zielAnteil = Math.min((erledigt + (ladenFertig ? 0 : .5 * smooth(0, 4000, jetzt - ladeStart))) / pflicht.length, 1);
+  ladeAnteil = lerp(ladeAnteil, ladenFertig ? 1 : Math.min(zielAnteil, .96), .06);
+  laderZahl.textContent = Math.round(ladeAnteil * 100) + ' %';
+  const mindestens = performance.now() - ladeStart > 1400;
+  if (ladenFertig && mindestens && ladeAnteil > .985) { intro = RM ? 1 : Math.min(1, intro + dt / 1.6); lader.classList.add('weg'); }
+  const introW = intro * intro * (3 - 2 * intro);
+
+  /* Scroll */
+  const y = scrollY;
+  scrollTempo = lerp(scrollTempo, (y - altY) / Math.max(dt, .001), .15); altY = y;
+  const L = lage();
+  if (L.i > 0 || L.p > .15) lader.classList.add('weg');
+  const abspannDeckt = abspann.getBoundingClientRect().top <= 0;
+
+  /* Maus */
+  const dx = (maus.x - maus.altX), dy = (maus.y - maus.altY);
+  maus.vx = lerp(maus.vx, clamp(dx / Math.max(dt, .001), -8, 8), .2);
+  maus.vy = lerp(maus.vy, clamp(dy / Math.max(dt, .001), -8, 8), .2);
+  maus.vx *= .94; maus.vy *= .94;
+
+  /* aktive Szene, HUD */
+  const nr = L.t > .5 ? L.i + 1 : L.i;
+  if (nr !== aktiv) {
+    aktiv = nr; const s = szenenEl[nr];
+    hudSzene.textContent = `${T.szene} ${String(nr + 1).padStart(2, '0')} / 06 — ${s.dataset.name}`;
+    hudEffekt.textContent = `${T.effekt}: ${s.dataset.effekt}`;
+    hudHinweis.textContent = s.dataset.hinweis || '';
+    zeigerText.textContent = TOUCH ? '' : ({ 2: 'Wind', 3: 'Halten', 4: 'Wischen' }[nr] || '');
+  }
+  balken.style.transform = `scaleX(${clamp(y / (document.documentElement.scrollHeight - innerHeight), 0, 1).toFixed(4)})`;
+
+  /* Blitz-Logik */
+  blitz.t += dt; blitz.sperre = Math.max(0, blitz.sperre - dt);
+  if (aktiv === 3) {
+    if (maus.unten && !RM) { blitz.ladung = Math.min(1, blitz.ladung + dt / 1.3); if (blitz.ladung >= 1) einschlag(maus.x); }
+    else blitz.ladung = Math.max(0, blitz.ladung - dt * 1.5);
+    if (!blitz.schonmal && L.i === 3 && L.p > .32) einschlag(.58);
+  } else blitz.ladung = 0;
+  zeiger.classList.toggle('halten', aktiv === 3 && maus.unten);
+
+  /* Filme: höchstens einer läuft */
+  const namen = ['hitze', 'aufbau', 'boee', 'blitz', 'regen', 'danach'];
+  if (L.i >= 1) filmLaden('boee');
+  if (L.i >= 2) filmLaden('blitz');
+  if (L.i >= 3) filmLaden('regen');
+  if (L.i >= 0 && L.p > .3) folgen.aufbau.laden();
+  if (L.i >= 3) folgen.danach.laden();
+  for (const n of ['hitze', 'boee', 'blitz', 'regen']) filmAktualisieren(n, !abspannDeckt && namen[aktiv] === n && (n !== 'hitze' || intro > 0));
+
+  /* Zeiger */
+  ring.x = lerp(ring.x, maus.px, .2); ring.y = lerp(ring.y, maus.py, .2);
+  zeiger.style.transform = `translate3d(${ring.x}px,${ring.y}px,0)`;
+
+  if (!abspannDeckt) {
+    /* Wisch-Maske */
+    if (aktiv === 4 || L.i === 4) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, wischB.f); gl.viewport(0, 0, wischB.w, wischB.h);
+      gl.useProgram(P_WISCH);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, wischA.t); gl.uniform1i(P_WISCH.u('uAlt'), 0);
+      gl.uniform2f(P_WISCH.u('uRes'), wischB.w, wischB.h);
+      gl.uniform2f(P_WISCH.u('uA'), maus.altX, maus.altY); gl.uniform2f(P_WISCH.u('uB'), maus.x, maus.y);
+      gl.uniform1f(P_WISCH.u('uR'), TOUCH ? .09 : .065); gl.uniform1f(P_WISCH.u('uDt'), dt);
+      gl.uniform1f(P_WISCH.u('uAktiv'), aktiv === 4 && maus.bewegt && (!TOUCH || maus.unten || true) ? 1 : 0);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      [wischA, wischB] = [wischB, wischA];
+    }
+
+    szeneZeichnen(L.i, L.i === 0 ? L.p : L.p, A, dt);
+    if (L.t > 0) szeneZeichnen(L.i + 1, 0, B, dt);
+
+    let satA = L.i === 5 ? lerp(.14, 1.28, smooth(.1, .55, L.p)) : SAT[L.i];
+    let satB = SAT[Math.min(L.i + 1, 5)] || .14;
+    const warm = L.i === 5 ? smooth(.15, .6, L.p) : 0;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, BW, BH);
+    gl.useProgram(P_MISCH);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, A.t); gl.uniform1i(P_MISCH.u('uA'), 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, B.t); gl.uniform1i(P_MISCH.u('uB'), 1);
+    gl.uniform2f(P_MISCH.u('uRes'), BW, BH); gl.uniform1f(P_MISCH.u('uTime'), zeit);
+    gl.uniform1f(P_MISCH.u('uT'), L.t); gl.uniform1f(P_MISCH.u('uArt'), L.i);
+    gl.uniform1f(P_MISCH.u('uSat'), lerp(satA, satB, L.t > .5 ? 1 : 0));
+    gl.uniform1f(P_MISCH.u('uWarm'), warm);
+    gl.uniform1f(P_MISCH.u('uKorn'), RM ? .025 : .055);
+    const schnitt = L.i === 3 ? Math.pow(Math.max(0, 1 - Math.abs(L.t - .5) * 2.4), 3) * .9 : 0;
+    gl.uniform1f(P_MISCH.u('uWeiss'), RM ? 0 : schnitt);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  maus.altX = maus.x; maus.altY = maus.y; maus.bewegt = false;
+  requestAnimationFrame(bild);
+}
+requestAnimationFrame(bild);
+})();
+</script>
+
+<div id="ordeBalken">
+  <a href="https://byorde.com/referenzen.html">&larr; Zur&uuml;ck zu ORD&Eacute;</a>
+  <span>Showreel &middot; kein echter Betrieb</span>
+  <a class="ordeCta" href="https://byorde.com/anfrage.html">So eine Seite anfragen</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+@media (max-width:640px){#ordeBalken{gap:10px;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));font-size:13px}#ordeBalken span{order:3;flex-basis:100%;text-align:center;font-size:11.5px;line-height:1.3}}
+@media print{#ordeBalken{display:none}}
+</style>
+</body>
+</html>
