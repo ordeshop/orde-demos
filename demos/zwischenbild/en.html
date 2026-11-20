@@ -20,18 +20,7 @@
    Kinetic Type nach Studio Dumbar (Schrift verformt sich, bleibt aber in ihrer Zeile).
    Bewusst nicht: keine Fotos, kein Video, kein WebGL, kein Dunkel-mit-Neon, keine Glitches.
    Bewegungsgrammatik: Schlüsselposen stehen, Zwischenbilder laufen; drei Kurven: rein expo.out, raus expo.in,
-   Wechsel expo.inOut.
-   Abgleich mit den Weltklasse-Erkenntnissen (Handbuch, 20.11.2026):
-   - eine Idee, Laden als erste Szene (Ball landet als i-Punkt), nahtlose Übergänge, Farbe als Ereignis
-   - Erkunden statt lesen: Punkt werfen oder antippen, Anfasser ziehen oder in den Graphen klicken, Zeitleiste ziehen
-   - versteckte Belohnung: Form im Pfad-Morph gedrückt halten (Antizipation), loslassen (Nachschwingen)
-   - Text: jede Szene steigt mit ihrem eigenen Werkzeug ein (Overshoot, Formmaske, Trim-Strich, Kopien, Stagger),
-     keine Kennzeile über Überschriften (impeccable); Szene und Nummer stehen in der Zeitleiste (ORDE-STIL Regel 21)
-   - Neigung nach Scrolltempo (Lenis-Tempo als skewY), Korn und Vignette über allem
-   - Handwerk: Pixeldichte höchstens 2, bei langsamem Gerät 1; Lenis aus bei "weniger Bewegung"
-   - Text in Rot/Blau nur in den dunklen Texttönen (5,3 : 1 und 5,9 : 1), helle Töne nur für Formen
-   - Referenzen (awesome-design-md, nur Rhythmus): framer (Seite als Arbeitsfläche, Akzent für Auswahl und Fokus),
-     figma (Farbe als großes Ereignis auf einfarbigem Grund), ibm (8er-Abstandsleiter, eine Akzentfarbe) */
+   Wechsel expo.inOut. */
 :root{
   --papier:#E9EBEF;
   --papier-hell:#F4F5F7;
@@ -39,10 +28,6 @@
   --blei:#555A64;
   --blau:#2E5BFF;
   --rot:#F2361A;
-  --blau-text:#2448D8;
-  --blau-hell:#B9C7FF;
-  --rot-text:#B8240B;
-  --a1:8px;--a2:12px;--a3:16px;--a4:24px;--a5:32px;--a6:48px;
   --linie:rgba(21,23,28,.16);
   --display:"Anybody","Arial Black",system-ui,sans-serif;
   --text:"Instrument Sans","Helvetica Neue",Arial,system-ui,sans-serif;
@@ -61,8 +46,6 @@ html{background:var(--papier)}
 body{margin:0;background:var(--papier);color:var(--graphit);font-family:var(--text);font-size:16px;line-height:1.55;overflow-x:clip;-webkit-font-smoothing:antialiased}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 a{color:inherit}
-::selection{background:var(--blau);color:var(--papier-hell)}
-html{scrollbar-color:var(--graphit) var(--papier);scrollbar-width:thin}
 :focus-visible{outline:2px solid var(--blau);outline-offset:3px}
 
 #leinwand{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
@@ -79,7 +62,7 @@ html{scrollbar-color:var(--graphit) var(--papier);scrollbar-width:thin}
 
 .zeitleiste{position:fixed;left:var(--gl);right:var(--gr);bottom:calc(var(--unten) + 12px);z-index:50;display:flex;align-items:center;gap:16px;font:400 10.5px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;font-variant-numeric:tabular-nums}
 .zl-szene{min-width:13.5em;color:var(--graphit)}
-.zl-szene b{color:var(--rot-text);font-weight:400}
+.zl-szene b{color:var(--rot);font-weight:400}
 .zl-zeit{color:var(--blei);min-width:8.5em;text-align:right}
 .spur{position:relative;flex:1;height:26px;cursor:ew-resize;touch-action:none}
 .spur::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--graphit);opacity:.5}
@@ -93,19 +76,17 @@ html{scrollbar-color:var(--graphit) var(--papier);scrollbar-width:thin}
 main{position:relative;z-index:2}
 .szene{position:relative}
 .js .szene{height:calc(var(--lang) * 1vh)}
-.js .ui{position:fixed;inset:0;pointer-events:none;padding:calc(64px + env(safe-area-inset-top,0px)) var(--gr) calc(var(--unten) + 64px) var(--gl);display:flex;flex-direction:column;justify-content:flex-end}
+.js .ui{position:fixed;inset:0;pointer-events:none;padding:calc(64px + env(safe-area-inset-top,0px)) var(--gr) calc(var(--unten) + 64px) var(--gl);display:flex;flex-direction:column;justify-content:space-between}
 .ui{padding:48px var(--gr) 48px var(--gl)}
 .kicker{margin:0;font:400 10.5px/1.5 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--blei)}
 .kicker b{color:var(--rot);font-weight:400}
-.block{max-width:min(440px,34vw)}
-.js .ui .block,.js .abspann .ui>div{transform:skewY(calc(var(--tempo,0) * .045deg));transform-origin:0 100%}
+.block{max-width:min(430px,34vw)}
 .titel{margin:0 0 .45em;font:800 clamp(30px,3.3vw,52px)/1 var(--display);font-variation-settings:"wdth" 88;letter-spacing:-.025em;text-wrap:balance}
 .titel em{font-style:normal;color:var(--blau)}
 .fliess{margin:0;font-size:16px;line-height:1.55;color:var(--graphit);max-width:42ch}
-.code{margin:var(--a2) 0 0;font:400 11px/1.5 var(--mono);color:var(--blau-text);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.code{margin:.9em 0 0;font:400 11px/1.5 var(--mono);color:var(--blau);font-variant-numeric:tabular-nums;letter-spacing:.02em}
 @media (hover:none){.nur-maus{display:none}}
-.hinweis{margin:var(--a2) 0 0;font:500 13.5px/1.4 var(--text);color:var(--rot-text);display:flex;align-items:center;gap:var(--a1)}
-.hinweis>span::before{content:"";display:inline-block;width:7px;height:7px;margin-right:var(--a1);background:var(--rot);transform:rotate(45deg) translateY(-1px)}
+.hinweis{margin:.6em 0 0;font:400 10.5px/1.5 var(--mono);color:var(--rot);letter-spacing:.04em;text-transform:uppercase}
 
 /* Zeilen fahren aus der Maske, nur transform */
 .m{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
@@ -115,7 +96,7 @@ main{position:relative;z-index:2}
 
 /* Held */
 .held-titel{margin:0;-webkit-user-select:none;user-select:none;font:800 100px/1 var(--display);letter-spacing:-.02em;white-space:nowrap;color:var(--graphit)}
-.js .held-titel{position:fixed;z-index:2;left:var(--gl);top:38%;transform:translateY(-50%) skewY(calc(var(--tempo,0) * .035deg))}
+.js .held-titel{position:fixed;z-index:2;left:var(--gl);top:38%;transform:translateY(-50%)}
 .wort{display:inline-block;vertical-align:top}
 .wort-innen{display:inline-block;transform-origin:0 50%;white-space:nowrap}
 .bu{display:inline-block;vertical-align:top;overflow:hidden;line-height:1;padding:.14em 0 .16em}
@@ -123,18 +104,6 @@ main{position:relative;z-index:2}
 .js .bu>i{transform:translateY(118%)}
 .js .los .bu>i{transform:none;transition:transform .9s var(--rein) calc(var(--i) * .045s)}
 .js .weg .bu>i{transform:translateY(-118%);transition:transform .45s var(--raus) calc(var(--i) * .025s)}
-/* Jede Szene steigt mit ihrem eigenen Werkzeug ein */
-.js #easing .m>span{transform:translateX(-104%)}
-.js #easing.an .m>span{transform:none;transition:transform .95s cubic-bezier(.34,1.56,.64,1) calc(.3s + var(--i,0) * .08s)}
-.js #morph .m>span{transform:none;clip-path:circle(0% at 0% 55%);transition:clip-path .3s var(--raus)}
-.js #morph.an .m>span{clip-path:circle(150% at 0% 55%);transition:clip-path 1.1s var(--rein) calc(.3s + var(--i,0) * .09s)}
-#trim .titel em{background:linear-gradient(var(--rot),var(--rot)) no-repeat 0 96%/0% .075em;transition:background-size .3s var(--raus)}
-#trim.an .titel em{background-size:100% .075em;transition:background-size 1s var(--rein) 1.05s}
-.js #repeater .titel>span{text-shadow:.08em 0 0 var(--blau-hell),.16em 0 0 var(--blau-hell),.24em 0 0 var(--blau-hell)}
-.js #repeater.an .titel>span{text-shadow:0 0 0 var(--blau-hell),0 0 0 var(--blau-hell),0 0 0 var(--blau-hell);transition:transform .85s var(--rein) .3s,text-shadow .8s var(--rein) .95s}
-.js #stagger .titel>span,.js #stagger .fliess>span{transform:none}
-.js #stagger .wo{display:inline-block;transform:scale(0);transform-origin:50% 60%;transition:transform .2s var(--raus)}
-.js #stagger.an .wo{transform:none;transition:transform .5s cubic-bezier(.34,1.25,.64,1) calc(.3s + var(--w,0) * 30ms)}
 .bu.stoss>i{animation:stoss .42s var(--rein)}
 @keyframes stoss{0%{transform:scale(1.12,.84)}45%{transform:scale(.96,1.05)}100%{transform:none}}
 .mess{display:inline-block;width:0;height:0;vertical-align:baseline}
@@ -163,11 +132,10 @@ main{position:relative;z-index:2}
   .block{max-width:none}
   .titel{font-size:clamp(26px,7.4vw,34px)}
   .fliess{font-size:15px}
-  .js .ui{padding-bottom:calc(var(--unten) + 72px)}
+  .js .ui{padding-bottom:calc(var(--unten) + 54px)}
   .js .held-titel{top:30%}
   .wort{display:block}
   .zl-szene{min-width:0}
-  .spur{height:44px}
   .zl-szene span{display:none}
   .zl-zeit{min-width:0}
   .hud-rechts .lang{display:none}
@@ -175,7 +143,7 @@ main{position:relative;z-index:2}
 }
 @media (max-height:620px) and (min-width:761px){.fliess{font-size:15px}.titel{font-size:34px}}
 @media (prefers-reduced-motion:reduce){
-  .js .m>span,.js .an .m>span,.js .szene .m>span,.js .wo,#trim .titel em,.js #repeater .titel>span{transition:none!important}
+  .js .m>span,.js .an .m>span{transition:none}
   .js .bu>i,.js .los .bu>i,.js .weg .bu>i{transition:none}
   .bu.stoss>i,.end-titel .w.stoss{animation:none}
 }
@@ -209,7 +177,8 @@ main{position:relative;z-index:2}
   <h1 class="held-titel" id="heldTitel"><span class="sr">Zwischenbild</span><span aria-hidden="true"><span class="wort"><span class="wort-innen"><span class="bu" style="--i:0"><i>z</i></span><span class="bu" style="--i:1"><i>w</i></span><span class="bu" id="buPunkt" style="--i:2"><i>ı</i><span class="mess" id="messPunkt"></span></span><span class="bu" style="--i:3"><i>s</i></span><span class="bu" style="--i:4"><i>c</i></span><span class="bu" style="--i:5"><i>h</i></span><span class="bu" style="--i:6"><i>e</i></span><span class="bu" style="--i:7"><i>n</i></span></span></span><span class="wort"><span class="wort-innen"><span class="bu" style="--i:8"><i>b</i></span><span class="bu" id="buKey" style="--i:9"><i>ı</i><span class="mess" id="messKey"></span></span><span class="bu" style="--i:10"><i>l</i></span><span class="bu" style="--i:11"><i>d</i></span></span></span></span></h1>
   <div class="ui">
     <div class="block">
-      <p class="fliess m" style="--i:1"><span>Zwischenbild is German for the in-between. Motion graphics live in the frames between two poses. Here you are the playhead: scroll, and the dot runs through six motion design tools.</span></p>
+      <p class="kicker m" style="--i:0"><span><b>01</b> / 06 · Squash &amp; Stretch</span></p>
+      <p class="fliess m" style="--i:1"><span>Zwischenbild is German for the in-between. Motion graphics live in the frames between two poses, and here your scroll is the playhead: six tools, one dot and not a single photo.</span></p>
       <p class="hinweis m" style="--i:2"><span><span class="nur-maus">Hover the type · </span>you can throw the dot</span></p>
     </div>
   </div>
@@ -218,6 +187,7 @@ main{position:relative;z-index:2}
 <!-- 02 EASING -->
 <section class="szene" id="easing" data-nr="02" data-name="Easing" style="--lang:340">
   <div class="ui">
+    <p class="kicker m"><span><b>02</b> / 06 · Easing · Graph editor</span></p>
     <div class="block">
       <h2 class="titel m" style="--i:1"><span>The curve sets the <em>character.</em></span></h2>
       <p class="fliess m" style="--i:2"><span>Same distance, same time. Only the curve changes, and a machine turns into something with weight or swagger. The blue circles show where the dot sits in every frame.</span></p>
@@ -230,6 +200,7 @@ main{position:relative;z-index:2}
 <!-- 03 PFAD-MORPH -->
 <section class="szene" id="morph" data-nr="03" data-name="Path Morph" style="--lang:320">
   <div class="ui">
+    <p class="kicker m"><span><b>03</b> / 06 · Path morph · Shape chain</span></p>
     <div class="block">
       <h2 class="titel m" style="--i:1"><span>One shape becomes <em>the next.</em></span></h2>
       <p class="fliess m" style="--i:2"><span>Five key poses: circle, square, triangle, star, flower. The browser computes everything in between, 240 points in every frame. The blue lines are the in-betweens that just went by.</span></p>
@@ -241,6 +212,7 @@ main{position:relative;z-index:2}
 <!-- 04 TRIM PATHS -->
 <section class="szene" id="trim" data-nr="04" data-name="Trim Paths" style="--lang:320">
   <div class="ui">
+    <p class="kicker m"><span><b>04</b> / 06 · Trim Paths · Line</span></p>
     <div class="block">
       <h2 class="titel m" style="--i:1"><span>A line that <em>draws itself.</em></span></h2>
       <p class="fliess m" style="--i:2"><span>The start and the end of a line run on different curves, so it chases itself along a path of 900 points. The mouse detunes the oscillation.</span></p>
@@ -252,6 +224,7 @@ main{position:relative;z-index:2}
 <!-- 05 REPEATER -->
 <section class="szene" id="repeater" data-nr="05" data-name="Repeater" style="--lang:320">
   <div class="ui">
+    <p class="kicker m"><span><b>05</b> / 06 · Repeater · Copies</span></p>
     <div class="block">
       <h2 class="titel m" style="--i:1"><span>Built once, <em>turned</em> a hundred times.</span></h2>
       <p class="fliess m" style="--i:2"><span>A single stroke, copied by fixed rules. At the golden angle of 137.5°, the copies line up like the seeds of a sunflower. The mouse twists every copy.</span></p>
@@ -263,6 +236,7 @@ main{position:relative;z-index:2}
 <!-- 06 STAGGER -->
 <section class="szene" id="stagger" data-nr="06" data-name="Stagger" style="--lang:320">
   <div class="ui">
+    <p class="kicker m"><span><b>06</b> / 06 · Stagger · Grid</span></p>
     <div class="block">
       <h2 class="titel m" style="--i:1"><span>Not all <em>at once.</em></span></h2>
       <p class="fliess m" style="--i:2"><span>Each cell starts a little later than its neighbor. The offset turns one movement into a wave: from the left, from the center, from the corner, at random. Click the grid and it answers.</span></p>
@@ -275,8 +249,9 @@ main{position:relative;z-index:2}
 <section class="szene abspann" id="abspann" data-nr="06" data-name="Credits" style="--lang:190">
   <div class="ui">
     <div>
+      <p class="kicker m"><span>Credits</span></p>
       <h2 class="end-titel m" style="--i:1"><span><span class="w">Every</span> <span class="w">frame</span> <span class="w w-blau">in&nbsp;between</span> <span class="w">is</span> <span class="w">deliberate.</span></span></h2>
-      <p class="fliess end-text m" style="--i:2"><span>Six motion design tools, all animated live in the browser. Built from dots and lines, without a single photo.</span></p>
+      <p class="fliess end-text m" style="--i:2"><span>Six motion design tools, all animated live in the browser. No photos, no video, just dots, lines and curves.</span></p>
       <div class="m" style="--i:3"><span><ul class="credits" aria-label="The tools"><li>Squash &amp; Stretch</li><li>Easing</li><li>Path Morph</li><li>Trim Paths</li><li>Repeater</li><li>Stagger</li></ul></span></div>
       <div class="m" style="--i:4"><span><button class="knopf" id="nochmal" type="button">Play it again</button></span></div>
     </div>
@@ -305,7 +280,7 @@ const hash = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return
 
 const css = getComputedStyle(document.documentElement);
 const farbe = (n) => css.getPropertyValue(n).trim();
-const C = { papier: farbe("--papier"), graphit: farbe("--graphit"), blau: farbe("--blau"), rot: farbe("--rot"), blei: farbe("--blei"), rotText: farbe("--rot-text"), blauText: farbe("--blau-text") };
+const C = { papier: farbe("--papier"), graphit: farbe("--graphit"), blau: farbe("--blau"), rot: farbe("--rot"), blei: farbe("--blei") };
 const rgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
 const RGB = { graphit: rgb(C.graphit), blau: rgb(C.blau), rot: rgb(C.rot) };
 const mische = (a, b, t) => { t = clamp(t); return `rgb(${Math.round(lerp(a[0], b[0], t))},${Math.round(lerp(a[1], b[1], t))},${Math.round(lerp(a[2], b[2], t))})`; };
@@ -315,7 +290,7 @@ const cv = $("#leinwand"), ctx = cv.getContext("2d");
 let W = 0, H = 0, DPR = 1, mobil = false, K = {};
 function groesse() {
   W = innerWidth; H = innerHeight; mobil = W < 761;
-  DPR = gedrosselt ? 1 : Math.min(devicePixelRatio || 1, 2);
+  DPR = Math.min(devicePixelRatio || 1, 2);
   if (W * H * DPR * DPR > 7e6) DPR = Math.max(1, Math.sqrt(7e6 / (W * H)));
   cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
   const balken = W <= 640 ? 94 : 58, oben = 64;
@@ -621,16 +596,9 @@ let anSzene = null, letzterWert = "", textCache = {};
 function setzeText(el, t) { if (textCache[el.id] !== t) { el.textContent = t; textCache[el.id] = t; } }
 const drall = { spin: 0, drall: 0 };
 
-let tempoS = 0, tempoZuletzt = 0, messN = 0, messSumme = 0, gedrosselt = false;
-const wurzel = document.documentElement;
 function bild() {
-  const jetzt = performance.now() / 1000, dtRoh = jetzt - letzteZeit, dt = Math.min(.05, dtRoh); letzteZeit = jetzt; zeit += dt;
+  const jetzt = performance.now() / 1000, dt = Math.min(.05, jetzt - letzteZeit); letzteZeit = jetzt; zeit += dt;
   if (lenis) lenis.raf(jetzt * 1000);
-  // Neigung nach Scrolltempo
-  tempoS = lerp(tempoS, lenis ? clamp(lenis.velocity || 0, -70, 70) : 0, 1 - Math.pow(.0005, dt));
-  if (Math.abs(tempoS - tempoZuletzt) > .05) { wurzel.style.setProperty("--tempo", tempoS.toFixed(2)); tempoZuletzt = tempoS; }
-  // Langsame Geräte: Pixeldichte auf 1 senken
-  if (auftaktFertig && !gedrosselt && dtRoh < .5) { messN++; messSumme += dtRoh; if (messN === 120) { if (messSumme / 120 > 1 / 38 && DPR > 1.01) { gedrosselt = true; DPR = 1; cv.width = W; cv.height = H; } messN = 0; messSumme = 0; } }
   const y = lenis ? lenis.scroll : scrollY;
   const st = stand(y);
   let p = st.p; const id = st.s.id;
@@ -816,8 +784,6 @@ function szeneEasing(p, dt) {
 
 /* 03 Morph */
 let mBox = [0, 0, 0, 0];
-const druck = { an: false, s: 1, v: 0, los: -9 };
-const HUD_DRUCK = ["Anticipation · pressed", "Follow-through"];
 function morphPfad(st, R0, cx, cy, ziehen) {
   const ra = RADIEN[st.k], rb = RADIEN[st.k + 1];
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
@@ -826,7 +792,6 @@ function morphPfad(st, R0, cx, cy, ziehen) {
     const th = WINKEL[i] + st.spin, r = lerp(ra[i], rb[i], st.e) * R0;
     let x = Math.cos(th) * r, y = Math.sin(th) * r;
     if (ziehen) { const d = x * ziehen.ux + y * ziehen.uy; x += ziehen.ux * d * ziehen.k; y += ziehen.uy * d * ziehen.k; }
-    if (druck.s !== 1) { x *= 1 + (1 - druck.s) * .9; y = y * druck.s + R0 * (1 - druck.s); }
     i ? ctx.lineTo(cx + x, cy + y) : ctx.moveTo(cx + x, cy + y);
     if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
   }
@@ -847,10 +812,6 @@ function transformRahmen(b, a, cx, cy) {
 function szeneMorph(p, dt) {
   const R0 = K.s * .34, cx = K.cx, cy = K.cy;
   const st = morphZustand(p);
-  // Feder: gedrückt sinkt die Form ein, losgelassen schwingt sie nach
-  const ziel = druck.an ? .74 : 1;
-  druck.v += (ziel - druck.s) * (druck.an ? 90 : 520) * dt; druck.v *= Math.exp(-(druck.an ? 14 : 7) * dt); druck.s += druck.v * dt;
-  if (!druck.an && Math.abs(druck.s - 1) < .0005 && Math.abs(druck.v) < .005) { druck.s = 1; druck.v = 0; }
   // Zug zur Maus
   let ziehen = null;
   if (kannHover && zeiger.aktiv && !RM) { const dx = zeiger.sx - cx, dy = zeiger.sy - cy, d = Math.hypot(dx, dy) || 1; ziehen = { ux: dx / d, uy: dy / d, k: .08 * clamp(d / (K.s * .8)) }; }
@@ -871,12 +832,10 @@ function szeneMorph(p, dt) {
   const kNr = st.e > .5 ? st.k + 1 : st.k, name = FORMEN[kNr].n;
   const lx = mobil ? cx : cx + R0 * 1.18, ly = mobil ? cy + R0 * 1.62 : cy - R0 * .95, al = mobil ? "center" : "left", mx = mobil ? -70 : -12;
   if (seg(p, .02, .08) > 0 && ausR < .5) {
-    if (istKey) { raute(lx + mx, ly, 5, C.rot); schrift(`Key ${String(kNr + 1).padStart(2, "0")} · ${name}`, lx, ly, C.rotText, al); }
-    else { ring(lx + mx, ly, 4, C.blau, 1.4); schrift(`In-between ${komma(st.e, 2)}`, lx, ly, C.blauText, al); }
+    if (istKey) { raute(lx + mx, ly, 5, C.rot); schrift(`Key ${String(kNr + 1).padStart(2, "0")} · ${name}`, lx, ly, C.rot, al); }
+    else { ring(lx + mx, ly, 4, C.blau, 1.4); schrift(`In-between ${komma(st.e, 2)}`, lx, ly, C.blau, al); }
   }
   setzeText(morphText, istKey ? `Key ${String(kNr + 1).padStart(2, "0")} · ${name}` : `${FORMEN[st.k].n} → ${FORMEN[st.k + 1].n} · ${Math.round(st.e * 100)}%`);
-  if (druck.an) return HUD_DRUCK[0];
-  if (zeit - druck.los < 1.2) return HUD_DRUCK[1];
   return istKey ? `Key · ${name}` : `Morph · ${Math.round(st.e * 100)}%`;
 }
 
@@ -1035,25 +994,17 @@ function nahAmAnfasser(x, y) {
   if (Math.hypot(x - E.h2[0], y - E.h2[1]) < 24) return 2;
   return 0;
 }
-let anfasser = 0, druckStart = null;
-function anfasserSetzen(x, y) {
-  const st = easingZustand(stand(lenis ? lenis.scroll : scrollY).p);
-  const t = clamp((x - E.gx) / E.G), v = clamp(E.vmax - (y - E.gy) / E.G * (E.vmax - E.vmin), E.vmin, E.vmax);
-  if (eigene.slot !== st.k || !eigene.b) { eigene.slot = st.k; eigene.b = st.b.slice(); }
-  if (anfasser === 1) { eigene.b[0] = t; eigene.b[1] = v; } else { eigene.b[2] = t; eigene.b[3] = v; }
-}
-function imGraph(x, y) {
-  return stand(lenis ? lenis.scroll : scrollY).s.id === "easing" && E.h1 && x > E.gx - 10 && x < E.gx + E.G + 10 && y > E.gy - 10 && y < E.gy + E.G + 10;
-}
-function aufForm(x, y) {
-  if (stand(lenis ? lenis.scroll : scrollY).s.id !== "morph" || RM) return false;
-  return Math.hypot(x - K.cx, y - K.cy) < K.s * .34;
-}
+let anfasser = 0;
 addEventListener("pointermove", (e) => {
   zeiger.x = e.clientX; zeiger.y = e.clientY; zeiger.nx = e.clientX; zeiger.ny = e.clientY;
   if (!zeiger.aktiv) { zeiger.sx = e.clientX; zeiger.sy = e.clientY; }
   zeiger.aktiv = true; zeiger.zuletzt = zeit;
-  if (anfasser) anfasserSetzen(e.clientX, e.clientY);
+  if (anfasser) {
+    const st = easingZustand(stand(lenis ? lenis.scroll : scrollY).p);
+    const t = clamp((e.clientX - E.gx) / E.G), v = clamp(E.vmax - (e.clientY - E.gy) / E.G * (E.vmax - E.vmin), E.vmin, E.vmax);
+    if (eigene.slot !== st.k || !eigene.b) { eigene.slot = st.k; eigene.b = st.b.slice(); }
+    if (anfasser === 1) { eigene.b[0] = t; eigene.b[1] = v; } else { eigene.b[2] = t; eigene.b[3] = v; }
+  }
   if (e.pointerType === "mouse") document.body.style.cursor = (anfasser || wurf.modus === "gezogen") ? "grabbing" : (nahAmBall(e.clientX, e.clientY) || nahAmAnfasser(e.clientX, e.clientY)) ? "grab" : "";
 }, { passive: true });
 addEventListener("pointerleave", () => { zeiger.aktiv = false; });
@@ -1061,15 +1012,9 @@ document.addEventListener("mouseleave", () => { zeiger.aktiv = false; });
 addEventListener("pointerdown", (e) => {
   if (e.target.closest("a,button,.spur")) return;
   zeiger.x = zeiger.nx = e.clientX; zeiger.y = zeiger.ny = e.clientY;
-  if (nahAmBall(e.clientX, e.clientY)) { e.preventDefault(); druckStart = { x: e.clientX, y: e.clientY, t: zeit }; wurf.modus = "gezogen"; wurf.geschichte = []; tempo("wurf", e.clientX, e.clientY, 0); if (lenis) lenis.stop(); return; }
+  if (nahAmBall(e.clientX, e.clientY)) { e.preventDefault(); wurf.modus = "gezogen"; wurf.geschichte = []; tempo("wurf", e.clientX, e.clientY, 0); if (lenis) lenis.stop(); return; }
   anfasser = nahAmAnfasser(e.clientX, e.clientY);
   if (anfasser) { e.preventDefault(); if (lenis) lenis.stop(); return; }
-  if (imGraph(e.clientX, e.clientY)) {
-    e.preventDefault();
-    anfasser = Math.hypot(e.clientX - E.h1[0], e.clientY - E.h1[1]) <= Math.hypot(e.clientX - E.h2[0], e.clientY - E.h2[1]) ? 1 : 2;
-    anfasserSetzen(e.clientX, e.clientY); if (lenis) lenis.stop(); return;
-  }
-  if (aufForm(e.clientX, e.clientY)) { druck.an = true; if (lenis) lenis.stop(); return; }
   if (stand(lenis ? lenis.scroll : scrollY).s.id === "stagger" && !RM) {
     const x0 = K.cx - R.cols * R.c / 2, y0 = K.cy - R.rows * R.c / 2;
     if (e.clientX > x0 && e.clientX < x0 + R.cols * R.c && e.clientY > y0 && e.clientY < y0 + R.rows * R.c) wellen.push({ x: e.clientX, y: e.clientY, t0: zeit });
@@ -1077,19 +1022,15 @@ addEventListener("pointerdown", (e) => {
 });
 addEventListener("touchstart", (e) => {
   const t = e.touches[0]; if (!t) return;
-  if (nahAmBall(t.clientX, t.clientY) || nahAmAnfasser(t.clientX, t.clientY) || imGraph(t.clientX, t.clientY)) e.preventDefault();
+  if (nahAmBall(t.clientX, t.clientY) || nahAmAnfasser(t.clientX, t.clientY)) e.preventDefault();
 }, { passive: false });
 addEventListener("pointerup", () => {
   if (wurf.modus === "gezogen") {
     wurf.modus = "fliegt"; wurf.t0 = zeit;
-    // Nur angetippt: der Punkt springt hoch
-    if (druckStart && Math.hypot(zeiger.x - druckStart.x, zeiger.y - druckStart.y) < 6) { wurf.vx = (hash(zeit * 100) - .5) * 700; wurf.vy = -1900; }
-    druckStart = null;
     const sp = Math.hypot(wurf.vx, wurf.vy), maxV = 4200; if (sp > maxV) { wurf.vx *= maxV / sp; wurf.vy *= maxV / sp; }
     if (lenis) lenis.start();
   }
   if (anfasser) { anfasser = 0; if (lenis) lenis.start(); }
-  if (druck.an) { druck.an = false; druck.los = zeit; if (lenis) lenis.start(); }
 });
 
 /* ---------- Zeitleiste ziehen ---------- */
@@ -1121,23 +1062,6 @@ $("#nochmal").addEventListener("click", () => springeZu(0, false));
   if (!RM) { let n = 0; setInterval(() => { n++; k.style.transform = `translate(${(hash(n) * 180) | 0}px,${(hash(n + 9) * 180) | 0}px)`; }, 1000 / 12); }
 })();
 
-/* ---------- Wörter für den Stagger-Einstieg ---------- */
-(() => {
-  let n = 0;
-  $$("#stagger .titel>span, #stagger .fliess>span").forEach((el) => {
-    const gehe = (knoten) => {
-      [...knoten.childNodes].forEach((k) => {
-        if (k.nodeType === 3) {
-          const teile = k.textContent.split(/(\s+)/), f = document.createDocumentFragment();
-          teile.forEach((t) => { if (!t) return; if (/^\s+$/.test(t)) f.appendChild(document.createTextNode(t)); else { const w = document.createElement("span"); w.className = "wo"; w.style.setProperty("--w", n++); w.textContent = t; f.appendChild(w); } });
-          k.replaceWith(f);
-        } else if (k.nodeType === 1) gehe(k);
-      });
-    };
-    gehe(el);
-  });
-})();
-
 /* ---------- Start ---------- */
 let lenis = null;
 if (!RM && window.Lenis) { try { lenis = new Lenis({ lerp: .09, smoothWheel: true }); } catch (e) { lenis = null; } }
@@ -1157,7 +1081,7 @@ function start() {
 }
 // Überspringen: Taste, Klick oder Rad beendet den Auftakt sofort
 const ueberspringen = () => { if (!auftaktFertig && zeit - auftaktStart > .4) auftaktEnde(); };
-addEventListener("wheel", ueberspringen, { passive: true }); addEventListener("touchstart", ueberspringen, { passive: true }); addEventListener("keydown", ueberspringen); addEventListener("click", ueberspringen);
+addEventListener("wheel", ueberspringen, { passive: true }); addEventListener("keydown", ueberspringen); addEventListener("click", ueberspringen);
 let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { groesse(); vermessen(); }, 120); });
 const bereit = document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]) : Promise.resolve();
 bereit.then(() => { (document.fonts ? Promise.all(["800 100px Anybody", "400 12px 'Martian Mono'", "400 16px 'Instrument Sans'"].map((f) => document.fonts.load(f).catch(() => {}))) : Promise.resolve()).then(start); });
