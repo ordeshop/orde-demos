@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="en" data-showreel>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zwischenbild · Showreel by ORDÉ</title>
+<meta name="description" content="A showreel about motion graphics: one dot bounces, follows curves and becomes a shape, a line, a hundred copies and a wave. All animated live, no images.">
+<meta name="theme-color" content="#E9EBEF">
+<link rel="stylesheet" href="../bibliothek/schriften.css">
+<script>document.documentElement.classList.add("js")</script>
+<style>
+/* Gestaltungsplan
+   Idee in einem Satz: Der Besucher hält die Zeitleiste eines Motion-Design-Films in der Hand. Ein einziger Punkt
+   läuft ohne Schnitt durch sechs Werkzeuge des Fachs (Squash & Stretch, Easing, Pfad-Morph, Trim Paths, Repeater,
+   Stagger), jede Szene wächst aus dem letzten Bild der vorigen.
+   Merkmal: die Zeitleiste unten mit roten Keyframes, blauen Zwischenbildern und Abspielkopf. Man kann sie ziehen.
+   Farben wie beim Zeichentrick auf dem Leuchttisch: Rotstift = Schlüsselpose, Blaustift = Zwischenbild, Graphit =
+   das fertige Bild. Farbe bedeutet immer etwas, sie ist nie Schmuck.
+   Vorbild: Formkette nach Ordinary Folk (eine Form verbindet alle Szenen, keine Blende, kein Schwarzbild) und
+   Kinetic Type nach Studio Dumbar (Schrift verformt sich, bleibt aber in ihrer Zeile).
+   Bewusst nicht: keine Fotos, kein Video, kein WebGL, kein Dunkel-mit-Neon, keine Glitches.
+   Bewegungsgrammatik: Schlüsselposen stehen, Zwischenbilder laufen; drei Kurven: rein expo.out, raus expo.in,
+   Wechsel expo.inOut. */
+:root{
+  --papier:#E9EBEF;
+  --papier-hell:#F4F5F7;
+  --graphit:#15171C;
+  --blei:#555A64;
+  --blau:#2E5BFF;
+  --rot:#F2361A;
+  --linie:rgba(21,23,28,.16);
+  --display:"Anybody","Arial Black",system-ui,sans-serif;
+  --text:"Instrument Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:"Martian Mono",ui-monospace,Menlo,Consolas,monospace;
+  --gl:max(24px,env(safe-area-inset-left,0px));
+  --gr:max(24px,env(safe-area-inset-right,0px));
+  --rein:cubic-bezier(.16,1,.3,1);
+  --raus:cubic-bezier(.7,0,.84,0);
+  --balkenhoehe:58px;
+  --unten:calc(env(safe-area-inset-bottom,0px) + var(--balkenhoehe));
+  color-scheme:light;
+}
+@media (max-width:640px){:root{--balkenhoehe:94px;--gl:max(16px,env(safe-area-inset-left,0px));--gr:max(16px,env(safe-area-inset-right,0px))}}
+*{box-sizing:border-box}
+html{background:var(--papier)}
+body{margin:0;background:var(--papier);color:var(--graphit);font-family:var(--text);font-size:16px;line-height:1.55;overflow-x:clip;-webkit-font-smoothing:antialiased}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blau);outline-offset:3px}
+
+#leinwand{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+.korn{position:fixed;inset:-50%;z-index:40;pointer-events:none;opacity:.07;mix-blend-mode:multiply;background-size:180px 180px}
+.vignette{position:fixed;inset:0;z-index:39;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(21,23,28,.07))}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:16px;padding-left:var(--gl);padding-right:var(--gr);font:400 10.5px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;pointer-events:none}
+.hud-oben{top:0;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+.hud-marke{font:800 15px/1 var(--display);font-variation-settings:"wdth" 120;letter-spacing:-.01em;text-transform:none}
+.hud-marke b{color:var(--rot);font-weight:inherit}
+.hud-rechts{display:flex;gap:18px;color:var(--blei);font-variant-numeric:tabular-nums}
+.hud-rechts b{color:var(--graphit);font-weight:400}
+
+.zeitleiste{position:fixed;left:var(--gl);right:var(--gr);bottom:calc(var(--unten) + 12px);z-index:50;display:flex;align-items:center;gap:16px;font:400 10.5px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.zl-szene{min-width:13.5em;color:var(--graphit)}
+.zl-szene b{color:var(--rot);font-weight:400}
+.zl-zeit{color:var(--blei);min-width:8.5em;text-align:right}
+.spur{position:relative;flex:1;height:26px;cursor:ew-resize;touch-action:none}
+.spur::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--graphit);opacity:.5}
+.spur-takte{position:absolute;left:0;right:0;top:calc(50% - 4px);height:8px;background:repeating-linear-gradient(90deg,var(--blau) 0 1px,transparent 1px 100%);background-size:calc(100% / 60) 100%;opacity:.55}
+.spur-key{position:absolute;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:var(--rot);transform:rotate(45deg)}
+.spur-kopf{position:absolute;top:-4px;bottom:-4px;left:0;width:2px;margin-left:-1px;background:var(--graphit);will-change:transform}
+.spur-kopf::before{content:"";position:absolute;top:-5px;left:-4px;border:5px solid transparent;border-top:6px solid var(--graphit);border-bottom:0}
+.spur:focus-visible{outline-offset:6px}
+
+/* ---------- Szenen ---------- */
+main{position:relative;z-index:2}
+.szene{position:relative}
+.js .szene{height:calc(var(--lang) * 1vh)}
+.js .ui{position:fixed;inset:0;pointer-events:none;padding:calc(64px + env(safe-area-inset-top,0px)) var(--gr) calc(var(--unten) + 64px) var(--gl);display:flex;flex-direction:column;justify-content:space-between}
+.ui{padding:48px var(--gr) 48px var(--gl)}
+.kicker{margin:0;font:400 10.5px/1.5 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--blei)}
+.kicker b{color:var(--rot);font-weight:400}
+.block{max-width:min(430px,34vw)}
+.titel{margin:0 0 .45em;font:800 clamp(30px,3.3vw,52px)/1 var(--display);font-variation-settings:"wdth" 88;letter-spacing:-.025em;text-wrap:balance}
+.titel em{font-style:normal;color:var(--blau)}
+.fliess{margin:0;font-size:16px;line-height:1.55;color:var(--graphit);max-width:42ch}
+.code{margin:.9em 0 0;font:400 11px/1.5 var(--mono);color:var(--blau);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+@media (hover:none){.nur-maus{display:none}}
+.hinweis{margin:.6em 0 0;font:400 10.5px/1.5 var(--mono);color:var(--rot);letter-spacing:.04em;text-transform:uppercase}
+
+/* Zeilen fahren aus der Maske, nur transform */
+.m{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
+.m>span{display:block}
+.js .m>span{transform:translateY(calc(112% + .6em));transition:transform .3s var(--raus)}
+.js .an .m>span{transform:none;transition:transform .85s var(--rein) calc(.3s + var(--i,0) * .07s)}
+
+/* Held */
+.held-titel{margin:0;-webkit-user-select:none;user-select:none;font:800 100px/1 var(--display);letter-spacing:-.02em;white-space:nowrap;color:var(--graphit)}
+.js .held-titel{position:fixed;z-index:2;left:var(--gl);top:38%;transform:translateY(-50%)}
+.wort{display:inline-block;vertical-align:top}
+.wort-innen{display:inline-block;transform-origin:0 50%;white-space:nowrap}
+.bu{display:inline-block;vertical-align:top;overflow:hidden;line-height:1;padding:.14em 0 .16em}
+.bu>i{display:inline-block;font-style:normal}
+.js .bu>i{transform:translateY(118%)}
+.js .los .bu>i{transform:none;transition:transform .9s var(--rein) calc(var(--i) * .045s)}
+.js .weg .bu>i{transform:translateY(-118%);transition:transform .45s var(--raus) calc(var(--i) * .025s)}
+.bu.stoss>i{animation:stoss .42s var(--rein)}
+@keyframes stoss{0%{transform:scale(1.12,.84)}45%{transform:scale(.96,1.05)}100%{transform:none}}
+.mess{display:inline-block;width:0;height:0;vertical-align:baseline}
+.held .ui{justify-content:flex-end}
+
+/* Abspann */
+.js .abspann .ui{justify-content:center;align-items:center;text-align:center}
+.end-titel{margin:0;font:800 clamp(40px,7.4vw,124px)/1.02 var(--display);letter-spacing:-.03em;text-wrap:balance;max-width:14ch}
+.end-titel .w{display:inline-block;transform-origin:50% 100%;font-variation-settings:"wdth" 100}
+.end-titel .w.stoss{animation:wstoss .45s var(--rein)}
+@keyframes wstoss{0%{transform:scale(1.06,.86)}45%{transform:scale(.98,1.04)}100%{transform:none}}
+.end-titel .w-blau{color:var(--blau)}
+.end-text{margin:1.3em auto 0;max-width:46ch;font-size:16px}
+.abspann .kicker{margin-bottom:1.6em}
+.credits{list-style:none;margin:1.6em 0 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font:400 10.5px/1.5 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--blei)}
+.credits li::before{content:"";display:inline-block;width:6px;height:6px;margin-right:8px;background:var(--rot);transform:rotate(45deg) translateY(-1px)}
+.knopf{pointer-events:auto;margin-top:2em;appearance:none;border:0;cursor:pointer;font:500 15px/1 var(--text);color:var(--papier-hell);background:var(--graphit);padding:15px 24px;border-radius:999px;min-height:46px;transition:transform .2s var(--rein)}
+.knopf:hover{transform:translateY(-2px)}
+.knopf:active{transform:translateY(1px) scale(.98)}
+
+.auftakt{position:fixed;left:0;right:0;bottom:calc(var(--unten) + 56px);z-index:60;text-align:center;font:400 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blei);font-variant-numeric:tabular-nums;pointer-events:none;transition:transform .5s var(--raus)}
+.auftakt.fertig{transform:translateY(calc(var(--unten) + 80px))}
+.ohne-js .auftakt{display:none}
+
+@media (max-width:760px){
+  .block{max-width:none}
+  .titel{font-size:clamp(26px,7.4vw,34px)}
+  .fliess{font-size:15px}
+  .js .ui{padding-bottom:calc(var(--unten) + 54px)}
+  .js .held-titel{top:30%}
+  .wort{display:block}
+  .zl-szene{min-width:0}
+  .zl-szene span{display:none}
+  .zl-zeit{min-width:0}
+  .hud-rechts .lang{display:none}
+  .credits{gap:4px 12px}
+}
+@media (max-height:620px) and (min-width:761px){.fliess{font-size:15px}.titel{font-size:34px}}
+@media (prefers-reduced-motion:reduce){
+  .js .m>span,.js .an .m>span{transition:none}
+  .js .bu>i,.js .los .bu>i,.js .weg .bu>i{transition:none}
+  .bu.stoss>i,.end-titel .w.stoss{animation:none}
+}
+</style>
+</head>
+<body>
+<canvas id="leinwand" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="korn" id="korn" aria-hidden="true"></div>
+
+<div class="hud hud-oben" aria-hidden="true">
+  <span class="hud-marke">zwischenbild<b>.</b></span>
+  <span class="hud-rechts"><span class="lang" id="hudWert">Squash &amp; Stretch</span><span>24 fps · Frame <b id="hudBild">0000</b></span></span>
+</div>
+
+<div class="zeitleiste">
+  <span class="zl-szene" aria-hidden="true"><b id="zlNr">01</b> / 06<span id="zlName"> · Squash &amp; Stretch</span></span>
+  <div class="spur" id="spur" role="slider" tabindex="0" aria-label="Timeline: jump to a point" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Scene 1 of 6">
+    <div class="spur-takte"></div>
+    <div class="spur-kopf" id="kopf"></div>
+  </div>
+  <span class="zl-zeit" id="zlZeit" aria-hidden="true">00:00:00:00</span>
+</div>
+
+<div class="auftakt" id="auftakt" aria-hidden="true">Frame 001 / 060 · loading</div>
+
+<main>
+
+<!-- 01 SQUASH & STRETCH -->
+<section class="szene held" id="held" data-nr="01" data-name="Squash &amp; Stretch" style="--lang:150">
+  <h1 class="held-titel" id="heldTitel"><span class="sr">Zwischenbild</span><span aria-hidden="true"><span class="wort"><span class="wort-innen"><span class="bu" style="--i:0"><i>z</i></span><span class="bu" style="--i:1"><i>w</i></span><span class="bu" id="buPunkt" style="--i:2"><i>ı</i><span class="mess" id="messPunkt"></span></span><span class="bu" style="--i:3"><i>s</i></span><span class="bu" style="--i:4"><i>c</i></span><span class="bu" style="--i:5"><i>h</i></span><span class="bu" style="--i:6"><i>e</i></span><span class="bu" style="--i:7"><i>n</i></span></span></span><span class="wort"><span class="wort-innen"><span class="bu" style="--i:8"><i>b</i></span><span class="bu" id="buKey" style="--i:9"><i>ı</i><span class="mess" id="messKey"></span></span><span class="bu" style="--i:10"><i>l</i></span><span class="bu" style="--i:11"><i>d</i></span></span></span></span></h1>
+  <div class="ui">
+    <div class="block">
+      <p class="kicker m" style="--i:0"><span><b>01</b> / 06 · Squash &amp; Stretch</span></p>
+      <p class="fliess m" style="--i:1"><span>Zwischenbild is German for the in-between. Motion graphics live in the frames between two poses, and here your scroll is the playhead: six tools, one dot and not a single photo.</span></p>
+      <p class="hinweis m" style="--i:2"><span><span class="nur-maus">Hover the type · </span>you can throw the dot</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 EASING -->
+<section class="szene" id="easing" data-nr="02" data-name="Easing" style="--lang:340">
+  <div class="ui">
+    <p class="kicker m"><span><b>02</b> / 06 · Easing · Graph editor</span></p>
+    <div class="block">
+      <h2 class="titel m" style="--i:1"><span>The curve sets the <em>character.</em></span></h2>
+      <p class="fliess m" style="--i:2"><span>Same distance, same time. Only the curve changes, and a machine turns into something with weight or swagger. The blue circles show where the dot sits in every frame.</span></p>
+      <p class="code m" style="--i:3"><span id="kurveText">cubic-bezier(0, 0, 1, 1) · linear</span></p>
+      <p class="hinweis m" style="--i:4"><span>Drag the red handles</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PFAD-MORPH -->
+<section class="szene" id="morph" data-nr="03" data-name="Path Morph" style="--lang:320">
+  <div class="ui">
+    <p class="kicker m"><span><b>03</b> / 06 · Path morph · Shape chain</span></p>
+    <div class="block">
+      <h2 class="titel m" style="--i:1"><span>One shape becomes <em>the next.</em></span></h2>
+      <p class="fliess m" style="--i:2"><span>Five key poses: circle, square, triangle, star, flower. The browser computes everything in between, 240 points in every frame. The blue lines are the in-betweens that just went by.</span></p>
+      <p class="code m" style="--i:3"><span id="morphText">Key 01 · Circle</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 TRIM PATHS -->
+<section class="szene" id="trim" data-nr="04" data-name="Trim Paths" style="--lang:320">
+  <div class="ui">
+    <p class="kicker m"><span><b>04</b> / 06 · Trim Paths · Line</span></p>
+    <div class="block">
+      <h2 class="titel m" style="--i:1"><span>A line that <em>draws itself.</em></span></h2>
+      <p class="fliess m" style="--i:2"><span>The start and the end of a line run on different curves, so it chases itself along a path of 900 points. The mouse detunes the oscillation.</span></p>
+      <p class="code m" style="--i:3"><span id="trimText">Start 0% · End 100%</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 REPEATER -->
+<section class="szene" id="repeater" data-nr="05" data-name="Repeater" style="--lang:320">
+  <div class="ui">
+    <p class="kicker m"><span><b>05</b> / 06 · Repeater · Copies</span></p>
+    <div class="block">
+      <h2 class="titel m" style="--i:1"><span>Built once, <em>turned</em> a hundred times.</span></h2>
+      <p class="fliess m" style="--i:2"><span>A single stroke, copied by fixed rules. At the golden angle of 137.5°, the copies line up like the seeds of a sunflower. The mouse twists every copy.</span></p>
+      <p class="code m" style="--i:3"><span id="repText">Copies 1</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 STAGGER -->
+<section class="szene" id="stagger" data-nr="06" data-name="Stagger" style="--lang:320">
+  <div class="ui">
+    <p class="kicker m"><span><b>06</b> / 06 · Stagger · Grid</span></p>
+    <div class="block">
+      <h2 class="titel m" style="--i:1"><span>Not all <em>at once.</em></span></h2>
+      <p class="fliess m" style="--i:2"><span>Each cell starts a little later than its neighbor. The offset turns one movement into a wave: from the left, from the center, from the corner, at random. Click the grid and it answers.</span></p>
+      <p class="code m" style="--i:3"><span id="stagText">Wave 1 / 4 · from the left</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ABSPANN -->
+<section class="szene abspann" id="abspann" data-nr="06" data-name="Credits" style="--lang:190">
+  <div class="ui">
+    <div>
+      <p class="kicker m"><span>Credits</span></p>
+      <h2 class="end-titel m" style="--i:1"><span><span class="w">Every</span> <span class="w">frame</span> <span class="w w-blau">in&nbsp;between</span> <span class="w">is</span> <span class="w">deliberate.</span></span></h2>
+      <p class="fliess end-text m" style="--i:2"><span>Six motion design tools, all animated live in the browser. No photos, no video, just dots, lines and curves.</span></p>
+      <div class="m" style="--i:3"><span><ul class="credits" aria-label="The tools"><li>Squash &amp; Stretch</li><li>Easing</li><li>Path Morph</li><li>Trim Paths</li><li>Repeater</li><li>Stagger</li></ul></span></div>
+      <div class="m" style="--i:4"><span><button class="knopf" id="nochmal" type="button">Play it again</button></span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="../bibliothek/lenis.min.js"></script>
+<script>
+(() => {
+"use strict";
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const TAU = Math.PI * 2, GOLD = Math.PI * (3 - Math.sqrt(5));
+const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const seg = (p, a, b) => clamp((p - a) / (b - a));
+const expoOut = (t) => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+const expoIn = (t) => t <= 0 ? 0 : Math.pow(2, 10 * t - 10);
+const expoInOut = (t) => t <= 0 ? 0 : t >= 1 ? 1 : t < .5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
+const backOut = (t) => { const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+const smooth = (t) => t * t * (3 - 2 * t);
+const komma = (v, n = 0) => v.toFixed(n);
+const hash = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+const css = getComputedStyle(document.documentElement);
+const farbe = (n) => css.getPropertyValue(n).trim();
+const C = { papier: farbe("--papier"), graphit: farbe("--graphit"), blau: farbe("--blau"), rot: farbe("--rot"), blei: farbe("--blei") };
+const rgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const RGB = { graphit: rgb(C.graphit), blau: rgb(C.blau), rot: rgb(C.rot) };
+const mische = (a, b, t) => { t = clamp(t); return `rgb(${Math.round(lerp(a[0], b[0], t))},${Math.round(lerp(a[1], b[1], t))},${Math.round(lerp(a[2], b[2], t))})`; };
+
+/* ---------- Leinwand ---------- */
+const cv = $("#leinwand"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1, mobil = false, K = {};
+function groesse() {
+  W = innerWidth; H = innerHeight; mobil = W < 761;
+  DPR = Math.min(devicePixelRatio || 1, 2);
+  if (W * H * DPR * DPR > 7e6) DPR = Math.max(1, Math.sqrt(7e6 / (W * H)));
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  const balken = W <= 640 ? 94 : 58, oben = 64;
+  let x0, x1, y0, y1;
+  if (mobil) { x0 = 16; x1 = W - 16; y0 = oben + 34; y1 = Math.max(y0 + 200, H * .56); }
+  else { x0 = Math.max(W * .40, 470); x1 = W - Math.max(40, W * .05); y0 = oben + 20; y1 = H - balken - 70; }
+  K = { x0, x1, y0, y1, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0, s: Math.min(x1 - x0, y1 - y0) };
+  rasterBauen(); easingLayout(); titelEinpassen();
+}
+
+/* ---------- Zeichnen ---------- */
+function ball(x, y, r, opt = {}) {
+  const vx = opt.vx || 0, vy = opt.vy || 0, sp = Math.hypot(vx, vy);
+  let sx = 1, sy = 1, a = 0;
+  const st = 1 + Math.min(sp / 2600, .5);
+  if (opt.sq && opt.sq > st - 1) { sx = 1 + opt.sq; sy = 1 / (1 + opt.sq); a = 0; y += r * (1 - sy); }
+  else if (sp > 30) { sx = st; sy = 1 / st; a = Math.atan2(vy, vx); }
+  ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.scale(sx, sy);
+  ctx.beginPath(); ctx.arc(0, 0, Math.max(.01, r), 0, TAU); ctx.restore();
+  ctx.fillStyle = opt.farbe || C.graphit; ctx.fill();
+}
+function ring(x, y, r, farbe, lw = 1.25) { ctx.beginPath(); ctx.arc(x, y, Math.max(.01, r), 0, TAU); ctx.strokeStyle = farbe; ctx.lineWidth = lw; ctx.stroke(); }
+function raute(x, y, s, farbe) { ctx.beginPath(); ctx.moveTo(x, y - s); ctx.lineTo(x + s, y); ctx.lineTo(x, y + s); ctx.lineTo(x - s, y); ctx.closePath(); ctx.fillStyle = farbe; ctx.fill(); }
+function rrect(x, y, w, h, r) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function form(x, y, w, h, r, rot, farbe) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); rrect(-w / 2, -h / 2, w, h, r); ctx.fillStyle = farbe; ctx.fill(); ctx.restore();
+}
+function linie(x0, y0, x1, y1, t, farbe, lw = 1) {
+  if (t <= 0) return; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(lerp(x0, x1, t), lerp(y0, y1, t));
+  ctx.strokeStyle = farbe; ctx.lineWidth = lw; ctx.stroke();
+}
+function schrift(text, x, y, farbe, align = "left") {
+  ctx.font = `400 ${mobil ? 9.5 : 10.5}px "Martian Mono", ui-monospace, monospace`; ctx.fillStyle = farbe; ctx.textAlign = align; ctx.textBaseline = "middle";
+  ctx.fillText(text.toUpperCase(), x, y);
+}
+// Geschwindigkeit je Darsteller aus dem letzten Bild
+const spuren = {};
+function tempo(id, x, y, dt) {
+  const s = spuren[id] || (spuren[id] = { x, y, vx: 0, vy: 0 });
+  if (dt > 0) { s.vx = lerp(s.vx, (x - s.x) / dt, .45); s.vy = lerp(s.vy, (y - s.y) / dt, .45); }
+  s.x = x; s.y = y; return s;
+}
+
+/* ---------- Zeiger ---------- */
+const zeiger = { x: -1e4, y: -1e4, sx: 0, sy: 0, nx: 0, ny: 0, aktiv: false, zuletzt: -1e4 };
+const kannHover = matchMedia("(hover: hover)").matches;
+
+/* ---------- Szenen und Scroll ---------- */
+const szenen = $$(".szene").map((el) => ({ el, id: el.id, nr: el.dataset.nr, name: el.dataset.name, start: 0, lang: 1 }));
+let maxScroll = 1;
+function vermessen() {
+  let y = 0;
+  for (const s of szenen) { s.start = s.el.offsetTop; s.lang = s.el.offsetHeight; y = s.start + s.lang; }
+  maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  const letzte = szenen[szenen.length - 1]; letzte.lang = Math.max(1, maxScroll - letzte.start);
+  // Keyframes in der Zeitleiste
+  $$(".spur-key").forEach((k) => k.remove());
+  for (const s of szenen) {
+    const k = document.createElement("i"); k.className = "spur-key"; k.style.left = (s.start / maxScroll * 100) + "%"; $("#spur").appendChild(k);
+  }
+}
+function stand(y) {
+  let i = 0;
+  for (let j = 0; j < szenen.length; j++) if (y >= szenen[j].start - 1) i = j;
+  const s = szenen[i];
+  return { i, s, p: clamp((y - s.start) / s.lang) };
+}
+const RM_P = { held: .2, easing: .7, morph: .55, trim: .62, repeater: .8, stagger: .4, abspann: .6 };
+
+/* ---------- Auftakt: der springende Ball ---------- */
+let auftaktFertig = RM, auftaktStart = 0;
+const AUFTAKT = 2.5;
+const bounces = (() => {
+  const c = .4, n = 5, hs = [];
+  for (let k = 0; k < n; k++) hs.push(Math.pow(c, k));
+  const L = hs.map((h, k) => (k === 0 ? 1 : 2) * Math.sqrt(h));
+  const sum = L.reduce((a, b) => a + b, 0);
+  return { hs, L, sum };
+})();
+function auftaktBall(t, T) {
+  // t: 0..1 über den ganzen Flug. Ball kommt von rechts oben, springt nach links und landet auf dem i.
+  const D = Math.min(W * .62, W - T.x - 30), h0 = Math.min(H * .5, T.y - 30);
+  let u = t * bounces.sum, k = 0;
+  while (k < bounces.L.length - 1 && u > bounces.L[k]) { u -= bounces.L[k]; k++; }
+  const f = clamp(u / bounces.L[k]);
+  const xFrom = bounces.L.slice(0, k).reduce((a, b) => a + b, 0) / bounces.sum;
+  const x = T.x + D - D * (xFrom + f * bounces.L[k] / bounces.sum);
+  const v = k === 0 ? f : f * 2 - 1;
+  const y = T.y - h0 * bounces.hs[k] * (1 - v * v);
+  return { x, y, k };
+}
+
+/* ---------- Held: Buchstaben ---------- */
+const titel = $("#heldTitel"), woerter = $$(".wort"), innen = $$(".wort-innen"), buchst = $$(".held-titel .bu");
+const lv = buchst.map(() => ({ v: .27, g: 0 }));
+let titelF = 100, basisBreite = [];
+function titelEinpassen() {
+  buchst.forEach((b) => b.style.fontVariationSettings = `"wdth" 91.6, "wght" 754`);
+  innen.forEach((e) => e.style.transform = "none");
+  woerter.forEach((w) => w.style.width = "auto");
+  titel.style.fontSize = "100px";
+  const rand = parseFloat(getComputedStyle(titel).left) || 24;
+  const verfuegbar = W - rand * 2;
+  if (mobil) titelF = 100 * verfuegbar / Math.max(...innen.map((e) => e.offsetWidth));
+  else titelF = 100 * verfuegbar / innen.reduce((a, e) => a + e.offsetWidth, 0);
+  titelF = Math.min(titelF, H * (mobil ? .26 : .42));
+  titel.style.fontSize = titelF + "px";
+  basisBreite = innen.map((e) => e.offsetWidth);
+  woerter.forEach((w, i) => w.style.width = basisBreite[i] + "px");
+  // x-Höhe für die Lage der Punkte
+  ctx.font = `800 ${titelF}px Anybody`;
+  const m = ctx.measureText("x"); titelXH = m.actualBoundingBoxAscent || titelF * .52;
+}
+let titelXH = 52;
+function punktLage(mess) {
+  const r = mess.getBoundingClientRect(), bu = mess.parentElement.getBoundingClientRect();
+  const rad = titelF * .078;
+  return { x: bu.left + bu.width / 2 + titelF * .006, y: r.top - titelXH - titelF * .07 - rad, r: rad };
+}
+function buchstabenBewegen(t, dt, aktiv) {
+  if (!aktiv) return;
+  const idle = !kannHover || (t - zeiger.zuletzt > 1.8);
+  const mitten = idle || RM ? null : buchst.map((b) => { const r = b.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+  buchst.forEach((b, i) => {
+    let ziel;
+    if (RM) ziel = .27;
+    else if (idle) ziel = .2 + .8 * Math.pow(Math.max(0, Math.sin(t * 1.6 - i * .55)), 4);
+    else {
+      const dx = (zeiger.x - mitten[i][0]) / titelF, dy = (zeiger.y - mitten[i][1]) / titelF;
+      ziel = clamp(1.15 - Math.hypot(dx * .9, dy * .7), 0, 1);
+    }
+    const s = lv[i];
+    s.g += (ziel - s.v) * 180 * dt; s.g *= Math.pow(.0009, dt); s.v += s.g * dt;
+    const wd = clamp(70 + 80 * s.v, 50, 150), wg = clamp(700 + 200 * s.v, 100, 900);
+    b.style.fontVariationSettings = `"wdth" ${wd.toFixed(1)}, "wght" ${wg.toFixed(0)}`;
+  });
+  innen.forEach((e, i) => { const w = e.offsetWidth; e.style.transform = `scaleX(${(basisBreite[i] / w).toFixed(4)})`; });
+}
+
+/* Wurf-Ball im Held */
+const wurf = { modus: "ruht", x: 0, y: 0, vx: 0, vy: 0, t0: 0, sq: 0, fx: 0, fy: 0, zx: 0, zy: 0, geschichte: [], ziehen: [] };
+function wurfBoden() { return H - (W <= 640 ? 94 : 58) - 64; }
+
+/* ---------- Easing ---------- */
+const KURVEN = [
+  { n: "linear", b: [0, 0, 1, 1] },
+  { n: "ease-in-out", b: [.65, 0, .35, 1] },
+  { n: "expo.out", b: [.16, 1, .3, 1] },
+  { n: "back.out", b: [.34, 1.56, .64, 1] },
+];
+const eigene = { slot: -1, b: null };
+let E = {};
+function easingLayout() {
+  const vmin = -.22, vmax = 1.28;
+  let G, gx, gy, laneY, lx0, lx1, r;
+  r = Math.max(9, Math.min(17, K.s * .03));
+  if (mobil) { G = Math.min(K.w * .62, K.h * .62); gx = K.cx - G / 2; gy = K.y0 + 8; laneY = gy + G + Math.max(42, G * .2); lx0 = K.x0 + r + 4; lx1 = K.x1 - r - 4; }
+  else { G = Math.min(K.w * .52, K.h * .6); const ges = G + Math.max(70, G * .24) + r; gx = K.x0; gy = K.cy - ges / 2; laneY = gy + G + Math.max(70, G * .24); lx0 = K.x0 + r; lx1 = K.x1 - r; }
+  E = { G, gx, gy, laneY, lx0, lx1, r, vmin, vmax };
+}
+const gxP = (t) => E.gx + t * E.G, gyP = (v) => E.gy + E.G - (v - E.vmin) / (E.vmax - E.vmin) * E.G;
+function bez(b, t) {
+  // cubic-bezier: x(u) = t lösen, y(u) zurück
+  const [x1, y1, x2, y2] = b;
+  const bx = (u) => 3 * (1 - u) * (1 - u) * u * x1 + 3 * (1 - u) * u * u * x2 + u * u * u;
+  const by = (u) => 3 * (1 - u) * (1 - u) * u * y1 + 3 * (1 - u) * u * u * y2 + u * u * u;
+  let lo = 0, hi = 1, u = t;
+  for (let i = 0; i < 24; i++) { u = (lo + hi) / 2; if (bx(u) < t) lo = u; else hi = u; }
+  return by(u);
+}
+function easingZustand(p) {
+  const a = .12, sl = .19;
+  const k = clamp(Math.floor((p - a) / sl), 0, 3);
+  const q = p < a ? 0 : seg(p, a + k * sl, a + (k + 1) * sl);
+  const vor = KURVEN[Math.max(0, k - 1)].b, nach = KURVEN[k].b;
+  const m = expoInOut(seg(q, 0, .2));
+  let b = vor.map((v, i) => lerp(v, nach[i], m));
+  if (eigene.slot === k && eigene.b) b = eigene.b.slice();
+  const t = p < a ? 0 : seg(q, .24, .9);
+  const rueck = k % 2 === 1;
+  const y = bez(b, t);
+  return { k, q, b, t, y, rueck, wert: rueck ? 1 - y : y, m };
+}
+
+/* ---------- Morph ---------- */
+const N_MORPH = 240;
+function polyR(verts, th) {
+  th = ((th % TAU) + TAU) % TAU;
+  for (let i = 0; i < verts.length; i++) {
+    const a = verts[i], b = verts[(i + 1) % verts.length];
+    let a0 = a[0], a1 = b[0]; if (a1 <= a0) a1 += TAU;
+    let t2 = th; if (t2 < a0) t2 += TAU;
+    if (t2 >= a0 && t2 <= a1) {
+      const ax = Math.cos(a0) * a[1], ay = Math.sin(a0) * a[1], bx = Math.cos(a1) * b[1], by = Math.sin(a1) * b[1];
+      const dx = Math.cos(th), dy = Math.sin(th);
+      const ex = bx - ax, ey = by - ay, den = dx * ey - dy * ex;
+      if (Math.abs(den) < 1e-9) return a[1];
+      return (ax * ey - ay * ex) / den;
+    }
+  }
+  return 1;
+}
+const vieleck = (n, rot, r = 1) => Array.from({ length: n }, (_, k) => [(((rot + k * TAU / n) % TAU) + TAU) % TAU, r]).sort((a, b) => a[0] - b[0]);
+const sternV = Array.from({ length: 10 }, (_, k) => [(((-Math.PI / 2 + k * Math.PI / 5) % TAU) + TAU) % TAU, k % 2 ? .5 : 1.12]).sort((a, b) => a[0] - b[0]);
+const quadV = vieleck(4, Math.PI / 4, 1.2), dreiV = vieleck(3, -Math.PI / 2, 1.3);
+const FORMEN = [
+  { n: "Circle", r: () => 1 },
+  { n: "Square", r: (th) => polyR(quadV, th) },
+  { n: "Triangle", r: (th) => polyR(dreiV, th) + 0 },
+  { n: "Star", r: (th) => polyR(sternV, th) },
+  { n: "Flower", r: (th) => .92 + .16 * Math.cos(6 * th) },
+  { n: "Circle", r: () => 1 },
+];
+// Radien vorrechnen
+const WINKEL = Array.from({ length: N_MORPH }, (_, i) => i / N_MORPH * TAU - Math.PI / 2);
+const RADIEN = FORMEN.map((f) => WINKEL.map((th) => f.r(th)));
+function morphZustand(p) {
+  const a = .1, b = .86, n = FORMEN.length - 1;
+  const u = seg(p, a, b) * n;
+  const k = Math.min(n - 1, Math.floor(u)), f = u - k;
+  const e = expoInOut(seg(f, .3, 1));
+  return { k, e, spin: (k + e) * Math.PI / 2 };
+}
+
+/* ---------- Trim Paths ---------- */
+const N_TRIM = 900, WICK = 9;
+const harm = { a: 0, b: 0 };
+function trimPunkte(p, R, cx, cy, mi) {
+  const m = expoInOut(seg(p, .06, .3)), z = expoInOut(seg(p, .86, .96));
+  const pts = new Float32Array(N_TRIM * 2), Ls = K.s * .16 - Math.max(4, K.s * .028);
+  const ph = harm.a, dk = .036 + harm.b * .02;
+  for (let i = 0; i < N_TRIM; i++) {
+    const s = i / (N_TRIM - 1);
+    const ca = s * TAU * WICK - Math.PI / 2;
+    const kx = Math.cos(ca), ky = Math.sin(ca);
+    const t = s * 44, d = Math.exp(-dk * t);
+    const hx = (Math.sin(2.01 * t + ph) * .62 + Math.sin(3 * t + 1.2) * .38) * d * 1.04;
+    const hy = (Math.sin(3.02 * t + .5) * .62 + Math.sin(2 * t + ph * .6) * .38) * d * 1.04;
+    let x = lerp(kx, hx, m), y = lerp(ky, hy, m);
+    if (z > 0) { x = lerp(x, 0, z); y = lerp(y, (s - .5) * Ls / R, z); }
+    pts[i * 2] = cx + x * R; pts[i * 2 + 1] = cy + y * R;
+  }
+  return pts;
+}
+function zug(pts, a, b, farbe, lw) {
+  a = clamp(a); b = clamp(b); if (b - a < .0005) return;
+  const n = pts.length / 2 - 1, ia = a * n, ib = b * n, i0 = Math.floor(ia), i1 = Math.ceil(ib);
+  ctx.beginPath();
+  const fa = ia - i0; ctx.moveTo(lerp(pts[i0 * 2], pts[(i0 + 1) * 2] ?? pts[i0 * 2], fa), lerp(pts[i0 * 2 + 1], pts[(i0 + 1) * 2 + 1] ?? pts[i0 * 2 + 1], fa));
+  for (let i = i0 + 1; i < i1; i++) ctx.lineTo(pts[i * 2], pts[i * 2 + 1]);
+  const fb = ib - (i1 - 1); ctx.lineTo(lerp(pts[(i1 - 1) * 2], pts[i1 * 2], fb), lerp(pts[(i1 - 1) * 2 + 1], pts[i1 * 2 + 1], fb));
+  ctx.strokeStyle = farbe; ctx.lineWidth = lw; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
+}
+
+/* ---------- Raster (Repeater-Ende und Stagger) ---------- */
+let R = {};
+function rasterBauen() {
+  let c = mobil ? 38 : Math.max(46, K.s / 8.5);
+  let cols = Math.floor(K.w / c), rows = Math.floor(K.h / c);
+  while (cols * rows > 150) { c *= 1.06; cols = Math.floor(K.w / c); rows = Math.floor(K.h / c); }
+  const ox = K.cx - cols * c / 2 + c / 2, oy = K.cy - rows * c / 2 + c / 2;
+  const zellen = [];
+  for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) {
+    const x = ox + q * c, y = oy + r * c, d = Math.hypot(x - K.cx, y - K.cy);
+    zellen.push({ x, y, q, r, d });
+  }
+  const dmax = Math.max(...zellen.map((z) => z.d));
+  zellen.forEach((z, i) => { z.dn = z.d / dmax; z.zf = hash(i + 7); });
+  const nachAbstand = zellen.map((z, i) => i).sort((a, b) => zellen[a].d - zellen[b].d);
+  R = { c, cols, rows, zellen, n: zellen.length, a: c * .62, nachAbstand };
+}
+const wellen = [];   // Klick-Wellen im Raster
+
+/* ---------- Repeater ---------- */
+function repZahl() { return Math.max(R.n, mobil ? 110 : 160); }
+function repKopie(i, n, p, tw) {
+  // Drei Schlüsselposen: Strahlenkranz, Spirale, Sonnenblume
+  const Rr = K.s * .44, N = repZahl(), u = i / Math.max(1, N - 1);
+  const k1 = { a: i / Math.max(1, n) * TAU, rho: Rr * .62, o: 0, g: .62 };
+  const k2 = { a: u * TAU * 3, rho: Rr * (.1 + .9 * u), o: .9, g: .22 + .42 * u };
+  const k3 = { a: i * GOLD, rho: Rr * Math.sqrt(u) * .98, o: 0, g: .16 + .44 * Math.sqrt(u) };
+  const st = u * .35;
+  const t12 = expoInOut(seg(p, .42 + st * .25, .55 + st * .25)), t23 = expoInOut(seg(p, .62 + st * .25, .75 + st * .25));
+  let a = lerp(lerp(k1.a, k2.a, t12), k3.a, t23), rho = lerp(lerp(k1.rho, k2.rho, t12), k3.rho, t23);
+  let o = lerp(lerp(k1.o, k2.o, t12), k3.o, t23), g = lerp(lerp(k1.g, k2.g, t12), k3.g, t23);
+  const bewegt = Math.sin(Math.PI * clamp(t12 * (1 - t12) * 4)) * .5 + Math.sin(Math.PI * clamp(t23 * (1 - t23) * 4)) * .5;
+  return { a: a + tw.spin, rho, o: o + tw.drall, g, bewegt };
+}
+
+/* ---------- Abspann ---------- */
+const wortEls = $$(".end-titel .w");
+let hopZuletzt = -1;
+
+/* ---------- Rendern ---------- */
+let letzteZeit = performance.now() / 1000, zeit = 0;
+const hudBild = $("#hudBild"), hudWert = $("#hudWert"), zlNr = $("#zlNr"), zlName = $("#zlName"), zlZeit = $("#zlZeit"), kopf = $("#kopf"), spur = $("#spur");
+const kurveText = $("#kurveText"), morphText = $("#morphText"), trimText = $("#trimText"), repText = $("#repText"), stagText = $("#stagText");
+let anSzene = null, letzterWert = "", textCache = {};
+function setzeText(el, t) { if (textCache[el.id] !== t) { el.textContent = t; textCache[el.id] = t; } }
+const drall = { spin: 0, drall: 0 };
+
+function bild() {
+  const jetzt = performance.now() / 1000, dt = Math.min(.05, jetzt - letzteZeit); letzteZeit = jetzt; zeit += dt;
+  if (lenis) lenis.raf(jetzt * 1000);
+  const y = lenis ? lenis.scroll : scrollY;
+  const st = stand(y);
+  let p = st.p; const id = st.s.id;
+  if (RM) p = RM_P[id];
+
+  // Zeiger glätten
+  zeiger.sx = lerp(zeiger.sx, zeiger.nx, 1 - Math.pow(.004, dt));
+  zeiger.sy = lerp(zeiger.sy, zeiger.ny, 1 - Math.pow(.004, dt));
+
+  // Text der aktiven Szene ein-/ausblenden
+  const textAn = id === "held" ? (auftaktFertig && p < .45) : (p > .035 && (id === "abspann" || p < .94));
+  for (const s of szenen) s.el.classList.toggle("an", s === st.s && textAn);
+  if (anSzene !== id) { anSzene = id; zlNr.textContent = st.s.nr; zlName.textContent = " · " + st.s.name; spur.setAttribute("aria-valuetext", `Scene ${st.s.nr} of 06, ${st.s.name}`); }
+  titel.classList.toggle("weg", id !== "held" || p > .42);
+
+  // HUD
+  const gesamt = clamp(y / maxScroll), bildNr = Math.round(gesamt * 1440);
+  hudBild.textContent = String(bildNr).padStart(4, "0");
+  const sek = Math.floor(bildNr / 24), fr = bildNr % 24;
+  zlZeit.textContent = `00:${String(Math.floor(sek / 60)).padStart(2, "0")}:${String(sek % 60).padStart(2, "0")}:${String(fr).padStart(2, "0")}`;
+  kopf.style.transform = `translateX(${(gesamt * spur.clientWidth).toFixed(1)}px)`;
+  spur.setAttribute("aria-valuenow", Math.round(gesamt * 100));
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+
+  let wert = st.s.name;
+  if (id === "held") wert = szeneHeld(p, dt);
+  else if (id === "easing") wert = szeneEasing(p, dt);
+  else if (id === "morph") wert = szeneMorph(p, dt);
+  else if (id === "trim") wert = szeneTrim(p, dt);
+  else if (id === "repeater") wert = szeneRepeater(p, dt);
+  else if (id === "stagger") wert = szeneStagger(p, dt);
+  else wert = szeneAbspann(p, dt);
+  if (wert !== letzterWert) { hudWert.textContent = wert; letzterWert = wert; }
+  if (id !== "held") buchstabenBewegen(zeit, dt, false);
+  requestAnimationFrame(bild);
+}
+
+/* 01 Held */
+function szeneHeld(p, dt) {
+  buchstabenBewegen(zeit, dt, p < .5);
+  const T = punktLage($("#messPunkt")), T2 = punktLage($("#messKey"));
+  // Auftakt
+  if (!auftaktFertig) {
+    const t = clamp((zeit - auftaktStart) / AUFTAKT);
+    const tf = clamp(t / .86), b = auftaktBall(tf, T);
+    const v = tempo("auf", b.x, b.y, dt);
+    // Kontakt-Stauchung
+    let sq = 0;
+    const kontakte = []; let acc = 0;
+    for (let k = 0; k < bounces.L.length; k++) { acc += bounces.L[k]; kontakte.push(acc / bounces.sum * .86); }
+    kontakte.forEach((tc, k) => { sq = Math.max(sq, Math.exp(-Math.pow((t - tc) * AUFTAKT / .05, 2)) * .55 * Math.sqrt(bounces.hs[Math.min(k + 1, bounces.hs.length - 1)] + .2)); });
+    // Zwiebelhaut: die letzten Bilder als blaue Ringe
+    wurf.geschichte.push([b.x, b.y]); if (wurf.geschichte.length > 40) wurf.geschichte.shift();
+    for (let j = wurf.geschichte.length - 1; j >= 0; j -= 5) { const g = wurf.geschichte[j]; ring(g[0], g[1], T.r, C.blau, 1.2); }
+    if (t < .86) ball(b.x, b.y, T.r, { vx: v.vx, vy: v.vy, sq });
+    else { const nach = (t - .86) / .14; ball(T.x, T.y, T.r, { sq: Math.exp(-nach * 6) * Math.cos(nach * 14) * .35 }); }
+    if (t >= .86 && !titel.classList.contains("los")) { titel.classList.add("los"); $("#buPunkt").classList.add("stoss"); }
+    $("#auftakt").textContent = `Frame ${String(Math.min(60, Math.round(t * 60) + 1)).padStart(3, "0")} / 060 · ${t < .86 ? "loading" : "ready"}`;
+    if (t >= 1) auftaktEnde();
+    if (t > .88) raute(T2.x, T2.y, T2.r * 1.15 * backOut(seg(t, .88, 1)), C.rot);
+    return "Intro · Bounce";
+  }
+  // Raute auf dem zweiten i: die Schlüsselpose
+  const aus = seg(p, .42, 1);
+  if (aus <= 0) raute(T2.x, T2.y, T2.r * 1.15, C.rot);
+  else if (aus < .15) raute(T2.x, T2.y - aus * 300, T2.r * 1.15 * (1 - aus / .15), C.rot);
+
+  // Ausgang: Punkt fällt vom i auf die Bahn der Easing-Szene
+  if (aus > 0) {
+    if (wurf.modus !== "ruht") wurf.modus = "ruht";
+    const L = { x: E.lx0, y: E.laneY };
+    const u = aus;
+    let x, yy, r = lerp(T.r, E.r, expoInOut(seg(u, 0, .7)));
+    if (u < .78) { const v = expoInOut(u / .78); x = lerp(T.x, L.x, v); yy = lerp(T.y, L.y, v) - Math.sin(Math.PI * v) * Math.min(160, H * .2); }
+    else { const v = (u - .78) / .22; x = L.x; yy = L.y - Math.sin(Math.PI * v) * 22; }
+    const s = tempo("held", x, yy, dt);
+    const sq = u >= .76 && u < .8 ? .3 : 0;
+    ball(x, yy, r, { vx: s.vx, vy: s.vy, sq });
+    return "Exit · Fall";
+  }
+
+  // Wurf
+  const boden = wurfBoden();
+  if (wurf.modus === "ruht") {
+    wurf.fx += ((T.x - wurf.x) * 260 - wurf.fx * 20) * dt; wurf.fy += ((T.y - wurf.y) * 260 - wurf.fy * 20) * dt;
+    if (Math.abs(T.x - wurf.x) > 200 || Math.abs(T.y - wurf.y) > 200) { wurf.x = T.x; wurf.y = T.y; wurf.fx = wurf.fy = 0; }
+    wurf.x += wurf.fx * dt; wurf.y += wurf.fy * dt;
+    ball(wurf.x, wurf.y, T.r, { vx: wurf.fx, vy: wurf.fy });
+    return "Squash & Stretch";
+  }
+  if (wurf.modus === "gezogen") {
+    wurf.x = zeiger.x; wurf.y = zeiger.y;
+    const s = tempo("wurf", wurf.x, wurf.y, dt); wurf.vx = s.vx; wurf.vy = s.vy;
+    ball(wurf.x, wurf.y, T.r * 1.05, { vx: s.vx * .5, vy: s.vy * .5 });
+    return "Throw · held";
+  }
+  if (wurf.modus === "fliegt") {
+    const r = T.r;
+    wurf.vy += 2600 * dt; wurf.x += wurf.vx * dt; wurf.y += wurf.vy * dt;
+    if (wurf.y > boden - r) { wurf.y = boden - r; if (wurf.vy > 0) { wurf.sq = Math.min(.6, wurf.vy / 2400); wurf.vy *= -.7; wurf.vx *= .9; } }
+    if (wurf.x < r) { wurf.x = r; wurf.vx *= -.75; } if (wurf.x > W - r) { wurf.x = W - r; wurf.vx *= -.75; }
+    wurf.sq = Math.max(0, wurf.sq - dt * 9);
+    wurf.geschichte.push([wurf.x, wurf.y]); if (wurf.geschichte.length > 30) wurf.geschichte.shift();
+    for (let j = wurf.geschichte.length - 4; j >= 0; j -= 3) { const g = wurf.geschichte[j]; ring(g[0], g[1], r, C.blau, 1.2); }
+    ball(wurf.x, wurf.y, r, { vx: wurf.vx, vy: wurf.vy, sq: wurf.sq });
+    const ruhig = Math.abs(wurf.vy) < 120 && wurf.y > boden - r - 2 && Math.abs(wurf.vx) < 160;
+    if (ruhig || zeit - wurf.t0 > 5) { wurf.modus = "zurueck"; wurf.t0 = zeit; wurf.zx = wurf.x; wurf.zy = wurf.y; wurf.geschichte = []; }
+    return "Throw · gravity";
+  }
+  if (wurf.modus === "zurueck") {
+    const u = clamp((zeit - wurf.t0) / .9), v = expoInOut(u);
+    const x = lerp(wurf.zx, T.x, v), yy = lerp(wurf.zy, T.y, v) - Math.sin(Math.PI * v) * 180;
+    const s = tempo("zur", x, yy, dt);
+    ball(x, yy, T.r, { vx: s.vx, vy: s.vy });
+    if (u >= 1) { wurf.modus = "ruht"; wurf.x = T.x; wurf.y = T.y; wurf.fx = 0; wurf.fy = 260; $("#buPunkt").classList.remove("stoss"); void $("#buPunkt").offsetWidth; $("#buPunkt").classList.add("stoss"); }
+    return "Throw · return";
+  }
+  return "Squash & Stretch";
+}
+
+/* 02 Easing */
+function szeneEasing(p, dt) {
+  const z = easingZustand(p);
+  const ein = expoOut(seg(p, 0, .12)), aus = expoIn(seg(p, .88, .97));
+  const sicht = ein * (1 - aus);
+  const { G, gx, gy, laneY, lx0, lx1, r } = E;
+  // Raster des Graph-Editors
+  ctx.lineCap = "butt";
+  for (let i = 0; i <= 4; i++) {
+    const f = sicht * clamp(1.3 - i * .08);
+    linie(gx + i * G / 4, gy + G, gx + i * G / 4, gy, f, i === 0 ? C.graphit : "rgba(46,91,255,.22)", i === 0 ? 1.2 : 1);
+  }
+  [0, .5, 1].forEach((v, i) => linie(gx, gyP(v), gx + G, gyP(v), sicht * clamp(1.3 - i * .1), v === 0 ? C.graphit : "rgba(46,91,255,.22)", v === 0 ? 1.2 : 1));
+  if (sicht > .6) {
+    schrift("Value", gx - 8, gy + 4, C.blei, "right");
+    schrift("Time", gx + G, gy + G + 16, C.blei, "right");
+  }
+  ctx.lineCap = "round";
+  // Kurve
+  const b = z.b;
+  ctx.beginPath();
+  const nK = 80, bis = Math.round(nK * sicht);
+  for (let i = 0; i <= bis; i++) { const t = i / nK; const yv = bez(b, t); i ? ctx.lineTo(gxP(t), gyP(yv)) : ctx.moveTo(gxP(t), gyP(yv)); }
+  ctx.strokeStyle = C.graphit; ctx.lineWidth = 2.5; ctx.stroke();
+  // Anfasser
+  if (sicht > .8) {
+    const a = (sicht - .8) / .2;
+    const p1 = [gxP(b[0]), gyP(b[1])], p2 = [gxP(b[2]), gyP(b[3])];
+    linie(gxP(0), gyP(0), p1[0], p1[1], a, C.rot, 1); linie(gxP(1), gyP(1), p2[0], p2[1], a, C.rot, 1);
+    raute(p1[0], p1[1], 6.5 * a, C.rot); raute(p2[0], p2[1], 6.5 * a, C.rot);
+    E.h1 = p1; E.h2 = p2;
+    // Abspielkopf im Graph
+    const px = gxP(z.t);
+    linie(px, gy + G, px, gy, a, "rgba(21,23,28,.35)", 1);
+    ball(px, gyP(z.y), 4.5 * a, { farbe: C.blau });
+  } else { E.h1 = E.h2 = null; }
+  // Bahn mit Abstandsdiagramm (Spacing Chart)
+  const lx = (v) => lerp(lx0, lx1, v);
+  linie(lx0, laneY + r + 10, lx1, laneY + r + 10, sicht, C.graphit, 1);
+  for (let g = 0; g <= 12; g++) {
+    const tg = g / 12, v = z.rueck ? 1 - bez(b, tg) : bez(b, tg), xg = lx(v);
+    const sg = clamp(sicht * 1.4 - g * .03);
+    if (sg <= 0) continue;
+    const key = g === 0 || g === 12;
+    linie(xg, laneY + r + 10, xg, laneY + r + 10 + (key ? 14 : 8) * sg, 1, key ? C.rot : C.blau, key ? 2 : 1.2);
+    if (sicht > .5 && !(aus > 0 && g === (z.rueck ? 12 : 0))) ring(xg, laneY, r * sg, C.blau, 1.1);
+  }
+  // Der Punkt
+  let x = lx(z.wert), yy = laneY, rr = r;
+  if (aus > 0) {
+    const u = expoInOut(seg(p, .88, 1));
+    x = lerp(x, K.cx, u); yy = lerp(laneY, K.cy, u) - Math.sin(Math.PI * u) * 40; rr = lerp(r, K.s * .34, expoIn(seg(p, .9, 1)));
+  }
+  const s = tempo("ease", x, yy, dt);
+  ball(x, yy, rr, { vx: aus > 0 ? s.vx * .3 : s.vx, vy: s.vy * .3 });
+  const kurv = (eigene.slot === z.k && eigene.b) ? { n: "custom curve" } : KURVEN[z.k];
+  setzeText(kurveText, `cubic-bezier(${b.map((v) => +v.toFixed(2)).join(", ")}) · ${kurv.n}`);
+  return `Curve ${kurv.n} · t ${komma(z.t, 2)}`;
+}
+
+/* 03 Morph */
+let mBox = [0, 0, 0, 0];
+function morphPfad(st, R0, cx, cy, ziehen) {
+  const ra = RADIEN[st.k], rb = RADIEN[st.k + 1];
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  ctx.beginPath();
+  for (let i = 0; i < N_MORPH; i++) {
+    const th = WINKEL[i] + st.spin, r = lerp(ra[i], rb[i], st.e) * R0;
+    let x = Math.cos(th) * r, y = Math.sin(th) * r;
+    if (ziehen) { const d = x * ziehen.ux + y * ziehen.uy; x += ziehen.ux * d * ziehen.k; y += ziehen.uy * d * ziehen.k; }
+    i ? ctx.lineTo(cx + x, cy + y) : ctx.moveTo(cx + x, cy + y);
+    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+  }
+  ctx.closePath(); mBox = [cx + x0, cy + y0, cx + x1, cy + y1];
+}
+function transformRahmen(b, a, cx, cy) {
+  // wie im Kompositionsfenster: Begrenzungsrahmen, acht Anfasser, Ankerpunkt
+  if (a <= 0) return;
+  const pad = 12 * a, x0 = b[0] - pad, y0 = b[1] - pad, x1 = b[2] + pad, y1 = b[3] + pad;
+  ctx.strokeStyle = `rgba(46,91,255,${(.9 * a).toFixed(3)})`; ctx.lineWidth = 1; ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const hs = 7 * a, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  for (const [hx, hy] of [[x0, y0], [mx, y0], [x1, y0], [x1, my], [x1, y1], [mx, y1], [x0, y1], [x0, my]]) {
+    ctx.fillStyle = "#F4F5F7"; ctx.fillRect(hx - hs / 2, hy - hs / 2, hs, hs); ctx.strokeRect(hx - hs / 2, hy - hs / 2, hs, hs);
+  }
+  ctx.beginPath(); ctx.arc(cx, cy, 6 * a, 0, TAU); ctx.moveTo(cx - 11 * a, cy); ctx.lineTo(cx + 11 * a, cy); ctx.moveTo(cx, cy - 11 * a); ctx.lineTo(cx, cy + 11 * a);
+  ctx.strokeStyle = "#F4F5F7"; ctx.lineWidth = 1.5; ctx.stroke();
+}
+function szeneMorph(p, dt) {
+  const R0 = K.s * .34, cx = K.cx, cy = K.cy;
+  const st = morphZustand(p);
+  // Zug zur Maus
+  let ziehen = null;
+  if (kannHover && zeiger.aktiv && !RM) { const dx = zeiger.sx - cx, dy = zeiger.sy - cy, d = Math.hypot(dx, dy) || 1; ziehen = { ux: dx / d, uy: dy / d, k: .08 * clamp(d / (K.s * .8)) }; }
+  // Zwiebelhaut: Zwischenbilder, die gerade vorbei sind
+  if (!RM) for (let j = 6; j >= 1; j--) {
+    const pe = p - j * .007; if (pe < .1) continue;
+    const se = morphZustand(pe); if (Math.abs(se.spin - st.spin) < .004) continue;
+    morphPfad(se, R0, cx, cy, ziehen); ctx.strokeStyle = C.blau; ctx.lineWidth = 1.2; ctx.stroke();
+  }
+  const ausR = expoInOut(seg(p, .9, 1));
+  morphPfad(st, R0, cx, cy, ziehen);
+  if (ausR <= 0) { ctx.fillStyle = C.graphit; ctx.fill(); }
+  else { const lw = lerp(R0, 3, ausR); ctx.save(); ctx.clip(); morphPfad(st, R0, cx, cy, ziehen); ctx.strokeStyle = C.graphit; ctx.lineWidth = lw * 2; ctx.stroke(); ctx.restore(); }
+  const keyNah = 1 - smooth(clamp(Math.min(st.e, 1 - st.e) * 14));
+  if (ausR <= 0 && p > .04) transformRahmen(mBox, keyNah * expoOut(seg(p, .04, .1)), cx, cy);
+  // Beschriftung: Key in Rot, Zwischenbild in Blau
+  const istKey = st.e < .002 || st.e > .998;
+  const kNr = st.e > .5 ? st.k + 1 : st.k, name = FORMEN[kNr].n;
+  const lx = mobil ? cx : cx + R0 * 1.18, ly = mobil ? cy + R0 * 1.62 : cy - R0 * .95, al = mobil ? "center" : "left", mx = mobil ? -70 : -12;
+  if (seg(p, .02, .08) > 0 && ausR < .5) {
+    if (istKey) { raute(lx + mx, ly, 5, C.rot); schrift(`Key ${String(kNr + 1).padStart(2, "0")} · ${name}`, lx, ly, C.rot, al); }
+    else { ring(lx + mx, ly, 4, C.blau, 1.4); schrift(`In-between ${komma(st.e, 2)}`, lx, ly, C.blau, al); }
+  }
+  setzeText(morphText, istKey ? `Key ${String(kNr + 1).padStart(2, "0")} · ${name}` : `${FORMEN[st.k].n} → ${FORMEN[st.k + 1].n} · ${Math.round(st.e * 100)}%`);
+  return istKey ? `Key · ${name}` : `Morph · ${Math.round(st.e * 100)}%`;
+}
+
+/* 04 Trim */
+function szeneTrim(p, dt) {
+  const Rt = K.s * .34 - 1.5, cx = K.cx, cy = K.cy;
+  if (!RM && zeiger.aktiv) { harm.a = lerp(harm.a, (zeiger.sx / W - .5) * 1.4, 1 - Math.pow(.02, dt)); harm.b = lerp(harm.b, (zeiger.sy / H - .5) * 1.2, 1 - Math.pow(.02, dt)); }
+  const pts = trimPunkte(p, Rt, cx, cy);
+  const führ = seg(p, .3, .36), z = seg(p, .93, .99);
+  // Grundpfad: erst graphit voll, dann blauer Bewegungspfad, am Ende wieder der Strich
+  const lwEnde = Math.max(4, K.s * .028);
+  if (seg(p, .86, .99) > 0) zug(pts, 0, 1, mische(RGB.blau, RGB.rot, z), lerp(1, lwEnde, expoInOut(z)));
+  else zug(pts, 0, 1, führ > 0 ? mische(RGB.graphit, RGB.blau, führ) : C.graphit, lerp(3, 1, führ));
+  // Drei Linien jagen sich
+  const farben = [C.graphit, C.rot, C.blau], breiten = [5, 3.2, 3.2];
+  let txt = "Start 0% · End 100%";
+  for (let j = 0; j < 3; j++) {
+    const q = seg(p, .33 + j * .05, .8 + j * .02);
+    if (q <= 0 || q >= 1) continue;
+    const ende = expoInOut(clamp(q * 1.35)), anfang = expoInOut(clamp(q * 1.35 - .35));
+    zug(pts, anfang, ende, farben[j], breiten[j]);
+    if (j === 0) txt = `Start ${Math.round(anfang * 100)}% · End ${Math.round(ende * 100)}% · Offset 3`;
+  }
+  setzeText(trimText, txt);
+  return p < .3 ? "Circle becomes oscillation" : p > .86 ? "Line becomes stroke" : "Trim Paths";
+}
+
+/* 05 Repeater */
+function szeneRepeater(p, dt) {
+  const N = repZahl(), cx = K.cx, cy = K.cy;
+  const ws = Math.max(4, K.s * .028), Ls = K.s * .16;
+  const n = Math.max(1, Math.round(lerp(1, N, expoInOut(seg(p, .04, .38)))));
+  if (!RM) {
+    drall.spin += dt * .06;
+    const zd = zeiger.aktiv ? (zeiger.sx / W - .5) * 2.2 : 0;
+    drall.drall = lerp(drall.drall, zd, 1 - Math.pow(.05, dt));
+  }
+  const aus = seg(p, .86, 1);
+  const tw = { spin: drall.spin * (1 - expoInOut(aus)), drall: drall.drall * (1 - expoInOut(aus)) };
+  const wachs = seg(p, .04, .38);
+  for (let i = n - 1; i >= 0; i--) {
+    const k = repKopie(i, n, p, tw);
+    // Neue Kopien kommen aus dem Original
+    const geb = n === 1 ? 0 : clamp((wachs * N - i) / 6);
+    let x = cx + Math.cos(k.a - Math.PI / 2) * k.rho * geb, yy = cy + Math.sin(k.a - Math.PI / 2) * k.rho * geb;
+    let w = ws, h = Ls * lerp(1, k.g, clamp(wachs * 4)), rot = k.a + k.o, cr = ws / 2;
+    let col = i === 0 ? C.rot : mische(RGB.graphit, RGB.blau, k.bewegt);
+    if (aus > 0) {
+      // Kopien fliegen in ihr Rasterfeld
+      const f = expoInOut(clamp((aus - (i / N) * .35) / .6));
+      if (i < R.n) { const z = R.zellen[R.nachAbstand[i]]; x = lerp(x, z.x, f); yy = lerp(yy, z.y, f); w = lerp(w, R.a, f); h = lerp(h, R.a, f); cr = lerp(cr, R.a * .14, f); }
+      else { const g = 1 - expoInOut(clamp(aus / .5)); w *= g; h *= g; if (g <= .01) continue; }
+      rot = lerp(rot % TAU, 0, f);
+      col = i === 0 ? mische(RGB.rot, RGB.graphit, f) : f < 1 ? mische(RGB.graphit, RGB.blau, Math.sin(Math.PI * f)) : C.graphit;
+    }
+    form(x, yy, w, h, cr, rot, col);
+  }
+  const stufe = p < .42 ? "Sunburst" : p < .62 ? "Spiral" : "Sunflower";
+  const dreh = p < .42 ? `${komma(360 / n, 1)}°` : p < .62 ? `${komma(1080 / N, 1)}°` : "137.5°";
+  setzeText(repText, `Copies ${n} · Rotation ${dreh} · ${stufe}`);
+  return `Repeater · ${n} copies`;
+}
+
+/* 06 Stagger */
+const WELLEN = [
+  { n: "from the left", d: (z) => z.q / Math.max(1, R.cols - 1) },
+  { n: "from the center", d: (z) => z.dn },
+  { n: "from the corner", d: (z) => ((R.cols - 1 - z.q) / Math.max(1, R.cols - 1) + z.r / Math.max(1, R.rows - 1)) / 2 },
+  { n: "random", d: (z) => z.zf },
+];
+function szeneStagger(p, dt) {
+  const a = R.a, cs = .14;
+  const anf = .08, sl = .19;
+  const k = clamp(Math.floor((p - anf) / sl), 0, 3);
+  const q = p < anf ? 0 : seg(p, anf + k * sl, anf + (k + 1) * sl);
+  const aus = seg(p, .86, 1);
+  const welle = WELLEN[k];
+  let bewegt = 0;
+  // Ursprung markieren
+  const ursprung = [
+    [K.cx - R.cols * R.c / 2 - 14, K.cy],
+    [K.cx, K.cy],
+    [K.cx + R.cols * R.c / 2 + 14, K.cy - R.rows * R.c / 2 - 14],
+    null,
+  ][k];
+  for (let i = 0; i < R.n; i++) {
+    const z = R.zellen[i];
+    const d = welle.d(z);
+    const ph = p < anf ? 0 : clamp((q * 1.6 - d * .6 - .1) / .5);
+    const e = backOut(ph);
+    // Form wechselt je Welle: Quadrat ↔ Kreis, dreht um 90°
+    const vorKreis = k % 2 === 1, nachKreis = !vorKreis;
+    const crV = vorKreis ? a / 2 : a * cs, crN = nachKreis ? a / 2 : a * cs;
+    let cr = lerp(crV, crN, clamp(e)), rot = (k + clamp(e, 0, 1.15)) * Math.PI / 2, sc = 1 - Math.sin(Math.PI * clamp(ph)) * .35;
+    let col = mische(RGB.graphit, RGB.blau, Math.sin(Math.PI * clamp(ph)));
+    if (ph > 0 && ph < 1) bewegt++;
+    // Zeiger als Kraftfeld
+    if (zeiger.aktiv && !RM) {
+      const dd = Math.hypot(zeiger.sx - z.x, zeiger.sy - z.y) / (R.c * 3);
+      const f = smooth(clamp(1 - dd)); sc *= 1 - .5 * f; rot += f * .7;
+    }
+    // Klick-Wellen
+    for (const w of wellen) {
+      const tt = zeit - w.t0 - Math.hypot(w.x - z.x, w.y - z.y) / 900;
+      const b = Math.exp(-Math.pow(tt / .09, 2)) * (tt > -.3 ? 1 : 0);
+      sc *= 1 - b * .55; col = b > .05 ? mische(RGB.graphit, RGB.rot, b * 1.4) : col; rot += b * .4;
+    }
+    let x = z.x, yy = z.y;
+    if (aus > 0) {
+      const f = expoIn(clamp((aus - z.dn * .25) / .7));
+      x = lerp(x, K.cx, f); yy = lerp(yy, K.cy, f); sc *= 1 - f * .9;
+    }
+    if (sc > .02) form(x, yy, a * sc, a * sc, cr * sc, rot, col);
+  }
+  for (let j = wellen.length - 1; j >= 0; j--) if (zeit - wellen[j].t0 > 3) wellen.splice(j, 1);
+  if (ursprung && p > anf && aus < .1) { raute(ursprung[0], ursprung[1], 6, C.rot); }
+  if (aus > 0) { const rA = abspannRadius(); ball(K.cx, K.cy, rA * expoOut(seg(aus, .55, 1))); }
+  setzeText(stagText, `Wave ${k + 1} / 4 · ${welle.n} · moving ${bewegt}`);
+  return `Stagger · ${welle.n}`;
+}
+
+/* Abspann */
+function abspannRadius() { return Math.max(9, Math.min(18, W * .011)); }
+function szeneAbspann(p, dt) {
+  const r = abspannRadius();
+  const rects = wortEls.map((w) => w.getBoundingClientRect());
+  if (!rects.length || rects[0].width === 0) return "Abspann";
+  const tops = rects.map((b) => ({ x: b.left + b.width / 2, y: b.top + b.height * .14 - r }));
+  // Sprünge von Wort zu Wort, dann zurück an den Anfang
+  const dauer = tops.map((_, i) => i === tops.length - 1 ? .95 : .52), ges = dauer.reduce((a, b) => a + b, 0);
+  let t = RM ? 0 : zeit % ges, i = 0;
+  while (t > dauer[i]) { t -= dauer[i]; i++; }
+  const f = t / dauer[i], A = tops[i], B = tops[(i + 1) % tops.length];
+  const hoch = Math.max(60, Math.abs(B.x - A.x) * .35) * (i === tops.length - 1 ? 1.6 : 1);
+  let x = lerp(A.x, B.x, f), yy = lerp(A.y, B.y, f) - 4 * hoch * f * (1 - f);
+  if (RM) { x = A.x; yy = A.y; }
+  if (i !== hopZuletzt && !RM) { hopZuletzt = i; const w = wortEls[i]; w.classList.remove("stoss"); void w.offsetWidth; w.classList.add("stoss"); }
+  const kontakt = Math.min(f, 1 - f) * dauer[i];
+  const sq = RM ? 0 : Math.exp(-Math.pow(kontakt / .035, 2)) * .45;
+  const ein = expoInOut(seg(p, 0, .3));
+  const bx = lerp(K.cx, x, ein), by = lerp(K.cy, yy, ein);
+  const s = tempo("end", bx, by, dt);
+  ball(bx, by, r, { vx: s.vx, vy: s.vy, sq: ein > .98 ? sq : 0 });
+  return "Credits · Bounce";
+}
+
+/* ---------- Zeiger, Ziehen, Klicken ---------- */
+function nahAmBall(x, y) {
+  if (stand(lenis ? lenis.scroll : scrollY).s.id !== "held" || !auftaktFertig || wurf.modus !== "ruht") return false;
+  const T = punktLage($("#messPunkt"));
+  return Math.hypot(x - wurf.x, y - wurf.y) < Math.max(30, T.r * 2.4);
+}
+function nahAmAnfasser(x, y) {
+  if (stand(lenis ? lenis.scroll : scrollY).s.id !== "easing" || !E.h1) return 0;
+  if (Math.hypot(x - E.h1[0], y - E.h1[1]) < 24) return 1;
+  if (Math.hypot(x - E.h2[0], y - E.h2[1]) < 24) return 2;
+  return 0;
+}
+let anfasser = 0;
+addEventListener("pointermove", (e) => {
+  zeiger.x = e.clientX; zeiger.y = e.clientY; zeiger.nx = e.clientX; zeiger.ny = e.clientY;
+  if (!zeiger.aktiv) { zeiger.sx = e.clientX; zeiger.sy = e.clientY; }
+  zeiger.aktiv = true; zeiger.zuletzt = zeit;
+  if (anfasser) {
+    const st = easingZustand(stand(lenis ? lenis.scroll : scrollY).p);
+    const t = clamp((e.clientX - E.gx) / E.G), v = clamp(E.vmax - (e.clientY - E.gy) / E.G * (E.vmax - E.vmin), E.vmin, E.vmax);
+    if (eigene.slot !== st.k || !eigene.b) { eigene.slot = st.k; eigene.b = st.b.slice(); }
+    if (anfasser === 1) { eigene.b[0] = t; eigene.b[1] = v; } else { eigene.b[2] = t; eigene.b[3] = v; }
+  }
+  if (e.pointerType === "mouse") document.body.style.cursor = (anfasser || wurf.modus === "gezogen") ? "grabbing" : (nahAmBall(e.clientX, e.clientY) || nahAmAnfasser(e.clientX, e.clientY)) ? "grab" : "";
+}, { passive: true });
+addEventListener("pointerleave", () => { zeiger.aktiv = false; });
+document.addEventListener("mouseleave", () => { zeiger.aktiv = false; });
+addEventListener("pointerdown", (e) => {
+  if (e.target.closest("a,button,.spur")) return;
+  zeiger.x = zeiger.nx = e.clientX; zeiger.y = zeiger.ny = e.clientY;
+  if (nahAmBall(e.clientX, e.clientY)) { e.preventDefault(); wurf.modus = "gezogen"; wurf.geschichte = []; tempo("wurf", e.clientX, e.clientY, 0); if (lenis) lenis.stop(); return; }
+  anfasser = nahAmAnfasser(e.clientX, e.clientY);
+  if (anfasser) { e.preventDefault(); if (lenis) lenis.stop(); return; }
+  if (stand(lenis ? lenis.scroll : scrollY).s.id === "stagger" && !RM) {
+    const x0 = K.cx - R.cols * R.c / 2, y0 = K.cy - R.rows * R.c / 2;
+    if (e.clientX > x0 && e.clientX < x0 + R.cols * R.c && e.clientY > y0 && e.clientY < y0 + R.rows * R.c) wellen.push({ x: e.clientX, y: e.clientY, t0: zeit });
+  }
+});
+addEventListener("touchstart", (e) => {
+  const t = e.touches[0]; if (!t) return;
+  if (nahAmBall(t.clientX, t.clientY) || nahAmAnfasser(t.clientX, t.clientY)) e.preventDefault();
+}, { passive: false });
+addEventListener("pointerup", () => {
+  if (wurf.modus === "gezogen") {
+    wurf.modus = "fliegt"; wurf.t0 = zeit;
+    const sp = Math.hypot(wurf.vx, wurf.vy), maxV = 4200; if (sp > maxV) { wurf.vx *= maxV / sp; wurf.vy *= maxV / sp; }
+    if (lenis) lenis.start();
+  }
+  if (anfasser) { anfasser = 0; if (lenis) lenis.start(); }
+});
+
+/* ---------- Zeitleiste ziehen ---------- */
+function springeZu(f, sofort) {
+  const y = clamp(f) * maxScroll;
+  if (lenis) lenis.scrollTo(y, sofort ? { immediate: true } : { duration: 1.4 }); else scrollTo({ top: y, behavior: sofort || RM ? "auto" : "smooth" });
+}
+let spurZieht = false;
+spur.addEventListener("pointerdown", (e) => { spurZieht = true; spur.setPointerCapture(e.pointerId); const r = spur.getBoundingClientRect(); springeZu((e.clientX - r.left) / r.width, false); });
+spur.addEventListener("pointermove", (e) => { if (!spurZieht) return; const r = spur.getBoundingClientRect(); springeZu((e.clientX - r.left) / r.width, true); });
+spur.addEventListener("pointerup", () => { spurZieht = false; });
+spur.addEventListener("keydown", (e) => {
+  const y = lenis ? lenis.scroll : scrollY, f = y / maxScroll, st = stand(y);
+  let ziel = null;
+  if (e.key === "ArrowRight" || e.key === "ArrowUp") ziel = f + .02;
+  else if (e.key === "ArrowLeft" || e.key === "ArrowDown") ziel = f - .02;
+  else if (e.key === "PageDown") ziel = (szenen[Math.min(szenen.length - 1, st.i + 1)].start + 2) / maxScroll;
+  else if (e.key === "PageUp") ziel = (szenen[Math.max(0, st.p < .05 ? st.i - 1 : st.i)].start + 2) / maxScroll;
+  else if (e.key === "Home") ziel = 0; else if (e.key === "End") ziel = 1;
+  if (ziel !== null) { e.preventDefault(); springeZu(ziel, false); }
+});
+$("#nochmal").addEventListener("click", () => springeZu(0, false));
+
+/* ---------- Korn ---------- */
+(() => {
+  const c = document.createElement("canvas"); c.width = c.height = 180; const g = c.getContext("2d"), d = g.createImageData(180, 180);
+  for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+  g.putImageData(d, 0, 0); const k = $("#korn"); k.style.backgroundImage = `url(${c.toDataURL()})`;
+  if (!RM) { let n = 0; setInterval(() => { n++; k.style.transform = `translate(${(hash(n) * 180) | 0}px,${(hash(n + 9) * 180) | 0}px)`; }, 1000 / 12); }
+})();
+
+/* ---------- Start ---------- */
+let lenis = null;
+if (!RM && window.Lenis) { try { lenis = new Lenis({ lerp: .09, smoothWheel: true }); } catch (e) { lenis = null; } }
+function auftaktEnde() {
+  auftaktFertig = true; titel.classList.add("los"); $("#auftakt").classList.add("fertig");
+  wurf.x = punktLage($("#messPunkt")).x; wurf.y = punktLage($("#messPunkt")).y; wurf.geschichte = [];
+  if (lenis) lenis.start(); document.documentElement.style.overflow = "";
+}
+function start() {
+  groesse(); vermessen();
+  if (RM) { auftaktEnde(); $("#auftakt").hidden = true; }
+  else {
+    if (scrollY > 20) auftaktEnde();
+    else { if (lenis) lenis.stop(); document.documentElement.style.overflow = "hidden"; auftaktStart = zeit; }
+  }
+  requestAnimationFrame(bild);
+}
+// Überspringen: Taste, Klick oder Rad beendet den Auftakt sofort
+const ueberspringen = () => { if (!auftaktFertig && zeit - auftaktStart > .4) auftaktEnde(); };
+addEventListener("wheel", ueberspringen, { passive: true }); addEventListener("keydown", ueberspringen); addEventListener("click", ueberspringen);
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { groesse(); vermessen(); }, 120); });
+const bereit = document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]) : Promise.resolve();
+bereit.then(() => { (document.fonts ? Promise.all(["800 100px Anybody", "400 12px 'Martian Mono'", "400 16px 'Instrument Sans'"].map((f) => document.fonts.load(f).catch(() => {}))) : Promise.resolve()).then(start); });
+})();
+</script>
+
+<div id="ordeBalken">
+  <a href="../../en/examples.html">&larr; Back to ORD&Eacute;</a>
+  <span>Example site &middot; animated live &middot; no images, no videos</span>
+  <a class="ordeCta" href="../../en/contact.html">Request a site like this</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));font-size:13px}
+  #ordeBalken span{order:3;flex-basis:100%;text-align:center;font-size:11.5px;line-height:1.3}
+}
+@media print{#ordeBalken{display:none}}
+</style>
+</body>
+</html>
