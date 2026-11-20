@@ -23,7 +23,7 @@ Seite. Die alten Links sind damit weg; keiner war verschickt.
 
 ```
 - [x] 1  Anfrage: DACH, Unternehmen (GmbH), persönlicher Kontakt, Slug spielcenter-dream-24
-- [ ] 1  Prüfung Nebentätigkeit (Artur), Seitenzahl bestätigen (Annahme: wie alte Seite)
+- [ ] 1  Interessenkonflikt geprüft (siehe privates Handbuch), Seitenzahl bestätigen (Annahme: wie alte Seite)
 - [x] 2  Entwurf gebaut und geprüft (8 Seiten), Link geöffnet, PDF erzeugt, Mail-Entwurf an Artur
 - [ ] 3  Angebot raus (mit AGB/Widerruf)
 - [ ] 4  Zusage, Auftragsbestätigung mit Briefing-Link

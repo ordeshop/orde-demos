@@ -9,8 +9,9 @@ name: Demos hochladen
 #
 # Vorher einrichten unter Settings -> Secrets and variables -> Actions:
 #   FTP_SERVER     Serveradresse von Hostinger
-#   FTP_USERNAME   FTP-Benutzername der Domain, bei Hostinger u350662327.byorde.com
-#                  (nicht nur u350662327). Dieser Zugang startet schon in
+#   FTP_USERNAME   FTP-Benutzername der Domain, bei Hostinger `u…….<domain>`
+#                  (vollständige Form, nicht nur der Teil vor dem Punkt; Wert
+#                  im privaten Handbuch bzw. in den Secrets). Dieser Zugang startet schon in
 #                  public_html von byorde.com, deshalb steht unten ./demos/
 #                  und nicht ./public_html/demos/.
 #   FTP_PASSWORD   FTP-Passwort

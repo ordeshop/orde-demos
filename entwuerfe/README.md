@@ -16,6 +16,11 @@ demos/entwuerfe/robots.txt   wirkt nicht (liegt nicht im Wurzelverzeichnis der
                              Domain); jede Seite braucht noindex
 demos/entwuerfe/<name>/      die fertigen Seiten mit assets/
                              → https://ordeshop.github.io/orde-demos/<name>/
+demos/entwuerfe/veit/komplett/  Sonderfall: fertige Vorschau ohne build.py (mit _theme/,
+                             _bilder/); die *.html darüber leiten nur dorthin weiter,
+                             deshalb bricht entwuerfe/veit/build.py ab
+demos/entwuerfe/front/       kein Kundenentwurf, sondern ein Showreel-Entwurf
+                             (über Pages erreichbar, nicht auf byorde.com; siehe CLAUDE.md)
 entwuerfe/pdf-erzeugen.py    macht aus einem Entwurf das PDF zum Weiterschicken
 ```
 
