@@ -19,20 +19,14 @@ Bilderordner. Kein Build, kein Framework.
 
 ## Showreels
 
-Sechs Seiten ohne Branche: `monolith/`, `spektrum/`, `lumen/`, `lichtfeld/`,
-`halvo/`, `zwischenbild/`. Sie zeigen, was technisch geht (WebGL, 3D, Simulationen) und erscheinen auf byorde.com
+Fünf Seiten ohne Branche: `monolith/`, `spektrum/`, `lumen/`, `lichtfeld/`,
+`halvo/`. Sie zeigen, was technisch geht (WebGL, 3D, Simulationen) und erscheinen auf byorde.com
 in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
 `BRANCHEN`. Abweichend von den sechs Demos:
 
 - **`halvo`:** echte Fotos, die eine KI-Tiefenschätzung (Depth Anything V2,
   `halvo/quelle/tiefe.py`) räumlich bewegt. Ein Hinweis darauf steht bewusst nicht im
   Balken (Arturs Entscheidung, 16.11.2026).
-- **`zwischenbild`** (20.11.2026): Motion Graphics ganz ohne Bilder, nur 2D-Canvas. Ein Punkt läuft durch
-  sechs Werkzeuge (Squash & Stretch, Easing, Pfad-Morph, Trim Paths, Repeater, Stagger), jede Szene beginnt mit dem
-  letzten Bild der vorigen. Farben wie auf dem Leuchttisch: Rot = Schlüsselpose, Blau = Zwischenbild, Graphit = fertiges
-  Bild. Die Zeitleiste unten lässt sich ziehen und per Tastatur bedienen. Schriften Anybody, Instrument Sans,
-  Martian Mono (in `bibliothek/`). Ändert sich an der Übergabe einer Szene etwas (Lage, Größe, Farbe des Punkts oder
-  Strichs), muss die nächste Szene mitziehen, sonst springt das Bild.
 - **Sonst keine KI-Bilder.** Die Videos sind frei lizenzierte Stockaufnahmen, `spektrum` ist ganz
   berechnet. Deshalb steht im Rückkehr-Balken kein „Bilder mit KI erzeugt“. Kommt je ein
   KI-Bild dazu, muss der Hinweis zurück.
