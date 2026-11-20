@@ -11,6 +11,9 @@ Ergebnis: entwuerfe/<name>/Entwurf-<name>.pdf  (wird nicht hochgeladen)
 Aufruf (im Repo-Ordner):
     python3 entwuerfe/pdf-erzeugen.py spielcenter-dream-24
 
+Vorher läuft entwuerfe/pruefen.py. Bei Fehlern gibt es kein PDF
+(--trotzdem nur mit Arturs ausdrücklichem OK).
+
 Voraussetzung wie bei vorschau-erzeugen.py: playwright und Pillow.
 Liegt Chromium schon irgendwo, den Pfad über PLAYWRIGHT_CHROMIUM setzen.
 """
@@ -44,13 +47,22 @@ def seiten_finden(ordner):
 
 
 def main():
-    if len(sys.argv) != 2:
+    args = [a for a in sys.argv[1:] if a != "--trotzdem"]
+    if len(args) != 1:
         print(__doc__)
         sys.exit(1)
-    name = sys.argv[1]
+    name = args[0]
     ordner = os.path.join(QUELLE, name)
     if not os.path.isdir(ordner):
         print("Entwurf nicht gefunden: %s" % ordner)
+        sys.exit(1)
+
+    # Erst prüfen, dann zeigen: ohne bestandene Prüfung kein PDF.
+    # --trotzdem nur mit Arturs ausdrücklichem OK (z. B. internes Ansehen).
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from pruefen import pruefen
+    if pruefen(name) != 0 and "--trotzdem" not in sys.argv:
+        print("\nKein PDF: erst die Fehler oben beheben (python3 entwuerfe/pruefen.py %s)." % name)
         sys.exit(1)
 
     try:
