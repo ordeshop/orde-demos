@@ -64,6 +64,9 @@ Projekt in sein eigenes `orde-kunde-<name>`-Repo um und wird hier gelöscht.
 (über Pages erreichbar, nicht auf byorde.com).
 
 **Wie ein Entwurf gebaut, geprüft und gezeigt wird: `entwuerfe/README.md`.**
+Vor dem Zeigen muss `python3 entwuerfe/pruefen.py <name>` ohne Fehler
+durchlaufen; `pdf-erzeugen.py` sperrt sonst. Jede gezeigte Seite ist von Hand
+fertig, nie eine automatisch übernommene Kopie der alten Seite.
 Kurz: so viele Seiten, wie der Kunde haben will; Link ist
 `https://ordeshop.github.io/orde-demos/<name>/`; dazu das PDF
 aus `entwuerfe/pdf-erzeugen.py`; nie eine HTML-Datei an den Kunden.
