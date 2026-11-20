@@ -34,8 +34,9 @@ in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
   kein „echte Filmaufnahmen“, kein „frei lizenziert“. Die Lizenznachweise stehen nur im privaten
   Handbuch (`Business-Handbuch/werkzeuge/website/VIDEOQUELLEN.md` und `quellen/`), nicht in
   diesem öffentlichen Repo.
-- **Nichts von fremden Servern.** Three.js, GSAP, Lenis und alle Schriften liegen
-  in `demos/bibliothek/` (`halvo` nutzt das ES-Modul in `bibliothek/three-0.160/`). Keine CDN-Links und kein Google Fonts einbauen, sonst
+- **Nichts von fremden Servern.** Three.js, GSAP, Lenis und die Schriften der Showreels liegen
+  in `demos/bibliothek/` (`halvo` nutzt das ES-Modul in `bibliothek/three-0.160/`). Die sechs
+  Branchen-Demos laden ihre Schriften dagegen aus `orde-website` (`../../assets/fonts/`). Keine CDN-Links und kein Google Fonts einbauen, sonst
   stimmt die Datenschutzerklärung von byorde.com nicht mehr.
 - **Rand unten:** Alles, was unten am Rand sitzt, nutzt `var(--unten)`
   (Balkenhöhe plus sicherer Bereich), damit der Rückkehr-Balken nichts verdeckt.
@@ -43,7 +44,7 @@ in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
   `vorschau-erzeugen.py` die Animation laufen lässt, 3D in Software rechnet und
   erst nach dem Vorspann fotografiert. Die fps-Anzeige wird dabei ausgeblendet.
 - **Gewicht:** `monolith` bringt 11,9 MB Full-HD-Video mit (lädt erst beim
-  Hinscrollen), `halvo` 13 MB (das Drohnenvideo lädt erst bei Szene 5), die anderen
+  Hinscrollen), `halvo` 12 MB (das Drohnenvideo lädt erst bei Szene 5), die anderen
   0,1 bis 6,3 MB.
 
 Jede hat eine englische Fassung `en.html` (Rückkehr-Balken auf `/en/`,
@@ -58,6 +59,9 @@ vor einem Auftrag. Sie gehören nicht zu den sechs Beispielseiten: nicht in
 Der Link geht nur an den Betrieb. Quelle und Bauskript liegen außerhalb des
 Upload-Ordners unter `entwuerfe/<name>/`. Wird daraus ein Auftrag, zieht das
 Projekt in sein eigenes `orde-kunde-<name>`-Repo um und wird hier gelöscht.
+
+`demos/entwuerfe/front/` ist kein Kundenentwurf, sondern ein Showreel-Entwurf
+(über Pages erreichbar, nicht auf byorde.com).
 
 **Wie ein Entwurf gebaut, geprüft und gezeigt wird: `entwuerfe/README.md`.**
 Kurz: so viele Seiten, wie der Kunde haben will; Link ist
@@ -89,7 +93,7 @@ den alten Stand:
 
 ```bash
 python3 vorschau-erzeugen.py cafe      # nur diese
-python3 vorschau-erzeugen.py           # alle sechs
+python3 vorschau-erzeugen.py           # alle Demos und Showreels
 ```
 
 Braucht `playwright` und `pillow`. Liegt Chromium schon irgendwo, kann der
@@ -107,6 +111,11 @@ Vorschaubild fällt niemandem auf, bis ein Kunde sich wundert.
    Pflicht (EU AI Act Art. 50 Abs. 4) und muss auch am Handy sichtbar sein.
 3. `python3 vorschau-erzeugen.py <name>`
 4. Im Repo `orde-website` in `build.py` unter `BRANCHEN` eintragen
+
+**Neues Showreel:** Schritte 1 bis 3 gleich, im Balken aber kein KI-Hinweis, wenn
+keine KI-Bilder darin sind. Statt `BRANCHEN` in `orde-website/build.py` unter
+`SHOWREELS` und `SHOWREELS_EN` eintragen, das aber nur auf Arturs ausdrückliche
+Anweisung (erst dann erscheint es auf byorde.com).
 
 ## Gestaltung
 

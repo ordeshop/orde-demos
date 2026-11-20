@@ -14,7 +14,7 @@ Hinweis „Beispielseite · kein echter Betrieb" und einem Weg zurück zu ORDÉ.
 | `praxis/` | Praxisseite mit Sprechzeiten | Praxis |
 | `elektro/` | Elektrobetrieb mit Leistungen | Handwerk |
 
-Dazu vier **Showreels** ohne Branche, die zeigen, was im Browser technisch geht:
+Dazu fünf **Showreels** ohne Branche, die zeigen, was im Browser technisch geht:
 
 | Ordner | Was es darstellt |
 |---|---|
@@ -22,6 +22,7 @@ Dazu vier **Showreels** ohne Branche, die zeigen, was im Browser technisch geht:
 | `spektrum/` | Chladni-Figuren, Prisma, Strömungssimulation, Schwarzes Loch, alles berechnet |
 | `lumen/` | Erfundener Duft: Facettenglas, Glaslinse, Tinte, Teilchen, Goldportal |
 | `lichtfeld/` | Abstrakt: Raymarching, Chrom und Glas, Teilchen, Video in Schrift |
+| `halvo/` | Hütte unter dem Nordlicht, Foto per Tiefenkarte in 3D bewegt, ein Terminal baut die Website dazu |
 
 Gemeinsame Bibliotheken und Schriften liegen lokal in `demos/bibliothek/`
 (Lizenzen in `demos/bibliothek/LIZENZEN.md`).
@@ -29,7 +30,7 @@ Gemeinsame Bibliotheken und Schriften liegen lokal in `demos/bibliothek/`
 ## Aufbau
 
 ```
-demos/           die sechs Seiten, je ein Ordner mit index.html
+demos/           sechs Branchen-Demos und fünf Showreels, je ein Ordner mit index.html
 demos/entwuerfe/ Kunden-Vorschauen → ordeshop.github.io/orde-demos/<slug>/ (siehe entwuerfe/README.md)
 entwuerfe/       Quellen, Bauskripte und PDF-Werkzeug dieser Entwürfe (Anleitung: entwuerfe/README.md), wird nicht hochgeladen
 vorschau/        Screenshots, die die ORDÉ-Website anzeigt
@@ -96,13 +97,14 @@ Liegt Chromium schon irgendwo, kann der Pfad über die Umgebungsvariable
    kommt der Besucher nicht zurück zur ORDÉ-Seite
 3. `python3 vorschau-erzeugen.py <name>` laufen lassen
 4. In der ORDÉ-Website in `build.py` unter `BRANCHEN` die Demo eintragen,
-   damit sie auf der Startseite und unter „Beispiele" erscheint
+   damit sie auf byorde.com unter `referenzen.html#branchen` erscheint
 
 ## Woher die Bilder stammen
 
 Die Fotos in den Demos sind teils selbst erzeugt, teils vom Auftraggeber
-gestellt. Jede Demo trägt im Rückkehr-Balken den Hinweis „Bilder mit KI
-erzeugt“, am Desktop und am Handy (EU AI Act Art. 50 Abs. 4). Für echte Kundenseiten gilt: Bilder stellt der Kunde, und er
+gestellt. Jede der sechs Branchen-Demos trägt im Rückkehr-Balken den Hinweis „Bilder mit KI
+erzeugt“, am Desktop und am Handy (EU AI Act Art. 50 Abs. 4). Die Showreels
+tragen ihn bewusst nicht (siehe `CLAUDE.md`). Für echte Kundenseiten gilt: Bilder stellt der Kunde, und er
 sichert die Rechte daran zu — so steht es in den AGB, § 7.
 
 ## Verwandte Projekte
