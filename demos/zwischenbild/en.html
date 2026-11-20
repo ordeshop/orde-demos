@@ -28,6 +28,9 @@
    - Text: jede Szene steigt mit ihrem eigenen Werkzeug ein (Overshoot, Formmaske, Trim-Strich, Kopien, Stagger),
      keine Kennzeile über Überschriften (impeccable); Szene und Nummer stehen in der Zeitleiste (ORDE-STIL Regel 21)
    - Neigung nach Scrolltempo (Lenis-Tempo als skewY), Korn und Vignette über allem
+   - Riesenwort hinter jeder Szene (Muster von motionsites.ai, Nachtrag 20.11.2026): das Werkzeugwort in
+     Papierton, und es führt sein Werkzeug selbst aus (atmet mit der Kurve, morpht in der Breite, wird
+     beschnitten, stapelt Kopien, hüpft in der Welle). Schrift und Grafik verschränkt, live statt Video.
    - Handwerk: Pixeldichte höchstens 2, bei langsamem Gerät 1; Lenis aus bei "weniger Bewegung"
    - Text in Rot/Blau nur in den dunklen Texttönen (5,3 : 1 und 5,9 : 1), helle Töne nur für Formen
    - Referenzen (awesome-design-md, nur Rhythmus): framer (Seite als Arbeitsfläche, Akzent für Auswahl und Fokus),
@@ -41,6 +44,7 @@
   --rot:#F2361A;
   --blau-text:#2448D8;
   --blau-hell:#B9C7FF;
+  --papier-tief:#D8DBE2;
   --rot-text:#B8240B;
   --a1:8px;--a2:12px;--a3:16px;--a4:24px;--a5:32px;--a6:48px;
   --linie:rgba(21,23,28,.16);
@@ -65,7 +69,15 @@ a{color:inherit}
 html{scrollbar-color:var(--graphit) var(--papier);scrollbar-width:thin}
 :focus-visible{outline:2px solid var(--blau);outline-offset:3px}
 
-#leinwand{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+#leinwand{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:block}
+/* Riesenwort hinter der Grafik: das Wort führt sein Werkzeug selbst aus */
+.riesen{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.rw{position:absolute;left:50%;top:0;transform:translateX(-50%);white-space:nowrap;overflow:hidden;padding:.06em .04em .1em;font:900 100px/.9 var(--display);letter-spacing:-.035em;color:var(--papier-tief);font-variation-settings:"wdth" 100}
+.rw-m{display:inline-block}
+.rw-m>span{display:inline-block}
+.rw-i{display:inline-block;transform:translateY(135%);transition:transform .3s var(--raus)}
+.rw.an .rw-i{transform:none;transition:transform 1.1s var(--rein) .25s}
+@media (prefers-reduced-motion:reduce){.rw-i,.rw.an .rw-i{transition:none}}
 .korn{position:fixed;inset:-50%;z-index:40;pointer-events:none;opacity:.07;mix-blend-mode:multiply;background-size:180px 180px}
 .vignette{position:fixed;inset:0;z-index:39;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(21,23,28,.07))}
 
@@ -183,6 +195,13 @@ main{position:relative;z-index:2}
 </head>
 <body>
 <canvas id="leinwand" aria-hidden="true"></canvas>
+<div class="riesen" aria-hidden="true">
+  <span class="rw" data-szene="easing"><span class="rw-i"><span class="rw-m">Easing</span></span></span>
+  <span class="rw" data-szene="morph"><span class="rw-i"><span class="rw-m">Morph</span></span></span>
+  <span class="rw" data-szene="trim"><span class="rw-i"><span class="rw-m">Trim</span></span></span>
+  <span class="rw" data-szene="repeater"><span class="rw-i"><span class="rw-m">Repeat</span></span></span>
+  <span class="rw" data-szene="stagger"><span class="rw-i"><span class="rw-m">Stagger</span></span></span>
+</div>
 <div class="vignette" aria-hidden="true"></div>
 <div class="korn" id="korn" aria-hidden="true"></div>
 
@@ -323,7 +342,7 @@ function groesse() {
   if (mobil) { x0 = 16; x1 = W - 16; y0 = oben + 34; y1 = Math.max(y0 + 200, H * .56); }
   else { x0 = Math.max(W * .40, 470); x1 = W - Math.max(40, W * .05); y0 = oben + 20; y1 = H - balken - 70; }
   K = { x0, x1, y0, y1, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0, s: Math.min(x1 - x0, y1 - y0) };
-  rasterBauen(); easingLayout(); titelEinpassen();
+  rasterBauen(); easingLayout(); titelEinpassen(); riesenEinpassen();
 }
 
 /* ---------- Zeichnen ---------- */
@@ -613,6 +632,49 @@ function repKopie(i, n, p, tw) {
 const wortEls = $$(".end-titel .w");
 let hopZuletzt = -1;
 
+/* ---------- Riesenwort ---------- */
+const RW = { wert: 0, mk: 0, me: 0, ta: 0, te: 1, rn: 0, rspin: 0, sk: 0, sq: 0, san: false };
+const rws = Object.fromEntries($$(".rw").map((el) => [el.dataset.szene, { el, m: el.querySelector(".rw-m"), zuletzt: "" }]));
+// Stagger-Wort in Buchstaben teilen
+(() => { const m = rws.stagger.m, t = m.textContent; m.textContent = ""; [...t].forEach((c) => { const s = document.createElement("span"); s.textContent = c; m.appendChild(s); }); rws.stagger.bu = [...m.children]; })();
+const MORPH_BREITE = [100, 58, 142, 66, 134, 100];
+const TIEF = rgb(farbe("--papier-tief")), PAPIER = rgb(farbe("--papier"));
+function riesenEinpassen() {
+  for (const k in rws) {
+    const r = rws[k];
+    r.el.style.fontSize = "100px"; r.m.style.cssText = ""; r.el.style.fontVariationSettings = "";
+    if (k === "morph") r.el.style.fontVariationSettings = `"wdth" ${Math.max(...MORPH_BREITE)}`;
+    if (k === "easing") r.m.style.letterSpacing = ".02em";
+    const b = r.el.offsetWidth;
+    r.m.style.cssText = ""; r.el.style.fontVariationSettings = "";
+    const fs = Math.min(100 * (W - (mobil ? 24 : 40)) / b, mobil ? K.h * .42 : H * .44);
+    r.el.style.fontSize = fs + "px";
+    r.el.style.top = (K.cy - fs * .58) + "px";
+    r.zuletzt = "";
+  }
+}
+function riesenwort(id, p, an) {
+  for (const k in rws) rws[k].el.classList.toggle("an", k === id && an);
+  const r = rws[id]; if (!r) return;
+  let stil = "";
+  if (id === "easing") stil = `letter-spacing:${(lerp(-.035, .02, clamp(RW.wert, -.2, 1.25))).toFixed(4)}em`;
+  else if (id === "morph") { const wd = lerp(MORPH_BREITE[RW.mk], MORPH_BREITE[RW.mk + 1], RW.me); r.el.style.fontVariationSettings = `"wdth" ${wd.toFixed(1)}`; }
+  else if (id === "trim") stil = `clip-path:inset(0 ${((1 - RW.te) * 100).toFixed(2)}% 0 ${(RW.ta * 100).toFixed(2)}%)`;
+  else if (id === "repeater") {
+    const n = Math.round(RW.rn * 10), sch = [], a = RW.rspin * 1.5 + .7;
+    for (let i = 1; i <= n; i++) { const f = i / 11; sch.push(`${(Math.cos(a) * i * .018).toFixed(4)}em ${(Math.sin(a) * i * .018).toFixed(4)}em 0 ${mische(TIEF, PAPIER, f)}`); }
+    stil = `text-shadow:${sch.length ? sch.join(",") : "none"}`;
+  } else if (id === "stagger") {
+    const bu = rws.stagger.bu, nB = bu.length;
+    bu.forEach((s, i) => {
+      const u = i / (nB - 1), d = [u, Math.abs(u - .5) * 2, 1 - u, hash(i + 3)][RW.sk];
+      const ph = RW.san ? clamp((RW.sq * 1.6 - d * .6 - .1) / .5) : 0, w = Math.sin(Math.PI * ph);
+      s.style.transform = w > .001 ? `translateY(${(-w * .14).toFixed(3)}em) scale(${(1 - w * .22).toFixed(3)})` : "";
+    });
+  }
+  if (stil !== r.zuletzt) { r.m.style.cssText = stil; r.zuletzt = stil; }
+}
+
 /* ---------- Rendern ---------- */
 let letzteZeit = performance.now() / 1000, zeit = 0;
 const hudBild = $("#hudBild"), hudWert = $("#hudWert"), zlNr = $("#zlNr"), zlName = $("#zlName"), zlZeit = $("#zlZeit"), kopf = $("#kopf"), spur = $("#spur");
@@ -667,6 +729,7 @@ function bild() {
   else if (id === "stagger") wert = szeneStagger(p, dt);
   else wert = szeneAbspann(p, dt);
   if (wert !== letzterWert) { hudWert.textContent = wert; letzterWert = wert; }
+  riesenwort(id, p, textAn);
   if (id !== "held") buchstabenBewegen(zeit, dt, false);
   requestAnimationFrame(bild);
 }
@@ -810,6 +873,7 @@ function szeneEasing(p, dt) {
   const s = tempo("ease", x, yy, dt);
   ball(x, yy, rr, { vx: aus > 0 ? s.vx * .3 : s.vx, vy: s.vy * .3 });
   const kurv = (eigene.slot === z.k && eigene.b) ? { n: "custom curve" } : KURVEN[z.k];
+  RW.wert = z.wert;
   setzeText(kurveText, `cubic-bezier(${b.map((v) => +v.toFixed(2)).join(", ")}) · ${kurv.n}`);
   return `Curve ${kurv.n} · t ${komma(z.t, 2)}`;
 }
@@ -847,6 +911,7 @@ function transformRahmen(b, a, cx, cy) {
 function szeneMorph(p, dt) {
   const R0 = K.s * .34, cx = K.cx, cy = K.cy;
   const st = morphZustand(p);
+  RW.mk = st.k; RW.me = st.e;
   // Feder: gedrückt sinkt die Form ein, losgelassen schwingt sie nach
   const ziel = druck.an ? .74 : 1;
   druck.v += (ziel - druck.s) * (druck.an ? 90 : 520) * dt; druck.v *= Math.exp(-(druck.an ? 14 : 7) * dt); druck.s += druck.v * dt;
@@ -891,6 +956,7 @@ function szeneTrim(p, dt) {
   if (seg(p, .86, .99) > 0) zug(pts, 0, 1, mische(RGB.blau, RGB.rot, z), lerp(1, lwEnde, expoInOut(z)));
   else zug(pts, 0, 1, führ > 0 ? mische(RGB.graphit, RGB.blau, führ) : C.graphit, lerp(3, 1, führ));
   // Drei Linien jagen sich
+  RW.ta = seg(p, .33, .8) >= 1 ? 1 : 0; RW.te = 1;
   const farben = [C.graphit, C.rot, C.blau], breiten = [5, 3.2, 3.2];
   let txt = "Start 0% · End 100%";
   for (let j = 0; j < 3; j++) {
@@ -898,6 +964,7 @@ function szeneTrim(p, dt) {
     if (q <= 0 || q >= 1) continue;
     const ende = expoInOut(clamp(q * 1.35)), anfang = expoInOut(clamp(q * 1.35 - .35));
     zug(pts, anfang, ende, farben[j], breiten[j]);
+    if (j === 0) { RW.ta = anfang; RW.te = ende; }
     if (j === 0) txt = `Start ${Math.round(anfang * 100)}% · End ${Math.round(ende * 100)}% · Offset 3`;
   }
   setzeText(trimText, txt);
@@ -909,6 +976,7 @@ function szeneRepeater(p, dt) {
   const N = repZahl(), cx = K.cx, cy = K.cy;
   const ws = Math.max(4, K.s * .028), Ls = K.s * .16;
   const n = Math.max(1, Math.round(lerp(1, N, expoInOut(seg(p, .04, .38)))));
+  RW.rn = seg(p, .04, .38); RW.rspin = drall.spin + drall.drall;
   if (!RM) {
     drall.spin += dt * .06;
     const zd = zeiger.aktiv ? (zeiger.sx / W - .5) * 2.2 : 0;
@@ -953,7 +1021,7 @@ function szeneStagger(p, dt) {
   const k = clamp(Math.floor((p - anf) / sl), 0, 3);
   const q = p < anf ? 0 : seg(p, anf + k * sl, anf + (k + 1) * sl);
   const aus = seg(p, .86, 1);
-  const welle = WELLEN[k];
+  const welle = WELLEN[k]; RW.sk = k; RW.sq = q; RW.san = p >= anf;
   let bewegt = 0;
   // Ursprung markieren
   const ursprung = [
