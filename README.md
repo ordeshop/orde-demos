@@ -75,7 +75,7 @@ verschiedene Ordner auf demselben Server und kommen sich nicht ins Gehege.
 
 ```bash
 python3 vorschau-erzeugen.py cafe      # nur diese eine
-python3 vorschau-erzeugen.py           # alle sechs
+python3 vorschau-erzeugen.py           # alle Demos und Showreels
 ```
 
 3. Commit und Push — der Rest läuft von selbst
