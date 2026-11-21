@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="de" data-showreel>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bewegung · Motion Design von ORDÉ</title>
+<meta name="description" content="Eine Komposition zum Scrollen: Aus einem Keyframe wird Schritt für Schritt ein fertiger Motion-Design-Film. Kurve, Gewicht, Raster, Schrift, Farbe.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#17181b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='9' y='9' width='14' height='14' transform='rotate(45 16 16)' fill='%232f5bff'/%3E%3C/svg%3E">
+<link rel="preload" href="lib/instrument-sans-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400 700;font-stretch:75% 100%;font-display:swap;src:url(lib/instrument-sans-latin-standard-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url(lib/space-mono-latin-400-normal.woff2) format('woff2')}
+:root{
+  --chrom:#17181b;--feld:#1f2024;--feld2:#26272c;--linie:rgba(255,255,255,.09);
+  --hell:#e9eae5;--leise:rgba(233,234,229,.62);--blau:#2f5bff;--blau-hell:#8aa2ff;
+  --kreide:#ecede8;--tinte:#141518;--rot:#ff3d2e;--gelb:#ffc21a;
+  --sans:'Instrument Sans',system-ui,sans-serif;--mono:'Space Mono',ui-monospace,monospace;
+  --raus:cubic-bezier(.16,1,.3,1);
+  --leiste:44px;--seite:340px;--zeit:176px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--chrom);-webkit-text-size-adjust:100%}
+body{background:var(--chrom);color:var(--hell);font:400 16px/1.5 var(--sans)}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blau-hell);outline-offset:2px}
+
+#leinwand{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+
+/* Editor */
+.app{position:fixed;inset:0;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) var(--seite);grid-template-rows:var(--leiste) 1fr var(--zeit);pointer-events:none}
+.app>*{pointer-events:auto}
+.leiste{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 16px;background:var(--chrom);border-bottom:1px solid var(--linie);font:400 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--leise);white-space:nowrap;will-change:transform}
+.leiste .marke{font:600 13px/1 var(--sans);letter-spacing:.02em;text-transform:none;color:var(--hell)}
+.leiste .datei{color:var(--hell)}
+.leiste .rechts{margin-left:auto;display:flex;gap:18px;align-items:center}
+.leiste .tc{color:var(--hell);font-variant-numeric:tabular-nums}
+.leiste .tempo{color:var(--blau-hell);opacity:0;transition:opacity .2s}
+.leiste .tempo.an{opacity:1}
+.vorschau{border:1px solid var(--linie);background:var(--feld);border-radius:4px;padding:0 12px;height:30px;font:400 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--hell)}
+.vorschau:hover{border-color:var(--blau-hell)}
+.buehne{grid-column:1;grid-row:2;pointer-events:none}
+.inspektor{grid-column:2;grid-row:2;background:var(--feld);border-left:1px solid var(--linie);padding:22px 22px 18px;overflow:hidden auto;scrollbar-width:none;display:flex;flex-direction:column;gap:14px;will-change:transform}
+.inspektor>*{flex-shrink:0}
+.etikett{font:400 11px/1.3 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--leise)}
+.etikett b{font-weight:400;color:var(--blau-hell)}
+.titel{overflow:hidden;padding:.06em 0}
+.titel h2{font:650 clamp(40px,4.2vw,66px)/.95 var(--sans);letter-spacing:-.035em;font-stretch:100%;transition:transform .45s var(--raus)}
+.titel.weg h2{transform:translateY(105%);transition:none}
+.text{color:var(--leise);font-size:15px;line-height:1.55;max-width:34ch;min-height:4.6em}
+.regler{display:none;flex-direction:column;gap:10px;border-top:1px solid var(--linie);padding-top:14px}
+.regler.an{display:flex}
+.graph{width:min(100%,236px,calc(30vh * .77));aspect-ratio:200/260;touch-action:none;user-select:none;-webkit-user-select:none}
+.graph .griff{cursor:grab}
+.graph .griff:active{cursor:grabbing}
+.knoepfe{display:flex;flex-wrap:wrap;gap:6px}
+.knoepfe button{border:1px solid var(--linie);background:var(--feld2);border-radius:4px;min-height:36px;padding:0 10px;font:400 11px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;color:var(--leise)}
+.knoepfe button:hover{color:var(--hell)}
+.knoepfe button[aria-pressed=true]{background:var(--blau);border-color:var(--blau);color:#fff}
+code{font:400 11px/1.4 var(--mono);color:var(--blau-hell)}
+.zeile{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+input[type=range]{width:100%;accent-color:var(--blau);height:28px}
+.wert{font:400 13px/1 var(--mono);color:var(--hell)}
+.hinweis{font:400 11px/1.45 var(--mono);letter-spacing:.04em;color:var(--leise)}
+
+/* Zeitleiste */
+.zeitleiste{grid-column:1/-1;grid-row:3;background:var(--chrom);border-top:1px solid var(--linie);position:relative;display:grid;grid-template-columns:168px minmax(0,1fr);grid-template-rows:26px 1fr;overflow:hidden;will-change:transform}
+.zl-kopf{grid-column:1;grid-row:1;border-bottom:1px solid var(--linie);border-right:1px solid var(--linie);font:400 10px/26px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--leise);padding:0 12px}
+.lineal{grid-column:2;grid-row:1;position:relative;border-bottom:1px solid var(--linie);display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.lineal span{border-left:1px solid var(--linie);font:400 10px/26px var(--mono);letter-spacing:.04em;color:var(--leise);padding-left:7px;white-space:nowrap;overflow:hidden;transition:color .2s}
+.lineal span.jetzt{color:var(--hell)}
+.arbeitsbereich{position:absolute;left:0;bottom:0;height:3px;background:var(--blau);width:calc(100%/7);transition:transform .35s var(--raus)}
+.renderbalken{position:absolute;left:0;top:0;height:2px;width:100%;background:var(--blau-hell);transform-origin:0 50%;transform:scaleX(0)}
+.namen{grid-column:1;grid-row:2;border-right:1px solid var(--linie);padding-top:6px}
+.spuren{grid-column:2;grid-row:2;position:relative;padding-top:6px}
+.namen div,.spur{height:21px;opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s var(--raus)}
+.namen div{font:400 11px/21px var(--sans);color:var(--leise);padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.namen div i{font-style:normal;color:var(--blau-hell);margin-right:6px}
+.namen div.an,.spur.an{opacity:1;transform:none}
+.spur{position:relative}
+.spur::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--linie)}
+.spur .balken{position:absolute;top:5px;height:11px;border-radius:2px;background:rgba(47,91,255,.22);border:1px solid rgba(138,162,255,.35)}
+.kf{position:absolute;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:var(--hell);transform:rotate(45deg)}
+.kf.weich{transform:none;clip-path:polygon(0 0,100% 0,50% 50%,100% 100%,0 100%,50% 50%)}
+.kopf{position:absolute;top:0;bottom:0;left:168px;width:1px;background:var(--blau-hell);pointer-events:none;will-change:transform}
+.kopf::before{content:"";position:absolute;top:0;left:-6px;width:13px;height:14px;background:var(--blau);clip-path:polygon(0 0,100% 0,100% 60%,50% 100%,0 60%)}
+
+/* Laufband für den Scroll */
+.strecke{position:relative;z-index:1;height:1050vh;pointer-events:none}
+
+/* Schluss */
+.schluss{position:relative;z-index:3;background:var(--kreide);color:var(--tinte);min-height:100vh;min-height:100svh;padding:14vh clamp(18px,5vw,80px) calc(48px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;justify-content:space-between;gap:56px}
+.schluss .etikett{color:rgba(20,21,24,.6)}
+.schluss h2{font:650 clamp(54px,10.5vw,190px)/.86 var(--sans);letter-spacing:-.045em;margin-top:18px;max-width:11ch}
+.schluss h2 em{font-style:normal;color:var(--blau)}
+.schluss .unten{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;border-top:2px solid var(--tinte);padding-top:22px}
+.schluss p{max-width:52ch;color:rgba(20,21,24,.76);font-size:17px}
+.schluss .klein{font-size:14px;margin-top:10px}
+.aktionen{display:flex;gap:10px;flex-wrap:wrap}
+.knopf{display:inline-flex;align-items:center;min-height:52px;padding:0 24px;border-radius:999px;border:2px solid var(--tinte);font:600 16px/1 var(--sans);text-decoration:none;color:var(--kreide);background:var(--tinte);cursor:pointer;transition:transform .2s var(--raus),background .2s}
+.knopf:hover{transform:translateY(-2px);background:var(--blau);border-color:var(--blau)}
+.knopf.leise{background:transparent;color:var(--tinte)}
+.knopf.leise:hover{color:#fff}
+.schluss :focus-visible{outline-color:var(--blau)}
+
+@media (hover:hover) and (pointer:fine){html.gl .buehne-zone{cursor:crosshair}}
+@media (max-width:860px){
+  :root{--seite:280px}
+  .leiste .datei{display:none}
+}
+@media (max-width:700px){
+  :root{--leiste:40px;--zeit:104px}
+  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:var(--leiste) minmax(0,1fr) auto var(--zeit)}
+  .leiste{gap:12px;padding:0 12px}
+  .leiste .datei,.leiste .fps{display:none}
+  .inspektor{grid-column:1;grid-row:3;border-left:0;border-top:1px solid var(--linie);padding:14px 16px 12px;gap:8px;height:clamp(220px,34vh,300px)}
+  .regler.kurve>.etikett,#kurveWert{display:none}
+  .knoepfe button{min-height:34px;padding:0 8px;font-size:10px}
+  .titel h2{font-size:38px}
+  .text{font-size:14px;min-height:0;max-width:none}
+  .regler{padding-top:10px;gap:8px}
+  .graph{width:118px;position:absolute;right:14px;top:12px}
+  .regler.kurve{padding-right:140px;min-height:120px;position:static}
+  .inspektor{position:relative}
+  .zeitleiste{grid-row:4;grid-template-columns:0 minmax(0,1fr);grid-template-rows:22px 1fr}
+  .zl-kopf,.namen{display:none}
+  .lineal span{font-size:9px;line-height:22px;padding-left:4px}
+  .namen div,.spur{height:15px}
+  .spur .balken{top:3px;height:9px}
+  .kf{width:7px;height:7px;margin:-3.5px 0 0 -3.5px}
+  .kopf{left:0}
+  .schluss .unten{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){.titel h2,.namen div,.spur{transition:none}}
+.ohne-gl .app .buehne{display:flex;align-items:center;justify-content:center;color:var(--leise);font:400 12px/1.4 var(--mono)}
+</style>
+</head>
+<body>
+<canvas id="leinwand" aria-hidden="true"></canvas>
+
+<div class="app" id="app">
+  <header class="leiste">
+    <span class="marke">ORDÉ Motion</span>
+    <span class="datei">bewegung.komp · 4 : 5</span>
+    <span id="status">Rendert Vorschau … 0 %</span>
+    <span class="rechts">
+      <span class="tempo" id="tempo">Zeitlupe 0,25×</span>
+      <span class="fps">24 fps</span>
+      <span class="tc" id="tc">00:00:00:00</span>
+      <button class="vorschau" id="vorschau" type="button" aria-label="Ganze Komposition abspielen">▶ Vorschau</button>
+    </span>
+  </header>
+  <div class="buehne" id="buehne"></div>
+  <aside class="inspektor" aria-live="polite">
+    <p class="etikett" id="kNr">Kapitel <b>1</b> von 7</p>
+    <div class="titel" id="kTitelBox"><h2 id="kTitel">Keyframe</h2></div>
+    <p class="text" id="kText">Zwei Keyframes, A und B. Dazwischen rechnet der Computer jeden Schritt gleich lang. Korrekt, aber leblos.</p>
+
+    <div class="regler kurve" id="rKurve">
+      <p class="etikett">Kurve · Position</p>
+      <svg class="graph" id="graph" viewBox="0 0 200 260" aria-label="Kurveneditor: die zwei Griffe ziehen">
+        <rect x="30" y="60" width="140" height="140" fill="none" stroke="rgba(255,255,255,.12)"/>
+        <path d="M30 130H170M100 60V200" stroke="rgba(255,255,255,.06)"/>
+        <line x1="30" y1="200" x2="170" y2="60" stroke="rgba(255,255,255,.18)" stroke-dasharray="3 4"/>
+        <line id="gL1" stroke="rgba(233,234,229,.55)"/>
+        <line id="gL2" stroke="rgba(233,234,229,.55)"/>
+        <path id="gKurve" fill="none" stroke="#e9eae5" stroke-width="2.4"/>
+        <circle cx="30" cy="200" r="3.5" fill="#e9eae5"/><circle cx="170" cy="60" r="3.5" fill="#e9eae5"/>
+        <circle id="gMarke" r="4" fill="#8aa2ff"/>
+        <g class="griff" id="gG1"><circle r="16" fill="transparent"/><rect x="-6" y="-6" width="12" height="12" fill="#2f5bff" stroke="#e9eae5"/></g>
+        <g class="griff" id="gG2"><circle r="16" fill="transparent"/><rect x="-6" y="-6" width="12" height="12" fill="#2f5bff" stroke="#e9eae5"/></g>
+      </svg>
+      <div class="knoepfe" id="vorgaben">
+        <button type="button" data-k="linear" aria-pressed="false">Linear</button>
+        <button type="button" data-k="weich" aria-pressed="false">Weich</button>
+        <button type="button" data-k="raus" aria-pressed="false">Schnell raus</button>
+        <button type="button" data-k="schwung" aria-pressed="false">Schwung</button>
+      </div>
+      <code id="kurveWert">cubic-bezier(0.33, 0.33, 0.67, 0.67)</code>
+    </div>
+
+    <div class="regler" id="rVerschluss">
+      <div class="zeile"><label class="etikett" for="verschluss">Verschluss</label><span class="wert" id="verschlussWert">180°</span></div>
+      <input type="range" id="verschluss" min="0" max="360" step="15" value="180">
+      <p class="hinweis">0° = jedes Bild gestochen scharf. 180° = wie im Kino. 360° = alles verwischt.</p>
+    </div>
+
+    <div class="regler" id="rHinweis"><p class="hinweis" id="hinweis"></p></div>
+  </aside>
+  <footer class="zeitleiste" aria-hidden="true">
+    <div class="zl-kopf">Ebenen</div>
+    <div class="lineal" id="lineal"><i class="renderbalken" id="renderbalken"></i><i class="arbeitsbereich" id="arbeitsbereich"></i></div>
+    <div class="namen" id="namen"></div>
+    <div class="spuren" id="spuren"></div>
+    <div class="kopf" id="kopf"></div>
+  </footer>
+</div>
+
+<main class="strecke" id="strecke">
+  <h1 class="sr">Bewegung – wie aus einem Keyframe ein Motion-Design-Film wird</h1>
+  <ol class="sr">
+    <li>Keyframe: zwei Punkte, gleichmäßig verbunden.</li>
+    <li>Kurve: die Zeit wird ungleich verteilt.</li>
+    <li>Gewicht: Fallen, Stauchen, Nachfedern, Bewegungsunschärfe.</li>
+    <li>Raster: jede Form bleibt in ihrer Zelle.</li>
+    <li>Schrift: das Wort Bewegung im Raster.</li>
+    <li>Farbe: Farbe als Ereignis.</li>
+    <li>Render: alles zusammen in Schleife.</li>
+  </ol>
+</main>
+
+<section class="schluss" id="schluss">
+  <div>
+    <p class="etikett" id="renderFertig">Render fertig</p>
+    <h2>Bewegung für deine <em>Marke.</em></h2>
+  </div>
+  <div class="unten">
+    <div>
+      <p>ORDÉ Motion macht Filme, Ads und Websites, die sich bewegen. Erst die Regel, dann die Kurve, dann jedes einzelne Bild.</p>
+      <p class="klein">Ein Beispiel von ORDÉ. Keine Fotos, kein Film: Alles hier wird in diesem Moment auf deiner Grafikkarte gerechnet. Tipp: Halt die Bühne gedrückt.</p>
+    </div>
+    <div class="aktionen">
+      <a class="knopf" href="https://byorde.com">byorde.com</a>
+      <button class="knopf leise" id="nochmal" type="button">Von vorn ↑</button>
+    </div>
+  </div>
+</section>
+
+<script src="lib/lenis.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TOUCH = matchMedia('(hover: none), (pointer: coarse)').matches;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const eio = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const eo3 = t => 1 - Math.pow(1 - t, 3);
+const backOut = t => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+
+/* ---------- Kapitel ---------- */
+const KAP = [
+  { titel: 'Keyframe', text: 'Zwei Keyframes, A und B. Dazwischen rechnet der Computer jeden Schritt gleich lang. Korrekt, aber leblos.' },
+  { titel: 'Kurve', text: 'Die Kurve verteilt die Zeit: langsam los, schnell durch, weich an. Zieh an den Griffen und sieh, wie die Abstände wandern.' },
+  { titel: 'Gewicht', text: 'Der Punkt fällt, staucht sich beim Aufprall und federt nach. Was schnell ist, verwischt. Wie stark, entscheidet der Verschluss.' },
+  { titel: 'Raster', text: 'Eine Regel, nie gebrochen: Jede Form bleibt in ihrer Zelle. Im Takt dreht sie sich um eine Vierteldrehung weiter.' },
+  { titel: 'Schrift', text: 'Buchstaben sind Formen, die etwas sagen. Sie halten sich an dieselbe Regel und füllen ihre Zelle ganz.' },
+  { titel: 'Farbe', text: 'Bis hierher nur Schwarz auf Kreide. Farbe kommt als Ereignis, nicht als Tapete.' },
+  { titel: 'Render', text: 'Alles zusammen, in Schleife. Das ist der fertige Film.' }
+];
+const N_KAP = KAP.length;
+const HINWEIS = {
+  3: TOUCH ? 'Tipp auf eine Zelle: Vierteldrehung.' : 'Fahr über eine Zelle: Vierteldrehung.',
+  4: 'Die Buchstaben stehen im selben Raster wie die Formen.',
+  5: TOUCH ? 'Tipp auf eine Zelle: neue Farbe.' : 'Klick auf eine Zelle: neue Farbe.',
+  6: 'Leertaste oder ▶ spielt alles von vorn ab.'
+};
+
+/* ---------- Zeitleiste aufbauen ---------- */
+const SPUREN = [
+  { name: 'Punkt', eig: 'Position', ab: 0, kf: [[0, .12], [0, .5], [0, .62], [0, 1], [1, .12], [1, .5], [1, .62], [1, 1]], weichAb: 1 },
+  { name: 'Punkt', eig: 'Skalierung', ab: 2, kf: [[2, .27], [2, .35], [2, .58], [2, .64]] },
+  { name: 'Ebene', eig: 'Bewegungsunschärfe', ab: 2, balken: [2, 7] },
+  { name: 'Raster', eig: 'Drehung', ab: 3, kf: [[3, .2], [3, .4], [3, .6], [3, .8], [4, .2], [4, .4], [4, .6], [4, .8], [5, .2], [5, .4], [5, .6], [5, .8], [6, .2], [6, .5], [6, .8]] },
+  { name: 'BEWEGUNG', eig: 'Position', ab: 4, kf: [[4, .1], [4, .22], [4, .34], [4, .46], [4, .58], [4, .7], [4, .82], [4, .94]], weichAb: 4 },
+  { name: 'Farbe', eig: 'Füllung', ab: 5, kf: [[5, .08], [5, .18], [5, .28], [5, .38], [5, .48], [5, .58], [5, .68], [5, .78]] }
+];
+const lineal = $('#lineal'), namen = $('#namen'), spurenEl = $('#spuren');
+KAP.forEach((k, i) => { const s = document.createElement('span'); s.textContent = `${i + 1} ${k.titel}`; lineal.appendChild(s); });
+const linealSpans = [...lineal.querySelectorAll('span')];
+const spurEls = SPUREN.map(sp => {
+  const n = document.createElement('div'); n.innerHTML = `<i>◆</i>${sp.name} · ${sp.eig}`; namen.appendChild(n);
+  const z = document.createElement('div'); z.className = 'spur';
+  if (sp.balken) { const b = document.createElement('i'); b.className = 'balken'; b.style.left = (sp.balken[0] / N_KAP * 100) + '%'; b.style.width = ((sp.balken[1] - sp.balken[0]) / N_KAP * 100) + '%'; z.appendChild(b); }
+  const kfs = (sp.kf || []).map(([k, f]) => { const d = document.createElement('i'); d.className = 'kf'; d.style.left = ((k + f) / N_KAP * 100) + '%'; d.dataset.k = k; z.appendChild(d); return d; });
+  spurenEl.appendChild(z);
+  return { n, z, kfs, sp };
+});
+
+/* ---------- Kurve ---------- */
+const VORGABEN = { linear: [.33, .33, .67, .67], weich: [.65, 0, .35, 1], raus: [.16, 1, .3, 1], schwung: [.34, 1.56, .64, 1] };
+const kurve = { g: VORGABEN.linear.slice(), ziel: VORGABEN.weich.slice(), manuell: false, zug: -1 };
+function bez1(a, b, u) { const v = 1 - u; return 3 * v * v * u * a + 3 * v * u * u * b + u * u * u; }
+function easeK(t, g) {
+  if (t <= 0) return 0; if (t >= 1) return 1;
+  let lo = 0, hi = 1, u = t;
+  for (let i = 0; i < 20; i++) { u = (lo + hi) / 2; if (bez1(g[0], g[2], u) < t) lo = u; else hi = u; }
+  return bez1(g[1], g[3], u);
+}
+const graph = $('#graph'), gKurve = $('#gKurve'), gL1 = $('#gL1'), gL2 = $('#gL2'), gG1 = $('#gG1'), gG2 = $('#gG2'), gMarke = $('#gMarke'), kurveWert = $('#kurveWert');
+const GX = x => 30 + x * 140, GY = y => 200 - y * 140;
+let kurveText = '';
+function graphZeichnen(markeT, markeV) {
+  const g = kurve.g;
+  gKurve.setAttribute('d', `M${GX(0)} ${GY(0)}C${GX(g[0])} ${GY(g[1])} ${GX(g[2])} ${GY(g[3])} ${GX(1)} ${GY(1)}`);
+  gL1.setAttribute('x1', GX(0)); gL1.setAttribute('y1', GY(0)); gL1.setAttribute('x2', GX(g[0])); gL1.setAttribute('y2', GY(g[1]));
+  gL2.setAttribute('x1', GX(1)); gL2.setAttribute('y1', GY(1)); gL2.setAttribute('x2', GX(g[2])); gL2.setAttribute('y2', GY(g[3]));
+  gG1.setAttribute('transform', `translate(${GX(g[0])} ${GY(g[1])})`);
+  gG2.setAttribute('transform', `translate(${GX(g[2])} ${GY(g[3])})`);
+  gMarke.setAttribute('cx', GX(markeT)); gMarke.setAttribute('cy', GY(markeV));
+  const t = `cubic-bezier(${g.map(n => n.toFixed(2)).join(', ')})`;
+  if (t !== kurveText) { kurveText = t; kurveWert.textContent = t; }
+}
+function svgPunkt(e) { const p = graph.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(graph.getScreenCTM().inverse()); }
+[gG1, gG2].forEach((h, i) => h.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); kurve.zug = i; kurve.manuell = true; h.setPointerCapture(e.pointerId); vorgabeMarkieren(null); }));
+graph.addEventListener('pointermove', e => {
+  if (kurve.zug < 0) return;
+  const p = svgPunkt(e), i = kurve.zug;
+  kurve.g[i * 2] = clamp((p.x - 30) / 140, 0, 1);
+  kurve.g[i * 2 + 1] = clamp((200 - p.y) / 140, -.4, 1.4);
+  kurve.ziel = kurve.g.slice();
+});
+['pointerup', 'pointercancel'].forEach(t => graph.addEventListener(t, () => { kurve.zug = -1; }));
+const vorgabenEl = $('#vorgaben');
+function vorgabeMarkieren(k) { vorgabenEl.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k ? 'true' : 'false')); }
+vorgabenEl.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; kurve.manuell = true; kurve.ziel = VORGABEN[b.dataset.k].slice(); vorgabeMarkieren(b.dataset.k); });
+
+/* ---------- Verschluss ---------- */
+const verschluss = { wert: 180, manuell: false };
+const verschlussEl = $('#verschluss'), verschlussWert = $('#verschlussWert');
+verschlussEl.addEventListener('input', () => { verschluss.manuell = true; verschluss.wert = +verschlussEl.value; });
+
+/* ---------- Scrollen ---------- */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+scrollTo(0, 0);
+let lenis = null;
+if (!RM && window.Lenis) { try { lenis = new Lenis({ lerp: .085, smoothWheel: true }); } catch (e) { lenis = null; } }
+const strecke = $('#strecke'), schluss = $('#schluss');
+function streckenEnde() { return strecke.offsetTop + strecke.offsetHeight - innerHeight; }
+function scrolle(y, dauer) { if (lenis) lenis.scrollTo(y, { duration: dauer, easing: t => t, lock: false }); else scrollTo({ top: y, behavior: RM ? 'auto' : 'smooth' }); }
+function vorschauStarten() {
+  if (scrollY > streckenEnde() - 20) { if (lenis) lenis.scrollTo(0, { immediate: true }); else scrollTo(0, 0); }
+  requestAnimationFrame(() => scrolle(streckenEnde(), 26 * (1 - scrollY / Math.max(1, streckenEnde()))));
+}
+$('#vorschau').addEventListener('click', vorschauStarten);
+$('#nochmal').addEventListener('click', () => { if (lenis) lenis.scrollTo(0, { duration: 2.4 }); else scrollTo({ top: 0, behavior: RM ? 'auto' : 'smooth' }); });
+addEventListener('keydown', e => {
+  if (e.code !== 'Space' || e.target.closest('input,button,a,textarea')) return;
+  e.preventDefault(); vorschauStarten();
+});
+
+/* ---------- WebGL ---------- */
+const canvas = $('#leinwand');
+const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'high-performance' });
+const status = $('#status');
+if (!gl) {
+  document.documentElement.classList.add('ohne-gl');
+  $('#buehne').textContent = 'Die Bühne braucht WebGL 2. Der Text links und die Zeitleiste funktionieren trotzdem.';
+  status.textContent = 'Ohne Vorschau';
+}
+document.documentElement.classList.toggle('gl', !!gl);
+
+const VS = `#version 300 es
+in vec2 a; out vec2 vUv; void main(){ vUv = a * .5 + .5; gl_Position = vec4(a, 0., 1.); }`;
+const FS = `#version 300 es
+precision highp float; precision highp int;
+in vec2 vUv; out vec4 o;
+uniform vec2 uRes; uniform float uTime, uPx;
+uniform highp sampler2D uDaten; uniform sampler2D uAtlas;
+uniform vec4 uComp;           // x, oben (GL), Breite, Höhe in Pixeln
+uniform int uK, uFrei;
+uniform float uRaster, uRasterZiehen, uRahmen;
+uniform vec3 uPappe;
+uniform vec4 uPfad; uniform float uPfadA;
+uniform vec2 uGeist[9]; uniform float uGeistA, uGeistR;
+uniform vec4 uSel; uniform float uSelA;
+const vec3 KREIDE = vec3(.925, .929, .910);
+const vec3 TINTE = vec3(.078, .082, .094);
+const vec3 BLAU = vec3(.184, .357, 1.);
+float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+float box(vec2 p, vec2 b){ vec2 d = abs(p) - b; return length(max(d, 0.)) + min(max(d.x, d.y), 0.); }
+float seg(vec2 p, vec2 a, vec2 b){ vec2 pa = p - a, ba = b - a; float h = clamp(dot(pa, ba) / dot(ba, ba), 0., 1.); return length(pa - ba * h); }
+mat2 dreh(float a){ float c = cos(a), s = sin(a); return mat2(c, s, -s, c); }
+vec4 D(int x, int y){ return texelFetch(uDaten, ivec2(x, y), 0); }
+
+float form(float typ, vec2 l){
+  if (typ < .5) return length(l) - .42;                                         // Kreis
+  if (typ < 1.5) return box(l, vec2(.42));                                      // Quadrat
+  if (typ < 2.5) return max(length(l - vec2(-.5, .5)) - 1., box(l, vec2(.5)));  // Viertelkreis aus der Ecke
+  if (typ < 3.5) return max(dot(l, vec2(.7071)), box(l, vec2(.5)));             // halbe Zelle, diagonal
+  if (typ < 4.5) return max(length(l - vec2(0., .5)) - .5, box(l, vec2(.5)));   // Halbkreis auf der Kante
+  return box(l, vec2(.5));                                                      // ganze Zelle
+}
+float deckung(vec2 c, int e, int j, float ppu){
+  vec4 a = D(e, 2 * j), b = D(e, 2 * j + 1);
+  float typ = b.z, cov;
+  if (typ > 7.5) {                                   // Blende aus der Zellecke
+    cov = clamp(.5 - (length(c - a.xy) - a.w) * ppu, 0., 1.);
+  } else {
+    vec2 q = dreh(-a.z) * (c - a.xy);
+    vec2 s = max(vec2(a.w, b.x), vec2(1e-4));
+    vec2 l = q / s;
+    if (typ > 4.5 && typ < 5.5) {                    // Buchstabe aus dem Atlas
+      vec4 f = D(e, 16);
+      vec2 uv = vec2((f.w + l.x + .5) / 8., 1. - (l.y + .5));
+      float innen = step(abs(l.x), .5) * step(abs(l.y), .5);
+      cov = texture(uAtlas, uv).r * innen;
+    } else {
+      cov = clamp(.5 - form(typ, l) * min(s.x, s.y) * ppu, 0., 1.);
+    }
+  }
+  if (b.w > -.5) {
+    vec2 z = vec2(mod(b.w, 4.), floor(b.w / 4.));
+    cov *= clamp(.5 - box(c - z - .5, vec2(.5)) * ppu, 0., 1.);
+  }
+  return cov * b.y;
+}
+vec3 zeichne(vec3 col, vec2 c, int e, float ppu){
+  vec4 fl = D(e, 17);
+  if (fl.w < -.5) return col;
+  int n = fl.w > .5 ? uK : 1;
+  float acc = 0.;
+  for (int j = 0; j < 8; j++) { if (j >= n) break; acc += deckung(c, e, j, ppu); }
+  acc /= float(n);
+  return mix(col, D(e, 16).rgb, acc);
+}
+void main(){
+  vec2 px = vUv * uRes;
+  float ppu = uComp.z / 4.;
+  vec2 c = vec2((px.x - uComp.x) / ppu, (uComp.y - px.y) / ppu);
+  float inKomp = clamp(.5 - box(c - vec2(2., 2.5), vec2(2., 2.5)) * ppu, 0., 1.);
+  vec3 col = mix(uPappe, KREIDE, inKomp);
+  // Rahmen um die Komposition (Editor)
+  col = mix(col, vec3(1.), clamp(.5 - (abs(box(c - vec2(2., 2.5), vec2(2., 2.5))) * ppu - .5 * uPx), 0., 1.) * .16 * uRahmen);
+  // Raster, zeichnet sich beim Laden von oben nach unten
+  vec2 g = abs(c - floor(c + .5)) * ppu;
+  float rl = clamp(.5 - (min(g.x, g.y) - .5 * uPx), 0., 1.);
+  float zieh = step(c.y, uRasterZiehen * 5.2);
+  col = mix(col, TINTE, rl * uRaster * .13 * inKomp * zieh);
+  // Ebenen der Zelle
+  if (inKomp > 0. && c.x >= 0. && c.y >= 0. && c.x < 4. && c.y < 5.) {
+    float ci = floor(c.y) * 4. + floor(c.x);
+    int i = int(ci);
+    col = zeichne(col, c, i, ppu);
+    col = zeichne(col, c, 20 + i, ppu);
+    if (40 + i != uFrei) col = zeichne(col, c, 40 + i, ppu);
+    if (i >= 4 && i <= 11) col = zeichne(col, c, 56 + i, ppu);
+  }
+  // Bewegungspfad und Geisterbilder
+  if (uPfadA > 0.) {
+    vec2 A = uPfad.xy, B = uPfad.zw;
+    float d = seg(c, A, B) * ppu;
+    float laengs = dot(c - A, normalize(B - A)) * ppu;
+    float strich = step(.45, fract(laengs / (9. * uPx)));
+    col = mix(col, BLAU, clamp(.5 - (d - .6 * uPx), 0., 1.) * strich * uPfadA * .8);
+    for (int k = 0; k < 9; k++) {
+      float dg = abs(length(c - uGeist[k]) - uGeistR) * ppu;
+      col = mix(col, TINTE, clamp(.5 - (dg - .5 * uPx), 0., 1.) * uGeistA * .32);
+    }
+    for (int k = 0; k < 2; k++) {
+      vec2 q = (c - (k == 0 ? A : B)) * ppu;
+      float dk = (abs(q.x) + abs(q.y)) * .7071 - 5.5 * uPx;
+      col = mix(col, BLAU, clamp(.5 - dk, 0., 1.) * uPfadA);
+    }
+  }
+  // das freie Element (der Punkt) über allem
+  if (uFrei >= 0) col = zeichne(col, c, uFrei, ppu);
+  // Auswahl: Rahmen, Anfasser, Ankerpunkt
+  if (uSelA > 0.) {
+    vec2 q = (c - uSel.xy) * ppu, h = uSel.zw * ppu;
+    float r = abs(box(q, h)) - .5 * uPx;
+    float a = clamp(.5 - r, 0., 1.);
+    for (int k = 0; k < 8; k++) {
+      vec2 o = vec2(k == 0 || k == 6 || k == 7 ? -1. : (k == 1 || k == 5 ? 0. : 1.), k < 3 ? -1. : (k == 3 || k == 7 ? 0. : 1.));
+      float db = box(q - o * h, vec2(3.5 * uPx));
+      col = mix(col, KREIDE, clamp(.5 - db, 0., 1.) * uSelA);
+      a = max(a, clamp(.5 - (abs(db) - .5 * uPx), 0., 1.));
+    }
+    float kreuz = min(max(abs(q.x) - 7. * uPx, abs(q.y) - .5 * uPx), max(abs(q.y) - 7. * uPx, abs(q.x) - .5 * uPx));
+    a = max(a, clamp(.5 - kreuz, 0., 1.) * .9);
+    col = mix(col, BLAU, a * uSelA);
+  }
+  // Korn und Vignette über allem
+  col += (hash(px + fract(uTime * 13.) * 97.) - .5) * .028;
+  col *= 1. - .1 * pow(length(vUv - .5) * 1.3, 2.4);
+  o = vec4(col, 1.);
+}`;
+
+let prog = null, U = {}, datenTex = null, atlasTex = null;
+const BREITE = 68, ZEILEN = 18, KMAX = 8;
+const daten = new Float32Array(BREITE * ZEILEN * 4);
+if (gl) {
+  const sh = (t, s) => { const x = gl.createShader(t); gl.shaderSource(x, s); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x)); return x; };
+  prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+  gl.bindAttribLocation(prog, 0, 'a'); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+  gl.useProgram(prog);
+  ['uRes', 'uTime', 'uPx', 'uDaten', 'uAtlas', 'uComp', 'uK', 'uFrei', 'uRaster', 'uRasterZiehen', 'uRahmen', 'uPappe', 'uPfad', 'uPfadA', 'uGeist', 'uGeistA', 'uGeistR', 'uSel', 'uSelA']
+    .forEach(n => U[n] = gl.getUniformLocation(prog, n === 'uGeist' ? 'uGeist[0]' : n));
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  datenTex = gl.createTexture(); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, datenTex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, BREITE, ZEILEN, 0, gl.RGBA, gl.FLOAT, daten);
+  atlasTex = gl.createTexture(); gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, atlasTex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
+  gl.uniform1i(U.uDaten, 0); gl.uniform1i(U.uAtlas, 1);
+}
+
+/* Buchstaben-Atlas: jeder Buchstabe füllt seine Zelle ganz (Blocksatz im Raster) */
+const BUCHST = ['B', 'E', 'W', 'G', 'U', 'N'];
+const WORT = ['B', 'E', 'W', 'E', 'G', 'U', 'N', 'G'];
+function atlasZeichnen() {
+  if (!gl) return;
+  const Z = 256, c = document.createElement('canvas'); c.width = Z * 8; c.height = Z;
+  const x = c.getContext('2d');
+  x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#fff';
+  BUCHST.forEach((b, i) => {
+    x.save(); x.font = '700 200px "Instrument Sans"';
+    const m = x.measureText(b);
+    const w = m.actualBoundingBoxLeft + m.actualBoundingBoxRight, h = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
+    const rand = Z * .1, sx = (Z - 2 * rand) / w, sy = (Z - 2 * rand) / h;
+    x.translate(i * Z + rand, rand); x.scale(sx, sy);
+    x.fillText(b, m.actualBoundingBoxLeft, m.actualBoundingBoxAscent);
+    x.restore();
+  });
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, atlasTex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+}
+
+/* ---------- Größe ---------- */
+let DPR = Math.min(devicePixelRatio || 1, TOUCH ? 1.75 : 2), Q = 1, K = 1;
+function groesse() {
+  K = DPR * Q;
+  canvas.width = Math.max(2, Math.round(innerWidth * K)); canvas.height = Math.max(2, Math.round(innerHeight * K));
+}
+groesse();
+let resizeT = 0;
+addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(groesse, 120); });
+
+/* ---------- Die Komposition ---------- */
+const FARBE = { kreide: [.925, .929, .910], tinte: [.078, .082, .094], rot: [1, .239, .18], gelb: [1, .761, .102], blau: [.184, .357, 1] };
+const DUNKEL = new Set(['tinte', 'rot', 'blau']);
+const TYPEN = [2, 1, 3, 0, 3, 2, 0, 2, 1, 3, 2, 0, 2, 0, 3, 2, 3, 0, 2, 1];
+const DREH0 = [0, 0, 1, 3, 2, 1, 0, 3, 0, 2, 1, 0, 3, 0, 0, 1, 1, 0, 2, 0];
+const PUNKT = 17;           // die Zelle, in der der Punkt landet
+const TAKT = 60 / 93 * 2;   // eine Vierteldrehung alle zwei Schläge bei 93 BPM
+const AUTO_FARBE = [[.06, 0, 'gelb'], [.15, 5, 'blau'], [.24, 10, 'rot'], [.33, 3, 'tinte'], [.42, 12, 'rot'], [.51, 15, 'blau'], [.6, PUNKT, 'gelb'], [.69, 18, 'tinte']];
+const zellen = [...Array(20)].map((_, i) => ({
+  zaehl: 0, start: -9, letzter: null, dir: hash(i + 3) > .45 ? 1 : -1,
+  versatz: ((i % 4) + Math.floor(i / 4)) * .09,
+  farbe: 'kreide', alt: 'kreide', wisch: -9, ecke: [0, 0], nutzer: null
+}));
+const ZELL_FOLGE = Object.keys(FARBE);
+
+function punktQuer(t, w) {
+  const L = 2.6, ph = ((t % L) + L) % L / L;
+  const E = s => lerp(s, easeK(s, kurve.g), w);
+  let v;
+  if (ph < .12) v = 0; else if (ph < .5) v = E((ph - .12) / .38); else if (ph < .62) v = 1; else v = 1 - E((ph - .62) / .38);
+  return { x: lerp(.5, 3.5, v), y: 2.5, sx: .36, sy: .36, s: (ph - .12) / .38 };
+}
+function punktFall(t) {
+  const L = 2.2, ph = ((t % L) + L) % L, r = .18, boden = 5 - r, oben = .9;
+  let y, sx = 1, sy = 1;
+  if (ph < .6) { const s = ph / .6; y = oben + (boden - oben) * s * s; sy = 1 + .38 * s * s; sx = 1 / Math.sqrt(sy); }
+  else if (ph < .78) { const q = Math.sin((ph - .6) / .18 * Math.PI); sy = 1 - .42 * q; sx = 1 + .48 * q; y = 5 - r * sy; }
+  else if (ph < 1.28) { const q = (ph - .78) / .5; y = boden - 1.1 * 4 * q * (1 - q); const v = Math.abs(1 - 2 * q); sy = 1 + .16 * v; sx = 1 / Math.sqrt(sy); }
+  else if (ph < 1.4) { const q = Math.sin((ph - 1.28) / .12 * Math.PI); sy = 1 - .18 * q; sx = 1 + .2 * q; y = 5 - r * sy; }
+  else { const q = (ph - 1.4) / .8; y = boden + (oben - boden) * eio(q); const v = Math.sin(q * Math.PI); sy = 1 + .14 * v; sx = 1 / Math.sqrt(sy); }
+  return { x: 1.5, y, sx: .36 * sx, sy: .36 * sy };
+}
+
+/* Element in die Datentextur schreiben */
+function setze(e, j, x, y, rot, sx, sy, alpha, typ, clip) {
+  let o = ((2 * j) * BREITE + e) * 4; daten[o] = x; daten[o + 1] = y; daten[o + 2] = rot; daten[o + 3] = sx;
+  o = ((2 * j + 1) * BREITE + e) * 4; daten[o] = sy; daten[o + 1] = alpha; daten[o + 2] = typ; daten[o + 3] = clip;
+}
+function farbeSetzen(e, rgb, glyph) { const o = (16 * BREITE + e) * 4; daten[o] = rgb[0]; daten[o + 1] = rgb[1]; daten[o + 2] = rgb[2]; daten[o + 3] = glyph || 0; }
+function flag(e, f) { daten[(17 * BREITE + e) * 4 + 3] = f; }
+
+let W = [0, 0, 0, 0, 0, 0, 0];   // Fortschritt je Kapitel 0..1
+let maus = { x: -9, y: -9, zelle: -1, ueberKomp: false, unten: false, ux: 0, uy: 0, typ: 'mouse' };
+
+/* Zustand aller Ebenen zur Zeit t schreiben (Unterbild j) */
+function komposition(t, j) {
+  const [w0, w1, w2, w3, w4, w5, w6] = W;
+  // Punkt
+  const q = punktQuer(t, smooth(0, .35, w1));
+  const f = punktFall(t);
+  const m = smooth(0, .22, w2), land = smooth(.72, .96, w2);
+  let px = lerp(q.x, f.x, m), py = lerp(q.y, f.y, m), psx = lerp(q.sx, f.sx, m), psy = lerp(q.sy, f.sy, m);
+  px = lerp(px, 1.5, land); py = lerp(py, 4.5, land); psx = lerp(psx, .36, land); psy = lerp(psy, .36, land);
+  const wachs = w3 > 0 ? backOut(smooth(0, .2, w3)) : 0;
+  const groesseP = lerp(.36, .84, wachs);
+  // im Raster federt der Punkt im Takt
+  const lt = t - zellen[PUNKT].versatz, ph = ((lt % TAKT) + TAKT) % TAKT;
+  const puls = Math.exp(-ph * 7) * Math.sin(Math.min(ph * 9, Math.PI)) * smooth(.6, .9, w3);
+  const pScaleX = w3 > 0 ? groesseP * (1 + .16 * puls) : psx, pScaleY = w3 > 0 ? groesseP * (1 - .16 * puls) : psy;
+  const pY = w3 > 0 ? 4.5 + (.84 - groesseP * (1 - .16 * puls)) * 0 : py;
+  // Zellen: Fläche alt, Blende neu, Form
+  for (let i = 0; i < 20; i++) {
+    const z = zellen[i], cx = (i % 4) + .5, cy = Math.floor(i / 4) + .5;
+    setze(i, j, cx, cy, 0, 1, 1, 1, 6, i);
+    const alter = t - z.wisch;
+    const rad = z.alt === z.farbe ? 0 : 1.5 * eo3(clamp(alter / .55, 0, 1));
+    setze(20 + i, j, z.ecke[0], z.ecke[1], 0, rad, 1, rad > 0 ? 1 : 0, 8, i);
+    const istBuchst = i >= 4 && i <= 11;
+    // Erscheinen der Formen vom Punkt aus
+    const dist = Math.hypot((i % 4) - 1, Math.floor(i / 4) - 4);
+    const auf = i === PUNKT ? 1 : backOut(clamp((w3 * 1.8 - dist * .22) / .35, 0, 1));
+    const schrift = istBuchst ? clamp((w4 * 1.7 - (i % 4) * .14 - (Math.floor(i / 4) - 1) * .3) / .4, 0, 1) : 0;
+    // Drehung im Takt (Zähler wird im Hauptschritt erhöht)
+    const fd = clamp((t - z.start) / .5, 0, 1);
+    const winkel = (DREH0[i] + z.zaehl - z.dir * (z.zaehlDiff || 0) * (1 - backOut(fd))) * Math.PI / 2;
+    if (i === PUNKT) {
+      // der Punkt: frei bis zur Landung, danach in seiner Zelle
+      const frei = w3 <= 0;
+      setze(40 + i, j, frei ? px : 1.5, frei ? py : pY, 0, pScaleX / .84, pScaleY / .84, 1, 0, frei ? -1 : i);
+    } else {
+      const s = auf * (1 - eo3(smooth(0, .55, schrift)));
+      setze(40 + i, j, cx, cy, winkel, s, s, s > .001 ? 1 : 0, TYPEN[i], i);
+    }
+    if (istBuchst) {
+      const g = i - 4, e = clamp((schrift - .25) / .75, 0, 1), hop = Math.sin(clamp(((((t - z.versatz) % TAKT) + TAKT) % TAKT) / .32, 0, 1) * Math.PI) * .045 * smooth(.9, 1, w4);
+      setze(56 + i, j, cx, cy + (1 - eo3(e)) * 1.02 - hop, 0, 1, 1, e > 0 ? 1 : 0, 5, i);
+    }
+  }
+}
+function farbenSchreiben() {
+  for (let i = 0; i < 20; i++) {
+    const z = zellen[i], neuSichtbar = (zeit - z.wisch) > .22;
+    const grund = (z.alt === z.farbe || neuSichtbar) ? z.farbe : z.alt;
+    farbeSetzen(i, FARBE[z.alt]); flag(i, z.alt === 'kreide' ? -1 : 0);
+    farbeSetzen(20 + i, FARBE[z.farbe]); flag(20 + i, z.alt === z.farbe ? -1 : 0);
+    const formFarbe = DUNKEL.has(grund) ? FARBE.kreide : FARBE.tinte;
+    farbeSetzen(40 + i, formFarbe);
+    if (i >= 4 && i <= 11) farbeSetzen(56 + i, formFarbe, BUCHST.indexOf(WORT[i - 4]));
+  }
+}
+
+/* Farben: Ereignisse aus dem Scrollen und aus Klicks */
+function farbeWechseln(i, neu, ecke) {
+  const z = zellen[i];
+  if (z.farbe === neu) return;
+  z.alt = z.farbe;
+  z.farbe = neu; z.wisch = zeit;
+  const cx = i % 4, cy = Math.floor(i / 4);
+  z.ecke = ecke || [cx + (hash(i * 7 + zeit) > .5 ? 1 : 0), cy + (hash(i * 3 + zeit * 2) > .5 ? 1 : 0)];
+}
+function farbenPflegen() {
+  const w5 = W[5];
+  for (let i = 0; i < 20; i++) {
+    const z = zellen[i];
+    if ((zeit - z.wisch) > .55 && z.alt !== z.farbe) z.alt = z.farbe;
+    let ziel = 'kreide';
+    for (const [schwelle, zi, f] of AUTO_FARBE) if (zi === i && w5 >= schwelle) ziel = f;
+    if (z.nutzer && W[5] > 0) ziel = z.nutzer;
+    if (W[5] <= 0 && z.nutzer) z.nutzer = null;
+    if (ziel !== z.farbe && (zeit - z.wisch) > .6) farbeWechseln(i, ziel);
+  }
+}
+
+/* Drehungen im Takt und unter der Maus */
+let gedreht = new Set();
+function drehungenPflegen() {
+  const aktiv = W[3] > .75;
+  for (let i = 0; i < 20; i++) {
+    if (i === PUNKT || (i >= 4 && i <= 11 && W[4] > .2)) continue;
+    const z = zellen[i];
+    const schlag = Math.floor((zeit - z.versatz) / TAKT);
+    if (z.letzter === null) z.letzter = schlag;
+    if (schlag > z.letzter) {
+      z.letzter = schlag;
+      if (aktiv && !RM) { z.zaehl += z.dir; z.zaehlDiff = 1; z.start = schlag * TAKT + z.versatz; }
+    }
+  }
+}
+function zelleDrehen(i) {
+  if (i < 0 || i === PUNKT || (i >= 4 && i <= 11 && W[4] > .2) || W[3] < .5) return;
+  const z = zellen[i]; z.zaehl += z.dir; z.zaehlDiff = 1; z.start = zeit;
+}
+
+/* ---------- Eingaben ---------- */
+let kompRect = { x: 0, y: 0, w: 1, h: 1 };
+function mausZelle(cx, cy) {
+  const x = (cx - kompRect.x) / kompRect.w * 4, y = (cy - kompRect.y) / kompRect.h * 5;
+  maus.ux = x; maus.uy = y;
+  maus.ueberKomp = x >= 0 && y >= 0 && x < 4 && y < 5;
+  return maus.ueberKomp ? Math.floor(y) * 4 + Math.floor(x) : -1;
+}
+let haltenStart = 0, druckOrt = null;
+const inPanel = e => e.target.closest && e.target.closest('.leiste,.inspektor,.zeitleiste,.schluss');
+addEventListener('pointermove', e => {
+  maus.typ = e.pointerType;
+  const z = mausZelle(e.clientX, e.clientY);
+  if (z !== maus.zelle) { maus.zelle = z; if (!TOUCH && z >= 0 && !inPanel(e)) zelleDrehen(z); }
+}, { passive: true });
+addEventListener('pointerdown', e => {
+  if (inPanel(e)) return;
+  maus.unten = true; haltenStart = performance.now(); druckOrt = [e.clientX, e.clientY];
+  mausZelle(e.clientX, e.clientY);
+});
+addEventListener('pointerup', e => {
+  const war = maus.unten; maus.unten = false;
+  if (!war || !druckOrt || inPanel(e)) return;
+  const bewegt = Math.hypot(e.clientX - druckOrt[0], e.clientY - druckOrt[1]) > 12;
+  const lang = performance.now() - haltenStart > 320;
+  if (bewegt || lang) return;
+  const z = mausZelle(e.clientX, e.clientY);
+  if (z < 0) return;
+  if (W[5] > 0 && W[6] < 1) {
+    const zz = zellen[z], ziele = ['rot', 'gelb', 'blau', 'tinte', 'kreide'];
+    const neu = ziele[(ziele.indexOf(zz.farbe) + 1) % ziele.length];
+    zz.nutzer = neu; farbeWechseln(z, neu, [maus.ux, maus.uy]);
+  } else if (TOUCH) zelleDrehen(z);
+});
+addEventListener('pointercancel', () => { maus.unten = false; });
+addEventListener('contextmenu', e => { if (!inPanel(e)) e.preventDefault(); });
+
+/* ---------- Laden ---------- */
+let ladeAnteil = 0, geladen = false, intro = 0;
+const ladeStart = performance.now();
+const pflicht = [
+  document.fonts ? document.fonts.load('700 100px "Instrument Sans"') : Promise.resolve(),
+  document.fonts ? document.fonts.load('400 12px "Space Mono"') : Promise.resolve()
+];
+let erledigt = 0; pflicht.forEach(p => p.then(() => erledigt++, () => erledigt++));
+Promise.all(pflicht.map(p => p.catch(() => {}))).then(() => { atlasZeichnen(); geladen = true; });
+
+/* ---------- Hauptschleife ---------- */
+const app = $('#app'), leiste = $('.leiste'), inspektor = $('.inspektor'), zeitleiste = $('.zeitleiste');
+const kopf = $('#kopf'), arbeit = $('#arbeitsbereich'), renderbalken = $('#renderbalken'), tc = $('#tc'), tempoEl = $('#tempo');
+const kNr = $('#kNr'), kTitel = $('#kTitel'), kTitelBox = $('#kTitelBox'), kText = $('#kText');
+const rKurve = $('#rKurve'), rVerschluss = $('#rVerschluss'), rHinweis = $('#rHinweis'), hinweisEl = $('#hinweis');
+const buehne = $('#buehne');
+let zeit = 0, alt = performance.now(), aktiv = -1, tempo = 1, altY = scrollY, scrollTempo = 0, breite = 100;
+let schnittZeit = [], qualPruef = performance.now();
+
+function kapitelZeigen(k) {
+  kNr.innerHTML = `Kapitel <b>${k + 1}</b> von ${N_KAP}`;
+  kTitelBox.classList.add('weg'); kTitel.textContent = KAP[k].titel;
+  void kTitel.offsetWidth; kTitelBox.classList.remove('weg');
+  kText.textContent = KAP[k].text;
+  rKurve.classList.toggle('an', k === 1);
+  rVerschluss.classList.toggle('an', k === 2);
+  rHinweis.classList.toggle('an', !!HINWEIS[k]); hinweisEl.textContent = HINWEIS[k] || '';
+  linealSpans.forEach((s, i) => s.classList.toggle('jetzt', i === k));
+  arbeit.style.transform = `translateX(${k * 100}%)`;
+}
+function zeitcode(s) {
+  const f = Math.floor(s * 24), ff = f % 24, ss = Math.floor(f / 24) % 60, mm = Math.floor(f / 1440);
+  return `00:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}:${String(ff).padStart(2, '0')}`;
+}
+
+function bild(jetzt) {
+  const echt = Math.min(.05, (jetzt - alt) / 1000); alt = jetzt;
+  if (lenis) lenis.raf(jetzt);
+  // Zeitlupe als versteckte Belohnung: Bühne gedrückt halten
+  const halten = maus.unten && maus.ueberKomp && jetzt - haltenStart > 320 && W[3] + W[2] + W[1] + W[0] > 0;
+  tempo = lerp(tempo, halten ? .25 : 1, .08);
+  tempoEl.classList.toggle('an', tempo < .7);
+  if (!RM) zeit += echt * tempo;
+
+  // Laden
+  const ziel = geladen ? 1 : Math.min(.95, (erledigt / pflicht.length) * .7 + .3 * smooth(0, 2500, jetzt - ladeStart));
+  ladeAnteil = lerp(ladeAnteil, ziel, 1 - Math.exp(-echt * 4.5));
+  const fertig = geladen && ladeAnteil > .985 && jetzt - ladeStart > 1500;
+  if (fertig) intro = Math.min(1, intro + echt / 1.1);
+  if (!fertig) status.textContent = `Rendert Vorschau … ${Math.round(ladeAnteil * 100)} %`;
+  else if (status.dataset.fertig !== '1') { status.dataset.fertig = '1'; status.textContent = 'Vorschau bereit · Scrollen spult'; }
+  renderbalken.style.transform = `scaleX(${fertig ? 1 - smooth(0, 1, intro) : ladeAnteil})`;
+
+  // Scroll → Kapitel
+  const ende = Math.max(1, streckenEnde());
+  const y = scrollY;
+  scrollTempo = lerp(scrollTempo, (y - altY) / Math.max(echt, .001), .12); altY = y;
+  const P = clamp(y / ende, 0, 1) * N_KAP;
+  for (let i = 0; i < N_KAP; i++) W[i] = clamp(P - i, 0, 1);
+  if (intro <= 0) W.fill(0);
+  const k = Math.min(N_KAP - 1, Math.floor(P));
+  if (k !== aktiv && intro > 0) { aktiv = k; kapitelZeigen(k); }
+  if (aktiv < 0 && intro > 0) { aktiv = 0; kapitelZeigen(0); }
+  // Spuren erscheinen mit ihrem Kapitel, Keyframes werden weich, sobald die Kurve kommt
+  spurEls.forEach(s => {
+    const an = intro > 0 && P >= s.sp.ab;
+    s.n.classList.toggle('an', an); s.z.classList.toggle('an', an);
+    if (s.sp.weichAb !== undefined) s.kfs.forEach(d => d.classList.toggle('weich', P >= s.sp.weichAb + .3 && +d.dataset.k >= s.sp.weichAb - 1));
+  });
+
+  // Schrift wird schmaler, je schneller gescrollt wird
+  const b = clamp(100 - Math.abs(scrollTempo) / 60, 76, 100);
+  breite = lerp(breite, b, .15);
+  kTitel.style.fontStretch = breite.toFixed(1) + '%';
+
+  // Kurve
+  if (!kurve.manuell) kurve.ziel = (W[1] > .05 ? VORGABEN.weich : VORGABEN.linear).slice();
+  if (kurve.zug < 0) for (let i = 0; i < 4; i++) kurve.g[i] = lerp(kurve.g[i], kurve.ziel[i], .14);
+  const lauf = punktQuer(zeit, 1), ls = clamp(lauf.s, 0, 1);
+  if (aktiv === 1) graphZeichnen(ls, easeK(ls, kurve.g));
+
+  // Verschluss
+  let winkel = 0;
+  if (W[2] > 0) winkel = verschluss.manuell ? verschluss.wert : 180 * smooth(.1, .4, W[2]);
+  if (!verschluss.manuell) { verschlussEl.value = Math.round(winkel / 15) * 15; }
+  verschlussWert.textContent = Math.round(verschluss.manuell ? verschluss.wert : winkel) + '°';
+
+  // Bühne: Editor → fertiger Film
+  const r = smooth(.04, .5, W[6]);
+  leiste.style.transform = `translateY(${-r * 101}%)`;
+  inspektor.style.transform = innerWidth > 700 ? `translateX(${r * 101}%)` : `translateY(${r * 140}%)`;
+  zeitleiste.style.transform = `translateY(${r * 101}%)`;
+  const br = buehne.getBoundingClientRect();
+  const sx = lerp(br.left, 0, r), sy = lerp(br.top, 0, r), sw = lerp(br.width, innerWidth, r), shh = lerp(br.height, innerHeight, r);
+  const rand = lerp(innerWidth > 700 ? 34 : 14, innerWidth > 700 ? 40 : 18, r);
+  let kh = shh - 2 * rand, kw = kh * .8;
+  if (kw > sw - 2 * rand) { kw = sw - 2 * rand; kh = kw / .8; }
+  kompRect = { x: sx + (sw - kw) / 2, y: sy + (shh - kh) / 2, w: kw, h: kh };
+
+  // Abspielkopf läuft im Arbeitsbereich des Kapitels in Schleife
+  const schleife = aktiv <= 1 ? 2.6 : (aktiv === 2 ? 2.2 : TAKT * 2);
+  const phase = ((zeit % schleife) + schleife) % schleife / schleife;
+  const kp = intro > 0 ? (Math.max(0, aktiv) + phase) / N_KAP : 0;
+  const spurBreite = spurenEl.getBoundingClientRect().width, spurLinks = spurenEl.offsetLeft;
+  kopf.style.transform = `translateX(${spurLinks - (innerWidth > 700 ? 168 : 0) + kp * spurBreite}px)`;
+  tc.textContent = zeitcode(Math.max(0, aktiv) * 6 + phase * schleife);
+
+  // Zustände pflegen
+  drehungenPflegen();
+  farbenPflegen();
+
+  const abgedeckt = schluss.getBoundingClientRect().top <= 0;
+  if (gl && !abgedeckt) {
+    // Unterbilder für die Bewegungsunschärfe
+    const kAnz = winkel > 1 ? (TOUCH ? 6 : KMAX) : 1;
+    const belichtung = (winkel / 360) / 24 * tempo;
+    for (let j = 0; j < kAnz; j++) komposition(zeit - belichtung * (kAnz > 1 ? j / (kAnz - 1) : 0), j);
+    // bewegt sich etwas zwischen den Unterbildern?
+    for (let e = 0; e < BREITE; e++) {
+      let bewegt = 0;
+      if (kAnz > 1) {
+        for (let j = 1; j < kAnz && !bewegt; j++) for (let c = 0; c < 4; c++) {
+          const a = ((2 * j) * BREITE + e) * 4 + c, b0 = (e) * 4 + c;
+          if (Math.abs(daten[a] - daten[b0]) > 1e-4) { bewegt = 1; break; }
+          const a2 = ((2 * j + 1) * BREITE + e) * 4 + c, b2 = (BREITE + e) * 4 + c;
+          if (Math.abs(daten[a2] - daten[b2]) > 1e-4) { bewegt = 1; break; }
+        }
+      }
+      flag(e, bewegt);
+    }
+    farbenSchreiben();
+    // Elemente ohne Deckung abschalten
+    for (let e = 40; e < BREITE; e++) if (daten[((1) * BREITE + e) * 4 + 1] <= 0) flag(e, -1);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.useProgram(prog);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, datenTex);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, BREITE, ZEILEN, gl.RGBA, gl.FLOAT, daten);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, atlasTex);
+    gl.uniform2f(U.uRes, canvas.width, canvas.height);
+    gl.uniform1f(U.uTime, zeit); gl.uniform1f(U.uPx, K);
+    gl.uniform4f(U.uComp, kompRect.x * K, (innerHeight - kompRect.y) * K, kompRect.w * K, kompRect.h * K);
+    gl.uniform1i(U.uK, kAnz);
+    gl.uniform1i(U.uFrei, W[3] <= 0 ? 40 + PUNKT : -1);
+    gl.uniform1f(U.uRaster, (1 - smooth(.2, .6, W[6])) * (intro > 0 ? 1 : 1));
+    gl.uniform1f(U.uRasterZiehen, intro > 0 ? 1 : ladeAnteil);
+    gl.uniform1f(U.uRahmen, 1 - r);
+    const pap = [.098, .102, .114];
+    gl.uniform3f(U.uPappe, lerp(pap[0], .925, r), lerp(pap[1], .929, r), lerp(pap[2], .910, r));
+    // Pfad, Geister, Auswahl
+    const pfadA = smooth(0, .25, intro) * (1 - smooth(.05, .3, W[2]));
+    gl.uniform4f(U.uPfad, .5, 2.5, 3.5, 2.5); gl.uniform1f(U.uPfadA, pfadA);
+    const geist = new Float32Array(18), wK = smooth(0, .35, W[1]);
+    for (let i = 0; i < 9; i++) { const s = i / 8; geist[i * 2] = lerp(.5, 3.5, lerp(s, easeK(s, kurve.g), wK)); geist[i * 2 + 1] = 2.5; }
+    gl.uniform2fv(U.uGeist, geist); gl.uniform1f(U.uGeistA, smooth(.15, .6, W[0] + (aktiv >= 1 ? 1 : 0)) * pfadA); gl.uniform1f(U.uGeistR, .17);
+    // Auswahl: erst der Punkt, ab dem Raster die Zelle unter der Maus
+    let selA = 0, sel = [0, 0, 0, 0];
+    if (W[3] <= 0) {
+      const d = W[2] > 0 ? (() => { const f = punktFall(zeit), q = punktQuer(zeit, 1), mm = smooth(0, .22, W[2]), ld = smooth(.72, .96, W[2]); return { x: lerp(lerp(q.x, f.x, mm), 1.5, ld), y: lerp(lerp(q.y, f.y, mm), 4.5, ld), sx: lerp(lerp(q.sx, f.sx, mm), .36, ld), sy: lerp(lerp(q.sy, f.sy, mm), .36, ld) }; })() : punktQuer(zeit, smooth(0, .35, W[1]));
+      sel = [d.x, d.y, d.sx / 2 + .06, d.sy / 2 + .06]; selA = smooth(0, .4, intro);
+    } else if (maus.zelle >= 0 && W[6] < .2 && !TOUCH) {
+      sel = [(maus.zelle % 4) + .5, Math.floor(maus.zelle / 4) + .5, .5, .5]; selA = 1 - smooth(0, .2, W[6]);
+    }
+    gl.uniform4f(U.uSel, sel[0], sel[1], sel[2], sel[3]); gl.uniform1f(U.uSelA, selA);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    // Qualität absenken, wenn die Grafik nicht hinterherkommt
+    schnittZeit.push(echt); if (schnittZeit.length > 50) schnittZeit.shift();
+    if (intro >= 1 && jetzt - qualPruef > 2500 && schnittZeit.length === 50) {
+      const m = schnittZeit.reduce((a, b) => a + b, 0) / 50;
+      if (m > 1 / 42 && Q > .55) { Q *= .8; groesse(); schnittZeit = []; }
+      qualPruef = jetzt;
+    }
+  }
+  requestAnimationFrame(bild);
+}
+requestAnimationFrame(bild);
+graphZeichnen(0, 0);
+})();
+</script>
+</body>
+</html>
