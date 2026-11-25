@@ -14,7 +14,7 @@ Hinweis „Beispielseite · kein echter Betrieb" und einem Weg zurück zu ORDÉ.
 | `praxis/` | Praxisseite mit Sprechzeiten | Praxis |
 | `elektro/` | Elektrobetrieb mit Leistungen | Handwerk |
 
-Dazu fünf **Showreels** ohne Branche, die zeigen, was im Browser technisch geht:
+Dazu sechs **Showreels** ohne Branche, die zeigen, was im Browser technisch geht:
 
 | Ordner | Was es darstellt |
 |---|---|
@@ -23,6 +23,7 @@ Dazu fünf **Showreels** ohne Branche, die zeigen, was im Browser technisch geht
 | `lumen/` | Erfundener Duft: Facettenglas, Glaslinse, Tinte, Teilchen, Goldportal |
 | `lichtfeld/` | Abstrakt: Raymarching, Chrom und Glas, Teilchen, Video in Schrift |
 | `halvo/` | Hütte unter dem Nordlicht, Foto per Tiefenkarte in 3D bewegt, ein Terminal baut die Website dazu |
+| `forma/` | Abstrakte Design-Welt: flüssiges Chrom, Glas, Kamerafahrt durch Ringe, Schrift unter der Maus, Video-Shader, Teilchen |
 
 Gemeinsame Bibliotheken und Schriften liegen lokal in `demos/bibliothek/`
 (Lizenzen in `demos/bibliothek/LIZENZEN.md`).
@@ -30,7 +31,7 @@ Gemeinsame Bibliotheken und Schriften liegen lokal in `demos/bibliothek/`
 ## Aufbau
 
 ```
-demos/           sechs Branchen-Demos und fünf Showreels, je ein Ordner mit index.html
+demos/           sechs Branchen-Demos und sechs Showreels, je ein Ordner mit index.html
 demos/entwuerfe/ Kunden-Vorschauen → ordeshop.github.io/orde-demos/<slug>/ (siehe entwuerfe/README.md)
 entwuerfe/       Quellen, Bauskripte und PDF-Werkzeug dieser Entwürfe (Anleitung: entwuerfe/README.md), wird nicht hochgeladen
 vorschau/        Screenshots, die die ORDÉ-Website anzeigt
