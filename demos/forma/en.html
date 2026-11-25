@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="en" data-showreel data-zeit="tag">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Forma · Showreel by ORDÉ</title>
+<meta name="description" content="An abstract design world in the browser: liquid chrome, refracting glass, a camera flight through rings, type that reacts to your mouse, video run through a liquid shader and tens of thousands of particles.">
+<meta name="theme-color" content="#ECEAF2">
+<link rel="stylesheet" href="../bibliothek/schriften.css">
+<style>
+/* Gestaltungsplan Forma
+   Farben nach Rolle: Fläche Tag #ECEAF2, Fläche Nacht #09090D, Text Tag #15131C, Text Nacht #F2F0F7,
+   leise Tag #575365, leise Nacht #A6A2B5, ein Akzent Glut #FF5B26.
+   Schrift: Archivo (variabel, Breite 62–125, Stärke 100–900) für alles Große, Instrument Serif kursiv
+   als Gegenstimme, Fragment Mono für kleine Angaben.
+   Merkmal: Die Welt kippt beim Scrollen von Tag in Nacht und zurück. Eine Leinwand, eine Kamera.
+   Bewusst nicht: keine Karten mit Icons, kein Zahlen-HUD, keine Einblendung auf jedem Abschnitt. */
+:root{
+  --perle:#ECEAF2;
+  --nacht:#09090D;
+  --tinte:#15131C;
+  --knochen:#F2F0F7;
+  --leise-tag:#575365;
+  --leise-nacht:#A6A2B5;
+  --glut:#FF5B26;
+  --vorn:var(--tinte);
+  --hinten:var(--perle);
+  --leise:var(--leise-tag);
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --serif:"Instrument Serif","Times New Roman",Georgia,serif;
+  --mono:"Fragment Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --gl:max(20px,env(safe-area-inset-left,0px));
+  --gr:max(20px,env(safe-area-inset-right,0px));
+  --oben:env(safe-area-inset-top,0px);
+  --kurve:cubic-bezier(.16,1,.3,1);
+  --kurz:240ms;
+  --mittel:700ms;
+  --r:22px;
+  --balkenhoehe:58px;
+  --unten:calc(env(safe-area-inset-bottom,0px) + var(--balkenhoehe));
+  color-scheme:light;
+}
+html[data-zeit="nacht"]{--vorn:var(--knochen);--hinten:var(--nacht);--leise:var(--leise-nacht);color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--perle)}
+body{margin:0;background:var(--hinten);color:var(--vorn);font-family:var(--display);font-size:17px;line-height:1.5;
+  overflow-x:clip;-webkit-font-smoothing:antialiased;transition:background-color var(--mittel) var(--kurve),color var(--mittel) var(--kurve)}
+html.gl body{background:transparent}
+::selection{background:var(--glut);color:var(--tinte)}
+a,button{color:inherit;font:inherit}
+:focus-visible{outline:2px solid var(--glut);outline-offset:4px;border-radius:4px}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.klein{font:400 12px/1.5 var(--mono);letter-spacing:.04em;color:var(--leise);margin:0}
+
+/* Leinwand */
+#welt{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
+html.ohne-gl #welt{display:none}
+html.ohne-gl body{background:radial-gradient(120% 80% at 50% 0%,#fff 0%,var(--perle) 55%,#d6d1e2 100%) fixed}
+html.ohne-gl[data-zeit="nacht"] body{background:radial-gradient(120% 80% at 50% 100%,#1c1530 0%,var(--nacht) 60%) fixed}
+
+/* Kopf */
+.kopf{position:fixed;left:0;right:0;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:calc(14px + var(--oben)) var(--gr) 14px var(--gl);pointer-events:none}
+.kopf>*{pointer-events:auto}
+.marke{display:flex;align-items:baseline;gap:12px;text-decoration:none}
+.marke b{font-weight:800;font-stretch:125%;letter-spacing:.02em;font-size:18px}
+.marke span{font:400 12px/1 var(--mono);color:var(--leise)}
+.halt{min-height:44px;padding:0 18px;white-space:nowrap;border-radius:999px;border:1px solid currentColor;background:transparent;cursor:pointer;
+  font:400 12px/1 var(--mono);letter-spacing:.04em;display:inline-flex;align-items:center;gap:10px;transition:background-color var(--kurz),color var(--kurz)}
+@media (max-width:520px){.marke span{display:none}.halt{padding:0 14px}}
+.halt i{width:8px;height:8px;border-radius:50%;background:var(--glut);display:block}
+.halt[aria-pressed="true"]{background:var(--vorn);color:var(--hinten)}
+.halt[aria-pressed="true"] i{border-radius:1px}
+
+/* Index rechts */
+.index{position:fixed;right:var(--gr);top:50%;transform:translateY(-50%);z-index:20;display:none}
+.index ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;justify-items:end}
+.index a{display:flex;align-items:center;gap:12px;min-height:30px;text-decoration:none;font:400 11px/1 var(--mono);letter-spacing:.06em;color:var(--leise)}
+.index a::after{content:"";width:16px;height:1px;background:currentColor;transition:width var(--mittel) var(--kurve)}
+.index a span{opacity:0;transform:translateX(6px);transition:opacity var(--kurz),transform var(--kurz)}
+.index a:hover span,.index a:focus-visible span,.index a[aria-current="true"] span{opacity:1;transform:none}
+.index a[aria-current="true"]{color:var(--vorn)}
+.index a[aria-current="true"]::after{width:44px;background:var(--glut)}
+@media (min-width:1024px){.index{display:block}
+  .station.rechts{right:calc(var(--gr) + 96px)}
+  #fluss{padding-right:calc(var(--gr) + 110px)}
+  .formen{right:calc(var(--gr) + 96px)}}
+
+/* Szenen */
+main{position:relative;z-index:1}
+.szene{position:relative}
+.buehne{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.schleier{position:absolute;left:0;right:0;bottom:0;height:46%;pointer-events:none;
+  background:linear-gradient(to top,color-mix(in srgb,var(--hinten) 78%,transparent),transparent)}
+
+/* Ankunft */
+#ankunft{height:200vh}
+.ankunft-text{position:absolute;left:var(--gl);right:var(--gr);bottom:calc(var(--unten) + 40px);display:grid;gap:22px;max-width:980px}
+.ankunft h1{font:400 italic clamp(40px,5.6vw,94px)/.96 var(--serif);letter-spacing:-.01em;margin:0;max-width:18ch}
+.ankunft h1 em{font-style:normal;font-family:var(--display);font-weight:800;font-stretch:112%;letter-spacing:-.03em;color:var(--glut)}
+.ankunft p{margin:0;max-width:44ch;color:var(--leise);font-size:17px}
+.auftritt .w{display:inline-block}
+@media (prefers-reduced-motion:no-preference){
+  html:not(.angehalten) .auftritt .w{animation:hoch 1100ms var(--kurve) both;animation-delay:calc(1400ms + var(--i) * 70ms)}
+  html:not(.angehalten) .ankunft p{animation:da 900ms var(--kurve) 2100ms both}
+}
+@keyframes hoch{from{opacity:0;transform:translateY(.5em) rotate(4deg)}}
+@keyframes da{from{opacity:0;transform:translateY(10px)}}
+.weiter{position:absolute;right:var(--gr);bottom:calc(var(--unten) + 44px);display:flex;align-items:center;gap:12px;font:400 12px/1 var(--mono);color:var(--leise)}
+.weiter i{display:block;width:1px;height:54px;background:linear-gradient(var(--vorn),transparent);transform-origin:top}
+@media (prefers-reduced-motion:no-preference){html:not(.angehalten) .weiter i{animation:tropfen 2.2s var(--kurve) infinite}}
+@keyframes tropfen{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+@media (max-width:700px){.weiter{display:none}}
+
+/* Flug */
+#flug{height:720vh}
+.station{position:absolute;max-width:min(600px,88vw);display:grid;gap:14px;opacity:0;will-change:opacity,transform}
+.station.links{left:var(--gl);bottom:calc(var(--unten) + 64px)}
+.station.rechts{right:var(--gr);top:calc(110px + var(--oben));text-align:right;justify-items:end}
+.station h2{margin:0;font:800 clamp(38px,5.4vw,88px)/.92 var(--display);font-stretch:88%;letter-spacing:-.025em}
+.station h2 .wm{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.station h2 .wi{display:inline-block;will-change:transform}
+.station h2 em{font:400 italic 1.08em/1 var(--serif);letter-spacing:0}
+.station p{margin:0;max-width:40ch;color:var(--leise)}
+.flugbahn{position:absolute;left:var(--gl);right:var(--gr);bottom:calc(var(--unten) + 22px);display:flex;align-items:center;gap:14px}
+.flugbahn .spur{flex:1;height:1px;background:color-mix(in srgb,var(--vorn) 22%,transparent);position:relative}
+.flugbahn .spur b{position:absolute;inset:0;background:var(--glut);transform-origin:left;transform:scaleX(0)}
+.flugbahn .klein{white-space:nowrap}
+@media (max-width:700px){
+  .station.rechts{top:auto;bottom:calc(var(--unten) + 64px);left:var(--gl);right:var(--gr);text-align:left;justify-items:start}
+  .station h2{font-size:clamp(34px,10vw,52px)}
+}
+
+/* Schrift */
+#schrift{height:340vh}
+.schrift .buehne{display:grid;align-content:center;padding-bottom:calc(var(--unten) + 40px)}
+.zeilen{will-change:opacity}
+.zeilen{display:grid;gap:clamp(0px,1vw,14px);opacity:0}
+.zeile{white-space:nowrap;font-family:var(--display);font-size:clamp(76px,15.5vw,270px);line-height:.84;letter-spacing:-.02em;
+  font-variation-settings:"wdth" 80,"wght" 300;will-change:transform}
+.zeile span{display:inline-block}
+.zeile.z2{color:var(--glut)}
+.zeile.z3{color:transparent;-webkit-text-stroke:1.5px var(--vorn)}
+.nacht-satz{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:0 var(--gr) 0 var(--gl);text-align:center;font:400 italic clamp(44px,7vw,120px)/1 var(--serif);opacity:0;pointer-events:none}
+.schrift-hinweis{position:absolute;left:var(--gl);right:var(--gr);bottom:calc(var(--unten) + 28px);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.schrift-hinweis p{margin:0}
+.schrift-hinweis .gross{font:400 italic clamp(22px,2.4vw,34px)/1.1 var(--serif);max-width:24ch}
+
+/* Fluss */
+#fluss{padding:clamp(120px,22vh,240px) var(--gr) clamp(120px,20vh,220px) var(--gl)}
+.fluss-kopf{display:grid;gap:18px;max-width:900px;margin:0 0 clamp(48px,9vh,110px)}
+.fluss-kopf h2{margin:0;font:800 clamp(44px,7.4vw,124px)/.9 var(--display);font-stretch:118%;letter-spacing:-.035em}
+.fluss-kopf h2 em{font:400 italic 1.02em/1 var(--serif);letter-spacing:0;font-stretch:100%;color:var(--glut)}
+.fluss-kopf p{margin:0;max-width:46ch;color:var(--leise)}
+.galerie{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(18px,2.6vw,36px);align-items:start}
+.galerie figure{margin:0;display:grid;gap:12px}
+.galerie figure:nth-child(1){grid-column:1/8}
+.galerie figure:nth-child(2){grid-column:8/13;margin-top:20vh}
+.galerie figure:nth-child(3){grid-column:2/7;margin-top:-4vh}
+.galerie figure:nth-child(4){grid-column:7/13;margin-top:12vh}
+.leinwand{position:relative;aspect-ratio:16/10;border-radius:var(--r);overflow:hidden;background:color-mix(in srgb,var(--vorn) 6%,transparent);cursor:crosshair}
+.galerie figure:nth-child(2) .leinwand,.galerie figure:nth-child(3) .leinwand{aspect-ratio:4/5}
+.leinwand video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+html.gl .leinwand{background:transparent}
+html.gl .leinwand video{opacity:0}
+.galerie figcaption{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.galerie figcaption b{font-weight:700;font-stretch:112%;font-size:20px;letter-spacing:-.01em}
+@media (max-width:760px){
+  .galerie{grid-template-columns:1fr;gap:56px}
+  .galerie figure:nth-child(n){grid-column:auto;margin-top:0}
+  .galerie figure:nth-child(even){width:84%;justify-self:end}
+}
+
+/* Teilchen */
+#teilchen{height:560vh}
+.teilchen-text{position:absolute;left:var(--gl);bottom:calc(var(--unten) + 48px);display:grid;gap:16px;max-width:560px}
+.teilchen-text h2{margin:0;font:800 clamp(36px,5vw,80px)/.92 var(--display);font-stretch:92%;letter-spacing:-.025em}
+.teilchen-text h2 em{font:400 italic 1.06em/1 var(--serif);letter-spacing:0;font-stretch:100%}
+.teilchen-text p{margin:0;color:var(--leise);max-width:38ch}
+.formen{position:absolute;right:var(--gr);top:calc(104px + var(--oben));display:grid;justify-items:end;gap:12px;text-align:right}
+.formname{font:400 italic clamp(44px,6vw,96px)/1 var(--serif);margin:0;min-height:1em;transition:opacity var(--kurz),transform var(--mittel) var(--kurve)}
+.formname.wechsel{opacity:0;transform:translateY(12px)}
+.formen ol{list-style:none;margin:0;padding:0;display:flex;gap:10px}
+.formen li{font:400 11px/1 var(--mono);color:var(--leise);padding:7px 10px;border:1px solid color-mix(in srgb,var(--vorn) 20%,transparent);border-radius:999px;transition:all var(--kurz)}
+.formen li[aria-current="true"]{color:var(--nacht);background:var(--knochen);border-color:var(--knochen)}
+@media (max-width:700px){.formen{top:calc(84px + var(--oben))}.formen ol{display:none}}
+
+/* Finale */
+#finale{height:220vh}
+.finale-text{position:absolute;left:var(--gl);right:var(--gr);bottom:calc(var(--unten) + 48px);display:grid;justify-items:center;text-align:center;gap:22px}
+.finale-text h2{margin:0;font:800 clamp(36px,5vw,84px)/.92 var(--display);font-stretch:96%;letter-spacing:-.035em;max-width:15ch}
+.finale-text h2 em{font:400 italic 1.04em/1 var(--serif);letter-spacing:0;font-stretch:100%;color:var(--glut)}
+.finale-text p{margin:0;color:var(--leise);max-width:42ch}
+.finale-text>*{opacity:0;transform:translateY(26px);transition:opacity 900ms var(--kurve),transform 1200ms var(--kurve)}
+.finale-text.da>*{opacity:1;transform:none}
+.finale-text.da>*:nth-child(2){transition-delay:120ms}
+.finale-text.da>*:nth-child(3){transition-delay:240ms}
+.knopf{display:inline-flex;align-items:center;gap:14px;min-height:56px;padding:0 28px;border-radius:999px;background:var(--tinte);color:var(--knochen);
+  text-decoration:none;font-weight:600;font-size:17px;transition:transform 500ms var(--kurve),background-color var(--kurz)}
+.knopf span{display:inline-block;transition:transform var(--mittel) var(--kurve)}
+.knopf:hover{background:var(--glut);color:var(--tinte)}
+.knopf:hover span{transform:translateX(4px)}
+
+/* Abspann */
+.abspann{position:relative;z-index:2;background:var(--perle);color:var(--tinte);padding:clamp(80px,14vh,150px) var(--gr) calc(80px + var(--unten)) var(--gl)}
+.abspann .innen{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px)}
+.abspann h2{margin:0;font:800 clamp(36px,4.6vw,72px)/.95 var(--display);font-stretch:90%;letter-spacing:-.025em}
+.abspann h2 em{font:400 italic 1.05em/1 var(--serif);letter-spacing:0;font-stretch:100%}
+.abspann dl{margin:0;display:grid}
+.abspann dl div{display:grid;grid-template-columns:minmax(0,10rem) minmax(0,1fr);gap:20px;padding:18px 0;border-top:1px solid rgba(21,19,28,.16)}
+.abspann dt{font:400 12px/1.6 var(--mono);color:var(--leise-tag)}
+.abspann dd{margin:0}
+.abspann .hinweis{grid-column:1/-1;margin:0;color:var(--leise-tag);font-size:15px;max-width:70ch}
+@media (max-width:820px){.abspann .innen{grid-template-columns:1fr}.abspann dl div{grid-template-columns:1fr;gap:4px}}
+
+/* Zeiger */
+#zeiger{position:fixed;left:0;top:0;z-index:9000;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;
+  mix-blend-mode:difference;pointer-events:none;opacity:0;transition:width 400ms var(--kurve),height 400ms var(--kurve),margin 400ms var(--kurve),opacity var(--kurz)}
+#zeiger.gross{width:64px;height:64px;margin:-32px 0 0 -32px}
+html.zeiger-an.maus-da #zeiger{opacity:1}
+html.zeiger-an,html.zeiger-an a,html.zeiger-an button,html.zeiger-an .leinwand{cursor:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:1ms!important;animation:none!important}
+}
+
+/* Platz für den Rückkehr-Balken: alles, was unten am Rand sitzt, rückt über ihn */
+</style>
+</head>
+<body>
+<canvas id="welt" aria-hidden="true"></canvas>
+<div id="zeiger" aria-hidden="true"></div>
+
+<header class="kopf">
+  <a class="marke" href="#ankunft"><b>FORMA</b><span>Showreel by ORDÉ</span></a>
+  <button class="halt" id="halt" type="button" aria-pressed="false"><i aria-hidden="true"></i>Pause motion</button>
+</header>
+
+<nav class="index" aria-label="Scenes">
+  <ul>
+    <li><a href="#ankunft" aria-current="true"><span>Arrival</span></a></li>
+    <li><a href="#flug"><span>Flight</span></a></li>
+    <li><a href="#schrift"><span>Type</span></a></li>
+    <li><a href="#fluss"><span>Flow</span></a></li>
+    <li><a href="#teilchen"><span>Particles</span></a></li>
+    <li><a href="#finale"><span>Finale</span></a></li>
+  </ul>
+</nav>
+
+<main>
+  <section class="szene ankunft" id="ankunft" tabindex="-1" aria-labelledby="titel">
+    <div class="buehne">
+      <div class="schleier"></div>
+      <div class="ankunft-text">
+        <h1 class="auftritt" id="titel"><span class="sr">A world of form, light and motion.</span><span aria-hidden="true"><span class="w" style="--i:0">A</span> <span class="w" style="--i:1">world</span> <span class="w" style="--i:2">of</span> <span class="w" style="--i:3"><em>form</em>,</span> <span class="w" style="--i:4">light</span> <span class="w" style="--i:5">and</span> <span class="w" style="--i:6">motion.</span></span></h1>
+        <p>A showreel without photos. Chrome, glass, type and particles are rendered in your browser right now.</p>
+      </div>
+      <div class="weiter" aria-hidden="true">Scroll <i></i></div>
+    </div>
+  </section>
+
+  <section class="szene flug" id="flug" tabindex="-1" aria-label="Flight through the world">
+    <div class="buehne">
+      <div class="schleier"></div>
+      <div class="station links" data-von=".15" data-bis=".33">
+        <h2>Chrome that stays <em>liquid.</em></h2>
+        <p>The surface is reshaped for every frame. Move your mouse over it and it bulges toward you.</p>
+      </div>
+      <div class="station rechts" data-von=".42" data-bis=".62">
+        <h2>Glass that bends <em>light.</em></h2>
+        <p>Real refraction, iridescent edges, reflections of a computed studio. Not a single photo.</p>
+      </div>
+      <div class="station links" data-von=".74" data-bis=".96">
+        <h2>A space you scroll <em>through.</em></h2>
+        <p>The camera follows your finger. Every point of the flight is its own frame, rendered live.</p>
+      </div>
+      <div class="flugbahn" aria-hidden="true"><span class="klein">Chrome</span><span class="spur"><b id="flugspur"></b></span><span class="klein">Glass</span><span class="spur"><b id="flugspur2"></b></span><span class="klein">Space</span></div>
+    </div>
+  </section>
+
+  <section class="szene schrift" id="schrift" tabindex="-1" aria-labelledby="schrift-titel">
+    <div class="buehne">
+      <p class="nacht-satz" id="nachtSatz">And then night falls.</p>
+      <h2 class="sr" id="schrift-titel">Form follows feeling. Type in motion.</h2>
+      <div class="zeilen" aria-hidden="true">
+        <div class="zeile z1" data-text="FORM FOLLOWS FEELING · FORM FOLLOWS FEELING"></div>
+        <div class="zeile z2" data-text="TYPE IN MOTION · TYPE IN MOTION · TYPE IN MOTION"></div>
+        <div class="zeile z3" data-text="WIDE NARROW LIGHT HEAVY · WIDE NARROW"></div>
+      </div>
+      <div class="schrift-hinweis">
+        <p class="gross">One typeface that stretches under your mouse.</p>
+        <p class="klein" id="schriftHinweis">Move your mouse across the letters. Scroll faster.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="szene fluss" id="fluss" tabindex="-1" aria-labelledby="fluss-titel">
+    <div class="fluss-kopf">
+      <h2 id="fluss-titel">Images that <em>flow</em>.</h2>
+      <p>Four videos run through a custom shader. Hover over them or scroll fast and they start to move.</p>
+    </div>
+    <div class="galerie">
+      <figure>
+        <div class="leinwand"><video muted loop playsinline preload="none" data-src="media/marmor.mp4" aria-label="Pink and blue paint flowing together like marble"></video></div>
+        <figcaption><b>Marble</b></figcaption>
+      </figure>
+      <figure>
+        <div class="leinwand"><video muted loop playsinline preload="none" data-src="media/explosion.mp4" aria-label="Pink and yellow ink billowing through water"></video></div>
+        <figcaption><b>Burst</b></figcaption>
+      </figure>
+      <figure>
+        <div class="leinwand"><video muted loop playsinline preload="none" data-src="media/tusche.mp4" aria-label="Black ink drifting through a pale liquid"></video></div>
+        <figcaption><b>Ink</b></figcaption>
+      </figure>
+      <figure>
+        <div class="leinwand"><video muted loop playsinline preload="none" data-src="media/tiefe.mp4" aria-label="Blue ink with fine particles, slowly circling"></video></div>
+        <figcaption><b>Depth</b></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="szene teilchen" id="teilchen" tabindex="-1" aria-labelledby="teilchen-titel">
+    <div class="buehne">
+      <div class="schleier"></div>
+      <div class="formen" aria-live="polite">
+        <p class="formname" id="formname">Dust</p>
+        <ol>
+          <li data-form="KUGEL">Sphere</li>
+          <li data-form="KNOTEN">Knot</li>
+          <li data-form="WELLE">Wave</li>
+          <li data-form="WIRBEL">Swirl</li>
+          <li data-form="MARKE">ORDÉ</li>
+        </ol>
+      </div>
+      <div class="teilchen-text">
+        <h2 id="teilchen-titel">One form <em>after</em> another.</h2>
+        <p><span id="anzahl">32,000</span> particles, each one computed in your browser. Move your mouse into them and they make way.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="szene finale" id="finale" tabindex="-1" aria-labelledby="finale-titel">
+    <div class="buehne">
+      <div class="schleier"></div>
+      <div class="finale-text" id="finaleText">
+        <h2 id="finale-titel">What runs here can run on <em>your</em> site.</h2>
+        <p>No app, no plugin. A site that any current browser opens, on a phone or a big screen.</p>
+        <a class="knopf" id="knopf" href="../../en/contact.html">Request a site like this <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="abspann" id="abspann" aria-labelledby="abspann-titel">
+    <div class="innen">
+      <h2 id="abspann-titel">What is <em>running</em> here</h2>
+      <dl>
+        <div><dt>World</dt><dd>A 3D scene in Three.js. The camera follows a curve through chrome, glass and fourteen rings, driven only by scrolling.</dd></div>
+        <div><dt>Material</dt><dd>Liquid chrome whose surface a noise field reshapes in every frame. Glass with real refraction. The reflections come from a studio that is computed as well.</dd></div>
+        <div><dt>Particles</dt><dd><span id="anzahl2">32,000</span> points that arrange themselves into type, a sphere, a knot, a wave and a swirl, and move out of your mouse’s way.</dd></div>
+        <div><dt>Type</dt><dd>Archivo as a variable font: the width and weight of every letter follow your mouse and your scroll speed.</dd></div>
+        <div><dt>Images</dt><dd>Four videos run through a liquid shader: ripples under the mouse, a color shift when you scroll fast, a flowing edge as they appear.</dd></div>
+        <div><dt>Building blocks</dt><dd>Fonts: Archivo, Instrument Serif and Fragment Mono (SIL Open Font License). Three.js and Lenis (MIT). Everything is served from the same server, nothing from third parties.</dd></div>
+      </dl>
+      <p class="hinweis">Abstract example site, not a real business. Built by ORDÉ.</p>
+    </div>
+  </section>
+</main>
+
+<script src="../bibliothek/three.min.js"></script>
+<script src="../bibliothek/lenis.min.js"></script>
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const html = document.documentElement;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const glatt = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+const mix = (a, b, t) => a + (b - a) * t;
+const ruhig = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fein = matchMedia("(hover: hover) and (pointer: fine)").matches;
+let vw = innerWidth, vh = innerHeight;
+const klein = Math.min(vw, vh) < 700 || !fein;
+let angehalten = ruhig;
+let zufall = (() => { let a = 1337; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; })();
+
+/* ---------- Anhalten ---------- */
+const halt = $("#halt");
+if (ruhig) { halt.setAttribute("aria-pressed", "true"); html.classList.add("angehalten"); }
+halt.addEventListener("click", () => {
+  angehalten = !angehalten;
+  halt.setAttribute("aria-pressed", String(angehalten));
+  html.classList.toggle("angehalten", angehalten);
+  videosSteuern();
+});
+
+/* ---------- Weiches Scrollen ---------- */
+let lenis = null;
+if (!ruhig && window.Lenis) lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
+$$('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
+  const ziel = $(a.getAttribute("href")); if (!ziel) return;
+  e.preventDefault();
+  if (lenis) lenis.scrollTo(ziel, { duration: 1.8 }); else ziel.scrollIntoView({ behavior: ruhig ? "auto" : "smooth" });
+  ziel.focus({ preventScroll: true });
+}));
+
+/* ---------- Abschnitte messen ---------- */
+const S = {};
+["ankunft", "flug", "schrift", "fluss", "teilchen", "finale", "abspann"].forEach(k => S[k] = { el: $("#" + k), top: 0, h: 0 });
+function messen() {
+  vw = innerWidth; vh = innerHeight;
+  for (const k in S) { const r = S[k].el.getBoundingClientRect(); S[k].top = r.top + scrollY; S[k].h = r.height; }
+}
+const stuck = (k, y) => clamp((y - S[k].top) / Math.max(1, S[k].h - vh));
+const ende = k => S[k].top + S[k].h - vh;
+
+/* ---------- Maus ---------- */
+const maus = { x: vw / 2, y: vh / 2, nx: 0, ny: 0, aktiv: false, gx: 0, gy: 0 };
+addEventListener("pointermove", e => {
+  maus.x = e.clientX; maus.y = e.clientY;
+  maus.nx = e.clientX / vw * 2 - 1; maus.ny = -(e.clientY / vh * 2 - 1);
+  if (e.pointerType === "mouse") { maus.aktiv = true; html.classList.add("maus-da"); }
+}, { passive: true });
+document.addEventListener("pointerleave", () => { maus.aktiv = false; });
+
+/* ---------- Zeiger ---------- */
+const zeiger = $("#zeiger");
+let zx = vw / 2, zy = vh / 2;
+if (fein && !ruhig) {
+  html.classList.add("zeiger-an");
+  document.addEventListener("pointerover", e => zeiger.classList.toggle("gross", !!e.target.closest("a,button,.leinwand")));
+}
+
+/* ---------- Magnetischer Knopf ---------- */
+const knopf = $("#knopf");
+if (fein && !ruhig) {
+  knopf.addEventListener("pointermove", e => {
+    const r = knopf.getBoundingClientRect();
+    knopf.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .3}px,${(e.clientY - r.top - r.height / 2) * .4}px)`;
+  });
+  knopf.addEventListener("pointerleave", () => { knopf.style.transform = ""; });
+}
+
+/* ---------- Stationen im Flug ---------- */
+const stationen = $$(".station").map(el => {
+  const h2 = $("h2", el);
+  // Wörter in Masken legen (die Überschrift bleibt für Screenreader ganz lesbar)
+  const woerter = [];
+  const baue = (knoten, ziel) => {
+    [...knoten.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        n.textContent.split(/(\s+)/).forEach(t => {
+          if (!t) return;
+          if (/^\s+$/.test(t)) { ziel.appendChild(document.createTextNode(" ")); return; }
+          const m = document.createElement("span"); m.className = "wm";
+          const i = document.createElement("span"); i.className = "wi"; i.textContent = t;
+          m.appendChild(i); ziel.appendChild(m); woerter.push(i);
+        });
+      } else {
+        const k = n.cloneNode(false); ziel.appendChild(k); baue(n, k);
+      }
+    });
+  };
+  const neu = document.createElement("span"); neu.setAttribute("aria-hidden", "true");
+  baue(h2, neu);
+  const sr = document.createElement("span"); sr.className = "sr"; sr.textContent = h2.textContent;
+  h2.textContent = ""; h2.append(sr, neu);
+  return { el, woerter, p: $("p", el), von: +el.dataset.von, bis: +el.dataset.bis };
+});
+
+/* ---------- Bewegte Schrift ---------- */
+const zeilen = $$(".zeile").map((z, i) => {
+  const spans = [...z.dataset.text].map(ch => {
+    const s = document.createElement("span");
+    s.textContent = ch === " " ? " " : ch;
+    z.appendChild(s); return { el: s, x: 0, w: 0, letzt: "" };
+  });
+  return { el: z, spans, dir: i % 2 ? 1 : -1, breite: 0, mitteY: 0, x: 0 };
+});
+function zeilenMessen() {
+  zeilen.forEach(z => {
+    z.el.style.transform = "none";
+    z.spans.forEach(s => { s.el.style.fontVariationSettings = ""; s.letzt = ""; });
+  });
+  zeilen.forEach(z => {
+    z.breite = z.el.scrollWidth;
+    z.mitteY = z.el.offsetTop + z.el.offsetHeight / 2;
+    z.spans.forEach(s => { s.x = s.el.offsetLeft; s.w = s.el.offsetWidth; });
+  });
+}
+if (!fein) $("#schriftHinweis").textContent = "Scroll faster and the letters get wider.";
+
+/* ---------- Videos ---------- */
+const figuren = $$(".galerie figure").map(f => ({ fig: f, lw: $(".leinwand", f), v: $("video", f), sicht: false, auf: 0, hover: 0, hz: 0, mx: .5, my: .5, zx: .5, zy: .5 }));
+function videosSteuern() {
+  figuren.forEach(f => {
+    if (f.sicht && !angehalten) { const p = f.v.play(); if (p && p.catch) p.catch(() => {}); }
+    else f.v.pause();
+  });
+}
+const vidBeobachter = new IntersectionObserver(eintraege => {
+  eintraege.forEach(e => {
+    const f = figuren.find(x => x.lw === e.target);
+    if (e.isIntersecting && !f.v.src) { f.v.src = f.v.dataset.src; f.v.preload = "auto"; f.v.load(); }
+    f.sicht = e.isIntersecting;
+  });
+  videosSteuern();
+}, { rootMargin: "60% 0px" });
+figuren.forEach(f => {
+  vidBeobachter.observe(f.lw);
+  f.lw.addEventListener("pointerenter", () => { f.hz = 1; });
+  f.lw.addEventListener("pointerleave", () => { f.hz = 0; });
+  f.lw.addEventListener("pointermove", e => {
+    const r = f.lw.getBoundingClientRect();
+    f.zx = (e.clientX - r.left) / r.width; f.zy = 1 - (e.clientY - r.top) / r.height;
+    if (e.pointerType !== "mouse") f.hz = 1;
+  });
+});
+
+/* ---------- Index ---------- */
+const indexLinks = $$(".index a");
+let indexAktiv = "";
+
+/* ======================================================================
+   3D-Welt
+   ====================================================================== */
+const RAUSCHEN = `
+vec3 f_m289(vec3 x){return x-floor(x*(1./289.))*289.;}
+vec4 f_m289(vec4 x){return x-floor(x*(1./289.))*289.;}
+vec4 f_perm(vec4 x){return f_m289(((x*34.)+1.)*x);}
+vec4 f_tis(vec4 r){return 1.79284291400159-.85373472095314*r;}
+float f_snoise(vec3 v){
+  const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);
+  vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
+  vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
+  vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;
+  i=f_m289(i);
+  vec4 p=f_perm(f_perm(f_perm(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+  float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;
+  vec4 j=p-49.*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);
+  vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);
+  vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+  vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));
+  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+  vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+  vec4 nm=f_tis(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+  p0*=nm.x;p1*=nm.y;p2*=nm.z;p3*=nm.w;
+  vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;
+  return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+}`;
+
+let W = null;
+try { W = welt(); html.classList.add("gl"); }
+catch (fehler) { console.warn("WebGL nicht verfügbar:", fehler); html.classList.add("ohne-gl"); }
+
+function welt() {
+  const T = window.THREE;
+  if (!T) throw new Error("Three.js fehlt");
+  T.ColorManagement.legacyMode = false;
+  const canvas = $("#welt");
+  const voll = /voll/.test(location.search) || navigator.webdriver === true;
+  const renderer = new T.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+  // Software-Grafik (z. B. ohne Grafikkarte) bekommt eine leichte Fassung
+  let schwach = false;
+  try {
+    const ctx = renderer.getContext(), ext = ctx.getExtension("WEBGL_debug_renderer_info");
+    const name = ext ? String(ctx.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : "";
+    schwach = /swiftshader|llvmpipe|software|basic render/i.test(name);
+  } catch (e) {}
+  if (voll) schwach = false;
+  // Scharf auch am Handy: bis zur doppelten Auflösung, nie unter 1,25 (außer Software-Grafik)
+  // Automatische Vorschaubilder (Software-Grafik): einfache Auflösung, sonst dauert ein Bild über 30 s
+  const prMax = schwach ? .5 : navigator.webdriver === true ? 1 : Math.min(devicePixelRatio || 1, 2);
+  const prMin = schwach ? .5 : Math.min(prMax, 1.25);
+  let pr = prMax;
+  renderer.setPixelRatio(pr);
+  renderer.setSize(vw, vh, false);
+  renderer.outputEncoding = T.sRGBEncoding;
+  renderer.toneMapping = T.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
+
+  const F = {
+    perle: new T.Color("#ECEAF2"), perleOben: new T.Color("#FBFAFD"), perleUnten: new T.Color("#CFC8DD"),
+    nachtOben: new T.Color("#09090D"), nachtUnten: new T.Color("#1A1326"),
+    glut: new T.Color("#FF5B26"), tinte: new T.Color("#15131C"), violett: new T.Color("#8C6BFF"), cyan: new T.Color("#5FE3F5")
+  };
+
+  const scene = new T.Scene();
+  scene.fog = new T.Fog(F.perle.clone(), 26, 110);
+  const cam = new T.PerspectiveCamera(35, vw / vh, .1, 400);
+  cam.position.set(0, 0, 9);
+  scene.add(cam);
+
+  /* Hintergrund: eine Kugel mit Verlauf, die mit der Kamera wandert */
+  const himmelU = { uOben: { value: F.perleOben.clone() }, uUnten: { value: F.perleUnten.clone() }, uGlut: { value: F.glut }, uNacht: { value: 0 } };
+  const himmel = new T.Mesh(new T.SphereGeometry(150, 48, 24), new T.ShaderMaterial({
+    uniforms: himmelU, side: T.BackSide, depthWrite: false, fog: false,
+    vertexShader: `varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader: `uniform vec3 uOben,uUnten,uGlut;uniform float uNacht;varying vec3 vP;
+      void main(){float h=vP.y;vec3 c=mix(uUnten,uOben,smoothstep(-.55,.75,h));
+      float halo=exp(-pow(length(vec2(vP.x*.8,vP.y+.35)),2.)*5.);c+=uGlut*halo*.07*(1.-uNacht);
+      c+=vec3(.25,.12,.5)*exp(-pow(vP.y+.6,2.)*6.)*.18*uNacht;
+      gl_FragColor=vec4(c,1.);gl_FragColor=linearToOutputTexel(gl_FragColor);}`
+  }));
+  himmel.renderOrder = -1; himmel.frustumCulled = false;
+  scene.add(himmel);
+
+  /* Spiegelungen: ein berechnetes Fotostudio mit weichen Lichtflächen und Horizont */
+  const studio = new T.Scene();
+  studio.add(new T.Mesh(new T.SphereGeometry(20, 64, 32), new T.ShaderMaterial({
+    side: T.BackSide,
+    vertexShader: `varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader: `varying vec3 vP;void main(){float y=vP.y;
+      vec3 c=mix(vec3(.012,.011,.018),vec3(.11,.105,.14),smoothstep(-.4,.85,y));
+      c+=vec3(.16,.15,.2)*exp(-pow((y+.05)*9.,2.));
+      gl_FragColor=vec4(c,1.);}`
+  })));
+  const softbox = (farbe, staerke, b, h, x, y, z) => {
+    const m = new T.Mesh(new T.PlaneGeometry(b, h), new T.ShaderMaterial({
+      uniforms: { uFarbe: { value: new T.Color(farbe).multiplyScalar(staerke) } },
+      transparent: true, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide,
+      vertexShader: `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+      fragmentShader: `uniform vec3 uFarbe;varying vec2 vUv;void main(){vec2 q=abs(vUv-.5)*2.;
+        float e=(1.-smoothstep(.8,1.,q.x))*(1.-smoothstep(.8,1.,q.y));gl_FragColor=vec4(uFarbe*e,1.);}`
+    }));
+    m.position.set(x, y, z); m.lookAt(0, 0, 0); studio.add(m);
+  };
+  softbox("#ffffff", 9, 18, 3, 0, 12, 0);
+  softbox("#ffffff", 7, 1.6, 16, -12, 1, 3);
+  softbox("#ffffff", 5.5, 1.6, 16, 12, 1, -3);
+  softbox("#ffffff", 3, 15, 1.1, 0, -2.2, 13);
+  softbox("#ffffff", 1.4, 22, 9, 0, 7, -15);
+  softbox("#FF5B26", 6, 2, 12, 9, -1, -10);
+  softbox("#8C6BFF", 4, 15, 1.8, 0, -1.5, -13);
+  softbox("#5FE3F5", 3, 1.6, 8, -8, -2, -10);
+  const pmrem = new T.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(studio, .008).texture;
+  pmrem.dispose();
+
+  scene.add(new T.HemisphereLight(0xffffff, 0x8f87a6, .55));
+  const sonne = new T.DirectionalLight(0xffffff, 1.3); sonne.position.set(5, 8, 6); scene.add(sonne);
+
+  /* ----- Der Tropfen aus flüssigem Chrom ----- */
+  const tropfenU = { uZeit: { value: 0 }, uMaus: { value: new T.Vector3(0, 0, 9) }, uMausKraft: { value: 0 }, uWelle: { value: 0 } };
+  const tropfenMat = new T.MeshPhysicalMaterial({ color: 0xffffff, metalness: 1, roughness: .045, iridescence: .75, iridescenceIOR: 1.6, iridescenceThicknessRange: [240, 680], envMapIntensity: 1.35 });
+  tropfenMat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, tropfenU);
+    sh.vertexShader = "uniform float uZeit,uMausKraft,uWelle;uniform vec3 uMaus;\n" + RAUSCHEN + `
+float formF(vec3 p){vec3 n=normalize(p);
+  float d=f_snoise(n*1.1+vec3(0.,0.,uZeit*.22))*.22+f_snoise(n*2.6-vec3(uZeit*.18))*(.05+uWelle*.1);
+  d+=smoothstep(1.15,0.,distance(n*1.45,uMaus))*uMausKraft*.4;
+  return d;}
+` + sh.vertexShader
+      .replace("#include <beginnormal_vertex>", `
+  vec3 n0=normalize(position);
+  vec3 tg=normalize(cross(n0,abs(n0.y)>.99?vec3(1.,0.,0.):vec3(0.,1.,0.)));
+  vec3 bt=normalize(cross(n0,tg));
+  vec3 q0=n0*1.45;vec3 q1=normalize(q0+tg*.012)*1.45;vec3 q2=normalize(q0+bt*.012)*1.45;
+  vec3 d0=q0+normalize(q0)*formF(q0);vec3 d1=q1+normalize(q1)*formF(q1);vec3 d2=q2+normalize(q2)*formF(q2);
+  vec3 objectNormal=normalize(cross(d1-d0,d2-d0));
+  #ifdef USE_TANGENT
+  vec3 objectTangent=vec3(tangent.xyz);
+  #endif`)
+      .replace("#include <begin_vertex>", "vec3 transformed=d0;");
+  };
+  const tropfen = new T.Mesh(new T.IcosahedronGeometry(1.45, schwach ? 18 : klein ? 48 : 72), tropfenMat);
+  scene.add(tropfen);
+
+  /* ----- Materialien ----- */
+  const glas = new T.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: .02, transmission: 1, thickness: 1.6, ior: 1.6,
+    iridescence: 1, iridescenceIOR: 1.35, iridescenceThicknessRange: [120, 560], clearcoat: 1, clearcoatRoughness: .02, envMapIntensity: 1.6,
+    attenuationColor: new T.Color("#a993ff"), attenuationDistance: 1.1, specularIntensity: 1 });
+  // Ohne echte Brechung (Handy, oder wenn es ruckelt): schillerndes, durchscheinendes Glas
+  const glasLeicht = () => {
+    if (!glas.transmission) return;
+    Object.assign(glas, { transmission: 0, transparent: true, opacity: .45, color: new T.Color("#d9ceff"), depthWrite: false, envMapIntensity: 2.3, side: T.DoubleSide });
+    glas.needsUpdate = true;
+  };
+  if (klein || schwach || navigator.webdriver === true) glasLeicht();
+  const chrom = new T.MeshPhysicalMaterial({ color: 0xffffff, metalness: 1, roughness: .045, envMapIntensity: 1.35 });
+  const seifenChrom = new T.MeshPhysicalMaterial({ color: 0xffffff, metalness: 1, roughness: .03, iridescence: 1, iridescenceIOR: 1.8, iridescenceThicknessRange: [260, 640], envMapIntensity: 1.35 });
+  const eloxal = new T.MeshPhysicalMaterial({ color: new T.Color("#FF6A33"), metalness: 1, roughness: .2, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: 1.3 });
+  const keramik = eloxal;
+  const lack = new T.MeshPhysicalMaterial({ color: F.tinte, metalness: 0, roughness: .15, clearcoat: 1, clearcoatRoughness: .03, envMapIntensity: 1.2 });
+  // Organische Körper: eine Kugel, einmal verformt, mit weichen Normalen
+  const organisch = (r, s) => {
+    const geo = new T.SphereGeometry(r, klein ? 64 : 112, klein ? 48 : 80), pos = geo.attributes.position, v = new T.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i).normalize();
+      const d = 1 + .22 * Math.sin(v.x * 2.6 + s) * Math.sin(v.y * 2.2 + s * 1.7) * Math.sin(v.z * 2.9 + s * .6)
+        + .06 * Math.sin(v.x * 6.1 + s) * Math.sin(v.y * 5.3 + s) * Math.sin(v.z * 6.7 + s);
+      v.multiplyScalar(r * d); pos.setXYZ(i, v.x, v.y, v.z);
+    }
+    geo.computeVertexNormals(); return geo;
+  };
+
+  /* ----- Die Bahn der Kamera ----- */
+  const bahn = new T.CatmullRomCurve3([
+    new T.Vector3(0, 0, 9), new T.Vector3(3.6, .9, 4.4), new T.Vector3(2.6, .4, -5), new T.Vector3(-2.6, -.7, -16),
+    new T.Vector3(-1.2, .9, -28), new T.Vector3(1.8, -.2, -40), new T.Vector3(.4, .3, -52), new T.Vector3(0, 0, -66)
+  ], false, "catmullrom", .5);
+  const OBEN = new T.Vector3(0, 1, 0);
+  const rahmen = t => {
+    const p = bahn.getPointAt(t), tan = bahn.getTangentAt(t);
+    const seite = new T.Vector3().crossVectors(tan, OBEN).normalize();
+    const hoch = new T.Vector3().crossVectors(seite, tan).normalize();
+    return { p, tan, seite, hoch };
+  };
+
+  const welt3d = new T.Group(); scene.add(welt3d);
+  const bewegte = [];
+  const streuen = (geo, mat, n, sMin, sMax) => {
+    const m = new T.InstancedMesh(geo, mat, n); const daten = [];
+    for (let i = 0; i < n; i++) {
+      const { p, seite, hoch } = rahmen(mix(.22, .99, zufall()));
+      const a = zufall() * Math.PI * 2, r = mix(3.1, 9, Math.pow(zufall(), .8));
+      p.addScaledVector(seite, Math.cos(a) * r).addScaledVector(hoch, Math.sin(a) * r * .7);
+      daten.push({ p, s: mix(sMin, sMax, zufall()), ax: new T.Vector3(zufall() - .5, zufall() - .5, zufall() - .5).normalize(), w: (zufall() - .5) * 1.1, ph: zufall() * 6.28 });
+    }
+    m.userData.daten = daten; welt3d.add(m); bewegte.push(m); return m;
+  };
+  const f = klein ? .8 : 1;
+  streuen(new T.SphereGeometry(.5, 64, 32), seifenChrom, Math.round(14 * f), .4, 1.2);
+  streuen(organisch(.55, 1.3), chrom, Math.round(12 * f), .6, 1.3);
+  streuen(organisch(.5, 4.1), eloxal, Math.round(8 * f), .6, 1.2);
+  streuen(new T.TorusGeometry(.7, .085, 32, 220), eloxal, Math.round(10 * f), .7, 1.3);
+  streuen(new T.CapsuleGeometry(.28, .9, 16, 48), glas, Math.round(8 * f), .7, 1.3);
+  streuen(new T.TorusKnotGeometry(.5, .14, 240, 36), chrom, Math.round(5 * f), .6, 1);
+
+  // Glas-Gruppe an der zweiten Station
+  const g = rahmen(.645);
+  const glasMitte = g.p.clone().addScaledVector(g.seite, -2.7).addScaledVector(g.hoch, .1);
+  const glasBlick = glasMitte.clone().sub(bahn.getPointAt(.55)).normalize();
+  const glasTeile = [
+    [new T.CylinderGeometry(1, 1, 2.8, 3, 1), [0, 0, 0], 1],
+    [new T.TorusGeometry(1.1, .42, 64, 200), [-1.4, 1.2, -1.6], 1],
+    [new T.IcosahedronGeometry(1, 0), [1.3, -1, -.8], .9],
+    [new T.SphereGeometry(.7, 96, 48), [-1.1, -1.3, .8], 1],
+    [new T.TorusKnotGeometry(.6, .2, 320, 40), [1.6, 1.4, -2.2], 1]
+  ].map(([geo, o, s]) => {
+    const m = new T.Mesh(geo, glas); m.position.copy(glasMitte).addScaledVector(g.seite, Math.min(o[0], .4) - .3).addScaledVector(g.hoch, o[1]).addScaledVector(glasBlick, o[2]); m.scale.setScalar(s);
+    m.userData.ph = zufall() * 6; welt3d.add(m); return m;
+  });
+  [[0, 0, -3.2, keramik, new T.CapsuleGeometry(.45, 2.2, 16, 48), [0, 0, 1.2]], [-.6, -1, -4, lack, organisch(.9, 2.2), [0, 0, 0]],
+   [1.8, .6, -3.6, keramik, new T.TorusGeometry(.8, .2, 48, 160), [.6, 0, 0]], [-2.2, 1.2, -3, seifenChrom, new T.SphereGeometry(.6, 64, 32), [0, 0, 0]]]
+    .forEach(([x, y, z, mat, geo, rot]) => { const m = new T.Mesh(geo, mat); m.position.copy(glasMitte).addScaledVector(g.seite, x - .8).addScaledVector(g.hoch, y).addScaledVector(glasBlick, -z); m.rotation.set(...rot); m.userData.ph = zufall() * 6; welt3d.add(m); glasTeile.push(m); });
+  // Ein großer Chrom-Knoten zwischen den Stationen
+  const knoten = new T.Mesh(new T.TorusKnotGeometry(.9, .28, 400, 56), seifenChrom);
+  { const k = rahmen(.33); knoten.position.copy(k.p).addScaledVector(k.seite, -2.8).addScaledVector(k.tan, 2); welt3d.add(knoten); }
+
+  // Tunnel aus Ringen und Bögen
+  const ringe = [];
+  for (let i = 0; i < 14; i++) {
+    const t = mix(.74, .975, i / 13);
+    const { p, tan } = rahmen(t);
+    const bogen = i % 3 === 1 ? Math.PI * 1.25 : Math.PI * 2;
+    const m = new T.Mesh(new T.TorusGeometry(2.5 + (i % 2) * .35, i % 3 === 1 ? .09 : .045, 24, 320, bogen), i % 2 ? keramik : chrom);
+    m.position.copy(p); m.lookAt(p.clone().add(tan));
+    m.userData.w = (i % 2 ? 1 : -1) * (.15 + zufall() * .35); m.userData.r0 = zufall() * 6;
+    welt3d.add(m); ringe.push(m);
+  }
+
+  /* ----- Teilchen ----- */
+  const N = schwach ? 10000 : klein ? 14000 : 32000;
+  const anzahlText = N.toLocaleString("en-US");
+  $("#anzahl").textContent = anzahlText; $("#anzahl2").textContent = anzahlText;
+  const tGeo = new T.BufferGeometry();
+  tGeo.setAttribute("position", new T.BufferAttribute(new Float32Array(N * 3), 3));
+  const attrA = new T.BufferAttribute(new Float32Array(N * 3), 3); attrA.setUsage(T.DynamicDrawUsage);
+  const attrB = new T.BufferAttribute(new Float32Array(N * 3), 3); attrB.setUsage(T.DynamicDrawUsage);
+  const rr = new Float32Array(N * 4); for (let i = 0; i < N * 4; i++) rr[i] = zufall();
+  tGeo.setAttribute("aA", attrA); tGeo.setAttribute("aB", attrB); tGeo.setAttribute("aR", new T.BufferAttribute(rr, 4));
+  const tU = {
+    uMix: { value: 0 }, uZeit: { value: 0 }, uStreu: { value: 0 }, uGroesse: { value: 34 }, uPR: { value: pr },
+    uMaus: { value: new T.Vector3(99, 99, 0) }, uMausKraft: { value: 0 }, uNacht: { value: 0 }, uAlpha: { value: 1 },
+    uTinte: { value: F.tinte }, uGlut: { value: F.glut }, uViolett: { value: F.violett }, uCyan: { value: F.cyan }
+  };
+  const tMat = new T.ShaderMaterial({
+    uniforms: tU, transparent: true, depthWrite: false,
+    vertexShader: `attribute vec3 aA;attribute vec3 aB;attribute vec4 aR;
+      uniform float uMix,uZeit,uStreu,uGroesse,uPR,uMausKraft;uniform vec3 uMaus;
+      varying float vR;varying float vFlug;
+      ${RAUSCHEN}
+      void main(){
+        float d=clamp((uMix-aR.x*.35)/.65,0.,1.);d=d*d*(3.-2.*d);
+        vec3 p=mix(aA,aB,d);
+        float flug=sin(d*3.14159);
+        p+=(aR.yzw-.5)*flug*2.4;
+        float t=uZeit*.35;
+        vec3 q=p*.55;
+        p+=vec3(f_snoise(q+vec3(t,0.,0.)),f_snoise(q+vec3(0.,t,4.)),f_snoise(q+vec3(7.,0.,t)))*(.04+uStreu*.7+flug*.25);
+        vec3 dm=p-uMaus;dm.z*=.35;float ab=length(dm);
+        p+=normalize(dm+1e-4)*uMausKraft*smoothstep(1.4,0.,ab)*.9;
+        vec4 mv=modelViewMatrix*vec4(p,1.);
+        gl_Position=projectionMatrix*mv;
+        gl_PointSize=uGroesse*uPR*(.45+aR.y*.9)/-mv.z;
+        vR=aR.y;vFlug=flug;
+      }`,
+    fragmentShader: `uniform vec3 uTinte,uGlut,uViolett,uCyan;uniform float uNacht,uAlpha,uZeit;
+      varying float vR;varying float vFlug;
+      void main(){
+        vec2 c=gl_PointCoord-.5;float r=length(c);if(r>.5)discard;
+        float a=smoothstep(.5,.12,r);
+        vec3 tag=vR>.86?uGlut:uTinte;
+        float k=fract(vR*2.3+uZeit*.04);
+        vec3 n=k<.333?mix(uGlut,uViolett,k*3.):(k<.666?mix(uViolett,uCyan,(k-.333)*3.):mix(uCyan,uGlut,(k-.666)*3.));
+        n=mix(n,vec3(1.),.12);
+        vec3 col=mix(tag,n,uNacht);
+        col=mix(col,uGlut,vFlug*.45);
+        gl_FragColor=vec4(col,a*uAlpha*(.5+.5*vR));
+        gl_FragColor=linearToOutputTexel(gl_FragColor);
+      }`
+  });
+  const punkte = new T.Points(tGeo, tMat);
+  punkte.position.set(0, 0, -9); punkte.frustumCulled = false;
+  cam.add(punkte);
+
+  /* Formen für die Teilchen */
+  const formen = {};
+  let skala = 1, sichtB = 1, sichtH = 1;
+  function textPunkte(wort, breite, yVers) {
+    const c = document.createElement("canvas"), Wc = 1400, Hc = 420; c.width = Wc; c.height = Hc;
+    const x = c.getContext("2d");
+    let fs = 340;
+    const setz = () => { x.font = `800 ${fs}px Archivo, "Arial Black", Arial, sans-serif`; };
+    setz(); while (x.measureText(wort).width > Wc * .94 && fs > 60) { fs -= 10; setz(); }
+    x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle";
+    x.fillText(wort, Wc / 2, Hc / 2 + fs * .05);
+    const d = x.getImageData(0, 0, Wc, Hc).data, pts = [];
+    for (let yy = 0; yy < Hc; yy += 2) for (let xx = 0; xx < Wc; xx += 2) if (d[(yy * Wc + xx) * 4 + 3] > 128) pts.push(xx, yy);
+    const a = new Float32Array(N * 3), s = breite / Wc;
+    for (let i = 0; i < N; i++) {
+      const k = Math.floor(zufall() * pts.length / 2) * 2;
+      a[i * 3] = (pts[k] - Wc / 2 + (zufall() - .5) * 2) * s;
+      a[i * 3 + 1] = -(pts[k + 1] - Hc / 2 + (zufall() - .5) * 2) * s + yVers;
+      a[i * 3 + 2] = (zufall() - .5) * .3;
+    }
+    return a;
+  }
+  const erzeuge = fn => { const a = new Float32Array(N * 3); for (let i = 0; i < N; i++) { const p = fn(i); a[i * 3] = p[0] * skala; a[i * 3 + 1] = p[1] * skala; a[i * 3 + 2] = p[2] * skala; } return a; };
+  const kippe = (p, w) => { const c = Math.cos(w), s = Math.sin(w); return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c]; };
+  let tropfenSkala = 1;
+  function formenBauen() {
+    sichtH = 2 * 9 * Math.tan(T.MathUtils.degToRad(cam.fov / 2)); sichtB = sichtH * cam.aspect;
+    skala = Math.min(1, sichtB / 7.4, sichtH / 5);
+    tropfenSkala = clamp(sichtB / 5.4, .5, 1);
+    const hoch = sichtH * (cam.aspect < .8 ? .16 : .12);
+    formen.WORT = textPunkte("FORMA", Math.min(sichtB * .88, 10.5) / .94, hoch);
+    formen.MARKE = textPunkte("ORDÉ", Math.min(sichtB * .78, 8.2) / .94, 0);
+    const kr = 1.5 * tropfenSkala / skala;
+    formen.KUGEL = erzeuge(i => { const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = i * 2.39996; const j = 1 + (zufall() - .5) * .04; return [Math.cos(th) * r * kr * j, y * kr * j, Math.sin(th) * r * kr * j]; });
+    formen.KNOTEN = erzeuge(() => {
+      const t = zufall() * Math.PI * 2, r = Math.cos(3 * t) + 2.1;
+      const u = [zufall() - .5, zufall() - .5, zufall() - .5], l = Math.hypot(...u) || 1, rad = .32 * Math.sqrt(zufall());
+      return [(r * Math.cos(2 * t)) * .78 + u[0] / l * rad, (r * Math.sin(2 * t)) * .78 + u[1] / l * rad, -Math.sin(3 * t) * .9 + u[2] / l * rad];
+    });
+    formen.WELLE = erzeuge(() => {
+      const x = (zufall() - .5) * 7.8, z = (Math.floor(zufall() * 34) / 33 - .5) * 4.4;
+      const y = Math.sin(x * 1.15 + z * .9) * .62 * Math.cos(z * .55) + (zufall() - .5) * .025;
+      return kippe([x, y, z], .55);
+    });
+    formen.WIRBEL = erzeuge(i => {
+      const arm = i % 3, r = Math.pow(zufall(), .7) * 3.3;
+      const w = arm * 2.0944 + r * 1.3 + (zufall() - .5) * .55 * (1.25 - r / 3.3);
+      return kippe([Math.cos(w) * r, (zufall() - .5) * .3 * (1 - r / 3.6), Math.sin(w) * r], 1.05);
+    });
+    formen.RING = erzeuge(() => {
+      const w = zufall() * Math.PI * 2, r = (2.15 + Math.pow(zufall(), 1.6) * .9) * tropfenSkala / skala;
+      return kippe([Math.cos(w) * r, (zufall() - .5) * .07, Math.sin(w) * r], 1.22);
+    });
+    formen.STAUB = erzeuge(() => [(zufall() - .5) * sichtB * 1.7 / skala, (zufall() - .5) * sichtH * 1.7 / skala, ((zufall() - .5) * 12 - 1) / skala]);
+    paar = ["", ""];
+  }
+  let paar = ["", ""];
+  function paarSetzen(a, b) {
+    if (paar[0] === a && paar[1] === b) return;
+    if (paar[0] !== a) { attrA.array.set(formen[a]); attrA.needsUpdate = true; }
+    if (paar[1] !== b) { attrB.array.set(formen[b]); attrB.needsUpdate = true; }
+    paar = [a, b];
+  }
+
+  /* ----- Bilder, die fließen: Ebenen über den Videos ----- */
+  const ortho = new T.OrthographicCamera(-vw / 2, vw / 2, vh / 2, -vh / 2, -10, 10);
+  const flussSzene = new T.Scene();
+  const ebeneGeo = new T.PlaneGeometry(1, 1, 32, 32);
+  figuren.forEach(fg => {
+    const tex = new T.VideoTexture(fg.v); tex.minFilter = T.LinearFilter; tex.magFilter = T.LinearFilter; tex.generateMipmaps = false;
+    fg.u = { uTex: { value: tex }, uZeit: { value: 0 }, uMaus: { value: new T.Vector2(.5, .5) }, uHover: { value: 0 }, uVel: { value: 0 },
+      uAuf: { value: 0 }, uGroesse: { value: new T.Vector2(1, 1) }, uVid: { value: new T.Vector2(16, 9) }, uRadius: { value: 22 }, uBereit: { value: 0 } };
+    fg.mesh = new T.Mesh(ebeneGeo, new T.ShaderMaterial({
+      uniforms: fg.u, transparent: true, depthTest: false, depthWrite: false,
+      vertexShader: `uniform float uVel;varying vec2 vUv;void main(){vUv=uv;vec3 p=position;p.y+=sin(uv.x*3.14159)*uVel*.07;p.x+=sin(uv.y*3.14159)*uVel*.015;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
+      fragmentShader: `uniform sampler2D uTex;uniform float uZeit,uHover,uVel,uAuf,uRadius,uBereit;uniform vec2 uMaus,uGroesse,uVid;varying vec2 vUv;
+        ${RAUSCHEN}
+        float box(vec2 p,vec2 b,float r){vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}
+        void main(){
+          float ra=uGroesse.x/uGroesse.y,va=uVid.x/uVid.y;
+          vec2 sc=ra>va?vec2(1.,va/ra):vec2(ra/va,1.);
+          vec2 uv=(vUv-.5)*sc*.9+.5;
+          vec2 d=vUv-uMaus;d.x*=ra;float r=length(d);
+          float welle=sin(r*36.-uZeit*5.)*exp(-r*4.5)*uHover;
+          uv+=normalize(d+1e-5)*welle*.02*sc;
+          uv-=d/vec2(ra,1.)*exp(-r*7.)*uHover*.09*sc;
+          float n1=f_snoise(vec3(uv*2.4,uZeit*.15)),n2=f_snoise(vec3(uv*2.4+7.,uZeit*.15));
+          uv+=vec2(n1,n2)*(.004+uHover*.012+abs(uVel)*.03);
+          float s=.0012+abs(uVel)*.03+uHover*.006*exp(-r*3.);
+          vec3 c=vec3(texture2D(uTex,uv+vec2(s,0.)).r,texture2D(uTex,uv).g,texture2D(uTex,uv-vec2(s,0.)).b);
+          c=mix(vec3(.12,.1,.16),c,uBereit);
+          float kante=uAuf*1.45-(1.-vUv.y)-(f_snoise(vec3(vUv*3.,uZeit*.3))*.5+.5)*.38;
+          float m=smoothstep(0.,.035,kante);
+          float leuchten=smoothstep(.07,0.,abs(kante))*(1.-step(.999,uAuf));
+          vec2 px=(vUv-.5)*uGroesse;float ecke=1.-smoothstep(-1.,.5,box(px,uGroesse*.5,uRadius));
+          vec3 col=mix(c,vec3(1.,.36,.15),leuchten*.85);
+          gl_FragColor=vec4(col,max(m,leuchten)*ecke);
+        }`
+    }));
+    fg.mesh.visible = false;
+    flussSzene.add(fg.mesh);
+    fg.v.addEventListener("loadeddata", () => { fg.u.uVid.value.set(fg.v.videoWidth || 16, fg.v.videoHeight || 9); fg.bereit = true; });
+  });
+
+  function groesse() {
+    renderer.setSize(vw, vh, false);
+    cam.aspect = vw / vh;
+    cam.fov = cam.aspect < .8 ? 56 : cam.aspect < 1.2 ? 44 : 35;
+    cam.updateProjectionMatrix();
+    ortho.left = -vw / 2; ortho.right = vw / 2; ortho.top = vh / 2; ortho.bottom = -vh / 2; ortho.updateProjectionMatrix();
+    formenBauen();
+  }
+  groesse();
+
+  // Bildrate beobachten: wird es zu langsam, zuerst auf die Glasbrechung verzichten, dann die Auflösung leicht senken
+  let messBilder = 0, messZeit = 0, stufe = 0;
+  function bildrate(dt) {
+    if (stufe >= 4) return;
+    messBilder++; messZeit += dt;
+    if (messBilder < 90) return;
+    if (messZeit / messBilder > 1 / 42) {
+      if (glas.transmission) glasLeicht();
+      else if (pr > prMin) { pr = Math.max(prMin, pr * .85); renderer.setPixelRatio(pr); renderer.setSize(vw, vh, false); tU.uPR.value = pr; }
+      stufe++;
+    }
+    messBilder = 0; messZeit = 0;
+  }
+
+  return { T, renderer, bildrate, scene, cam, F, himmelU, tropfen, tropfenU, tropfenMat, welt3d, bewegte, glasTeile, knoten, ringe, bahn,
+    punkte, tU, tMat, paarSetzen, groesse, ortho, flussSzene, get tropfenSkala() { return tropfenSkala; }, get sicht() { return [sichtB, sichtH]; } };
+}
+
+/* ======================================================================
+   Ablauf je Bild
+   ====================================================================== */
+let zeit = 0, letzteZeit = performance.now(), introStart = -1, introT = ruhig ? 1 : 0;
+let letztY = scrollY, tempo = 0, tempoGlatt = 0;
+let nacht = 0;
+const dummy = W ? new W.T.Object3D() : null;
+const kamZiel = W ? new W.T.Vector3() : null, kamBlick = W ? new W.T.Vector3() : null, kamBlickGlatt = W ? new W.T.Vector3() : null;
+const hilfsV = W ? new W.T.Vector3() : null;
+let formAktiv = "";
+const formname = $("#formname"), formLis = $$(".formen li");
+const NAMEN = { STAUB: "Dust", KUGEL: "Sphere", KNOTEN: "Knot", WELLE: "Wave", WIRBEL: "Swirl", MARKE: "ORDÉ", WORT: "Forma", RING: "Ring" };
+const zeilenBox = $(".zeilen"), schriftHinweisBox = $(".schrift-hinweis");
+const finaleText = $("#finaleText"), nachtSatz = $("#nachtSatz"), spur1 = $("#flugspur"), spur2 = $("#flugspur2");
+
+const stufen = (v, n) => Math.round(v * n) / n;
+
+function teilchenPlan(y) {
+  // Gibt [von, nach, mischung, deckkraft, streuung] zurück
+  const pa = stuck("ankunft", y);
+  if (y < ende("ankunft") + vh * .6) {
+    if (introT < 1) return ["STAUB", "WORT", introT, 1, 0];
+    if (pa < .65) return ["WORT", "KUGEL", glatt(.08, .62, pa), 1, 0];
+    return ["WORT", "KUGEL", 1, 1 - glatt(.65, .95, pa), 0];
+  }
+  if (y < ende("flug") + vh * .2) return ["STAUB", "STAUB", 0, 0, 0];
+  if (y < S.teilchen.top) {
+    const a = y < S.fluss.top ? .7 : .35;
+    return ["STAUB", "STAUB", 0, a * glatt(ende("flug") + vh * .2, ende("flug") + vh * .9, y), .15];
+  }
+  if (y < S.finale.top - vh * .7) {
+    const pm = stuck("teilchen", y);
+    const seg = [["STAUB", "KUGEL", 0, .1], ["KUGEL", "KNOTEN", .18, .32], ["KNOTEN", "WELLE", .4, .54], ["WELLE", "WIRBEL", .62, .76], ["WIRBEL", "MARKE", .84, .96]];
+    let aktiv = seg[0], m = 0;
+    for (const s of seg) { if (pm >= s[2]) { aktiv = s; m = glatt(s[2], s[3], pm); } }
+    if (pm < seg[0][2]) m = 0;
+    return [aktiv[0], aktiv[1], m, mix(.35, 1, glatt(S.teilchen.top - vh * .5, S.teilchen.top, y)), 0];
+  }
+  const pe = clamp((y - (S.finale.top - vh)) / S.finale.h);
+  return ["MARKE", "RING", glatt(.2, .62, pe), 1, 0];
+}
+
+function bild(jetzt) {
+  requestAnimationFrame(bild);
+  const dtEcht = Math.min(.5, Math.max(0, (jetzt - letzteZeit) / 1000)); letzteZeit = jetzt;
+  const dt = Math.min(.05, dtEcht);
+  const k = 1 - Math.exp(-dtEcht * 9);
+  if (lenis) lenis.raf(jetzt);
+  if (!angehalten) zeit += dt;
+  const y = scrollY;
+  tempo = dt > 0 ? (y - letztY) / Math.max(1, vh) * (1 / 60) / Math.max(dt, 1 / 240) : 0;
+  letztY = y;
+  tempoGlatt = mix(tempoGlatt, clamp(tempo * 6, -1.5, 1.5), .12);
+
+  // Zeiger
+  if (fein && !ruhig) { zx = mix(zx, maus.x, .22); zy = mix(zy, maus.y, .22); zeiger.style.transform = `translate(${zx}px,${zy}px)`; }
+
+  // Intro
+  if (introStart < 0 && introBereit) introStart = jetzt;
+  if (introStart >= 0 && introT < 1) introT = angehalten ? 1 : clamp((jetzt - introStart) / 2600);
+
+  // Nacht
+  const fE = ende("flug");
+  const nAuf = glatt(fE - vh * .3, fE + vh * .4, y);
+  const pe = clamp((y - (S.finale.top - vh)) / S.finale.h);
+  nacht = Math.min(nAuf, 1 - glatt(.12, .5, pe));
+  const zeitNeu = nacht > .5 ? "nacht" : "tag";
+  if (html.dataset.zeit !== zeitNeu) html.dataset.zeit = zeitNeu;
+
+  // Index
+  const mitte = y + vh * .5;
+  let aktiv = "ankunft";
+  for (const k of ["ankunft", "flug", "schrift", "fluss", "teilchen", "finale"]) if (mitte >= S[k].top) aktiv = k;
+  if (aktiv !== indexAktiv) { indexAktiv = aktiv; indexLinks.forEach(a => a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + aktiv))); }
+
+  // Flug: Kamera-Fortschritt
+  let fl = clamp((y - ende("ankunft")) / Math.max(1, fE - ende("ankunft")));
+  if (ruhig) fl = fl < .12 ? 0 : fl < .38 ? .22 : fl < .68 ? .5 : .86;
+
+  // Stationen
+  stationen.forEach(s => {
+    const l = (fl - s.von) / (s.bis - s.von);
+    const ein = glatt(0, .22, l), aus = 1 - glatt(.8, 1, l);
+    const o = Math.min(ein, aus);
+    s.el.style.opacity = o.toFixed(3);
+    if (o > .002) {
+      s.woerter.forEach((w, i) => {
+        const e = ruhig ? 1 : glatt(i * .03, .16 + i * .03, l) ;
+        const a = ruhig ? 0 : glatt(.8 + i * .01, .98, l);
+        w.style.transform = `translateY(${((1 - e) * 110 - a * 110).toFixed(1)}%)`;
+      });
+      s.p.style.transform = `translateY(${((1 - ein) * 16).toFixed(1)}px)`;
+    }
+  });
+  spur1.style.transform = `scaleX(${clamp(fl / .5).toFixed(4)})`;
+  spur2.style.transform = `scaleX(${clamp((fl - .5) / .5).toFixed(4)})`;
+
+  // Schrift
+  const ps = clamp((y - (S.schrift.top - vh)) / (S.schrift.h + vh));
+  nachtSatz.style.opacity = (glatt(.1, .2, ps) * (1 - glatt(.3, .38, ps))).toFixed(3);
+  zeilenBox.style.opacity = ruhig ? "1" : glatt(.34, .44, ps).toFixed(3);
+  schriftHinweisBox.style.opacity = ruhig ? "1" : glatt(.4, .5, ps).toFixed(3);
+  if (ps > 0 && ps < 1) schriftBewegen(ps);
+
+  // Finale
+  finaleText.classList.toggle("da", pe > .5);
+
+  if (!W) return;
+  const { T, renderer, scene, cam, F, himmelU, tropfen, tropfenU, welt3d, bewegte, glasTeile, knoten, ringe, bahn, punkte, tU, tMat } = W;
+
+  if (S.abspann.el.getBoundingClientRect().top <= 0) return; // Abspann deckt alles
+
+  // Himmel, Nebel
+  himmelU.uOben.value.lerpColors(F.perleOben, F.nachtOben, nacht);
+  himmelU.uUnten.value.lerpColors(F.perleUnten, F.nachtUnten, nacht);
+  himmelU.uNacht.value = nacht;
+  scene.fog.color.lerpColors(F.perle, F.nachtOben, nacht);
+  scene.fog.near = mix(26, .1, nacht); scene.fog.far = mix(110, .6, Math.pow(nacht, .5));
+  const weltSichtbar = nacht < .995;
+  welt3d.visible = weltSichtbar && y < fE + vh * .5;
+  tropfen.visible = weltSichtbar;
+
+  // Kamera
+  const nachFlug = y > fE + vh * .5;
+  if (!nachFlug) {
+    const t = clamp(fl, 0, .9999);
+    kamZiel.copy(bahn.getPointAt(t));
+    kamBlick.copy(bahn.getPointAt(Math.min(1, t + .045)));
+    const aufTropfen = 1 - glatt(.14, .36, t);
+    kamBlick.lerp(hilfsV.set(0, 0, 0), aufTropfen);
+  } else { kamZiel.set(0, 0, 9); kamBlick.set(0, 0, 0); }
+  const par = ruhig ? 0 : 1;
+  maus.gx = mix(maus.gx, maus.aktiv ? maus.nx : 0, .05); maus.gy = mix(maus.gy, maus.aktiv ? maus.ny : 0, .05);
+  cam.position.copy(kamZiel);
+  cam.position.x += maus.gx * .35 * par; cam.position.y += maus.gy * .22 * par;
+  if (nachFlug || fl === 0) kamBlickGlatt.copy(kamBlick); else kamBlickGlatt.lerp(kamBlick, ruhig ? 1 : .2);
+  cam.lookAt(kamBlickGlatt);
+
+  // Tropfen
+  const pa = stuck("ankunft", y);
+  const tsk = W.tropfenSkala;
+  const auftauchen = y < ende("ankunft") + vh ? glatt(.5, .95, pa) : 1;
+  tropfen.scale.setScalar(Math.max(.0001, auftauchen * tsk));
+  const fin = glatt(.2, .7, pe);
+  const anfang = y < fE ? (1 - glatt(.02, .2, fl)) * W.sicht[1] * (cam.aspect < .8 ? .1 : .16) : 0;
+  const heben = Math.max(anfang, fin * W.sicht[1] * (cam.aspect < .8 ? .2 : .235));
+  const finS = mix(1, cam.aspect < .8 ? .8 : .6, fin);
+  tropfen.scale.multiplyScalar(finS);
+  tropfen.position.y = heben; punkte.position.y = heben; punkte.scale.setScalar(finS);
+  tropfen.rotation.y = zeit * .12; tropfen.rotation.x = Math.sin(zeit * .2) * .2;
+  tropfenU.uZeit.value = zeit;
+  tropfenU.uWelle.value = mix(tropfenU.uWelle.value, Math.min(1.4, Math.abs(tempoGlatt) * 1.6), .08);
+  // Maus auf den Tropfen projizieren
+  let kraft = 0;
+  if (maus.aktiv && weltSichtbar) {
+    hilfsV.set(maus.nx, maus.ny, .5).unproject(cam).sub(cam.position).normalize();
+    const tz = -cam.position.z / (hilfsV.z || -1e-4);
+    if (tz > 0) {
+      const px = cam.position.x + hilfsV.x * tz, py = cam.position.y + hilfsV.y * tz;
+      const rad = 1.45 * tsk, d = Math.hypot(px, py);
+      if (d < rad * 1.7) {
+        const r2 = Math.min(d, rad * .999);
+        const sx = d > 0 ? px / d * r2 : 0, sy = d > 0 ? py / d * r2 : 0;
+        const pz = Math.sqrt(Math.max(0, rad * rad - r2 * r2));
+        const lok = tropfen.worldToLocal(hilfsV.set(sx, sy, pz));
+        tropfenU.uMaus.value.lerp(lok, .2);
+        kraft = 1 - glatt(rad, rad * 1.7, d);
+      }
+    }
+  }
+  tropfenU.uMausKraft.value = mix(tropfenU.uMausKraft.value, kraft, .08);
+
+  // Welt bewegen
+  if (welt3d.visible) {
+    // Die verstreuten Körper wachsen erst mit dem Flug, die Ankunft bleibt ruhig
+    const wachsen = ruhig ? 1 : glatt(.02, .16, fl);
+    const fern = ruhig || fl > .03;
+    knoten.visible = fern; glasTeile.forEach(m => { m.visible = fern; });
+    bewegte.forEach(m => {
+      m.userData.daten.forEach((d, i) => {
+        dummy.position.copy(d.p); dummy.position.y += Math.sin(zeit * .6 + d.ph) * .18;
+        dummy.quaternion.setFromAxisAngle(d.ax, zeit * d.w + d.ph);
+        dummy.scale.setScalar(Math.max(.0001, d.s * wachsen)); dummy.updateMatrix(); m.setMatrixAt(i, dummy.matrix);
+      });
+      m.instanceMatrix.needsUpdate = true;
+    });
+    glasTeile.forEach((m, i) => { m.rotation.x = zeit * .15 + m.userData.ph; m.rotation.y = zeit * .21 + i; });
+    knoten.rotation.set(zeit * .2, zeit * .27, 0);
+    ringe.forEach(m => { m.rotation.z = m.userData.r0 + zeit * m.userData.w + fl * m.userData.w * 8; });
+  }
+
+  // Teilchen
+  const [a, b, mi, al, st] = teilchenPlan(y);
+  // Unsichtbar werdende Teilchen behalten ihre Form, sonst springen sie beim Ausblenden
+  if (al > 0 || tU.uAlpha.value < .01) { W.paarSetzen(a, b); tU.uMix.value = ruhig ? (mi > .5 ? 1 : 0) : mi; }
+  tU.uAlpha.value = mix(tU.uAlpha.value, al, k);
+  tU.uStreu.value = mix(tU.uStreu.value, st, .05);
+  tU.uZeit.value = zeit;
+  tU.uNacht.value = nacht;
+  tU.uGroesse.value = mix(34, 30, nacht) * (klein ? 1.15 : 1);
+  const additiv = nacht > .5;
+  if ((tMat.blending === T.AdditiveBlending) !== additiv) { tMat.blending = additiv ? T.AdditiveBlending : T.NormalBlending; tMat.needsUpdate = true; }
+  punkte.visible = tU.uAlpha.value > .005;
+  const [sb, sh] = W.sicht;
+  tU.uMaus.value.set(maus.nx * sb / 2, maus.ny * sh / 2, 0);
+  tU.uMausKraft.value = mix(tU.uMausKraft.value, maus.aktiv && !ruhig ? 1 : 0, .1);
+  // Formname
+  const formJetzt = y > S.teilchen.top - vh * .2 && y < S.finale.top ? (mi > .5 ? b : a) : "";
+  if (formJetzt && formJetzt !== formAktiv) {
+    formAktiv = formJetzt;
+    formname.classList.add("wechsel");
+    setTimeout(() => { formname.textContent = NAMEN[formJetzt]; formname.classList.remove("wechsel"); }, ruhig ? 0 : 200);
+    formLis.forEach(li => li.setAttribute("aria-current", String(li.dataset.form === formJetzt)));
+  }
+
+  renderer.render(scene, cam);
+  if (introT >= 1) W.bildrate(dt);
+
+  // Fließende Bilder
+  const flussR = S.fluss.el.getBoundingClientRect();
+  if (flussR.bottom > 0 && flussR.top < vh) {
+    let sichtbar = false;
+    figuren.forEach(fg => {
+      const r = fg.lw.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) { fg.mesh.visible = false; return; }
+      sichtbar = true; fg.mesh.visible = true;
+      fg.mesh.scale.set(r.width, r.height, 1);
+      fg.mesh.position.set(r.left + r.width / 2 - vw / 2, vh / 2 - r.top - r.height / 2, 0);
+      fg.u.uGroesse.value.set(r.width, r.height);
+      if (r.top < vh * .88) fg.auf = ruhig ? 1 : Math.min(1, fg.auf + dt / 1.4);
+      fg.hover = mix(fg.hover, fg.hz, .08);
+      fg.mx = mix(fg.mx, fg.zx, .15); fg.my = mix(fg.my, fg.zy, .15);
+      fg.u.uAuf.value = fg.auf; fg.u.uHover.value = fg.hover; fg.u.uMaus.value.set(fg.mx, fg.my);
+      fg.u.uVel.value = ruhig ? 0 : tempoGlatt; fg.u.uZeit.value = zeit;
+      fg.u.uBereit.value = mix(fg.u.uBereit.value, fg.bereit ? 1 : 0, .08);
+    });
+    if (sichtbar) {
+      renderer.autoClear = false;
+      renderer.clearDepth();
+      renderer.render(W.flussSzene, W.ortho);
+      renderer.autoClear = true;
+    }
+  }
+}
+
+function schriftBewegen(ps) {
+  const sweepX = ((ps * 2.2) % 1) * vw * 1.2 - vw * .1;
+  const px = maus.aktiv ? maus.x : sweepX;
+  const py = maus.aktiv ? maus.y : vh * .5;
+  const schub = Math.min(1, Math.abs(tempoGlatt) * 1.2);
+  const buehneTop = S.schrift.el.querySelector(".buehne").getBoundingClientRect().top;
+  zeilen.forEach((z, i) => {
+    const weg = Math.max(0, z.breite - vw);
+    const x = ruhig ? -weg * .1 : (z.dir < 0 ? -ps * weg : -(1 - ps) * weg);
+    const schraeg = ruhig ? 0 : clamp(-tempoGlatt * 8, -14, 14);
+    z.el.style.transform = `translate3d(${x.toFixed(1)}px,0,0) skewX(${schraeg.toFixed(2)}deg)`;
+    const cy = buehneTop + z.mitteY;
+    const dy = (cy - py) / (vh * .32);
+    z.spans.forEach(s => {
+      const cx = x + s.x + s.w / 2;
+      const dx = (cx - px) / (vw * .16);
+      const nah = ruhig ? .35 + .35 * Math.sin(s.x * .01 + i) : Math.exp(-(dx * dx + dy * dy) * 1.1);
+      const f = clamp(nah + schub * .55);
+      const wd = Math.round(mix(66, 125, f)), wg = Math.round(mix(220, 900, f) / 10) * 10;
+      const v = `"wdth" ${wd},"wght" ${wg}`;
+      if (v !== s.letzt) { s.el.style.fontVariationSettings = v; s.letzt = v; }
+    });
+  });
+}
+
+/* ---------- Start ---------- */
+let introBereit = false;
+function start() {
+  messen(); zeilenMessen();
+  if (W) W.groesse();
+  introBereit = true;
+  requestAnimationFrame(bild);
+}
+const schriftenFertig = document.fonts ? Promise.race([
+  Promise.all([document.fonts.load('800 300px "Archivo"'), document.fonts.load('italic 40px "Instrument Serif"'), document.fonts.ready]),
+  new Promise(r => setTimeout(r, 2500))
+]) : Promise.resolve();
+schriftenFertig.then(start, start);
+
+let groesseTimer = 0, letzteB = vw;
+addEventListener("resize", () => {
+  clearTimeout(groesseTimer);
+  groesseTimer = setTimeout(() => {
+    const neuB = innerWidth;
+    messen(); zeilenMessen();
+    if (W && (Math.abs(neuB - letzteB) > 2 || !klein)) { W.groesse(); letzteB = neuB; }
+    else if (W) { W.renderer.setSize(vw, vh, false); W.cam.aspect = vw / vh; W.cam.fov = W.cam.aspect < .8 ? 56 : W.cam.aspect < 1.2 ? 44 : 35; W.cam.updateProjectionMatrix(); W.ortho.top = vh / 2; W.ortho.bottom = -vh / 2; W.ortho.updateProjectionMatrix(); }
+  }, 160);
+});
+addEventListener("load", messen);
+})();
+</script>
+
+<div id="ordeBalken">
+  <a href="../../en/examples.html">&larr; Back to ORD&Eacute;</a>
+  <span>Example site &middot; not a real business</span>
+  <a class="ordeCta" href="../../en/contact.html">Request a site like this</a>
+</div>
+<style>
+#ordeBalken{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+  background:#16150F;color:#C9C3B7;font:500 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+#ordeBalken a{color:#fff;text-decoration:none;white-space:nowrap}
+#ordeBalken a:hover{text-decoration:underline}
+#ordeBalken span{opacity:.72;font-size:13px}
+#ordeBalken .ordeCta{background:#1E3B32;padding:8px 16px;border-radius:999px}
+#ordeBalken .ordeCta:hover{background:#2F6B58;text-decoration:none}
+@media (max-width:640px){
+  #ordeBalken{gap:10px;padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));font-size:13px}
+  #ordeBalken span{order:3;flex-basis:100%;text-align:center;font-size:11.5px;line-height:1.3}
+}
+@media print{#ordeBalken{display:none}}
+</style>
+</body>
+</html>

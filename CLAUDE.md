@@ -19,8 +19,8 @@ Bilderordner. Kein Build, kein Framework.
 
 ## Showreels
 
-Fünf Seiten ohne Branche: `monolith/`, `spektrum/`, `lumen/`, `lichtfeld/`,
-`halvo/`. Sie zeigen, was technisch geht (WebGL, 3D, Simulationen) und erscheinen auf byorde.com
+Sechs Seiten ohne Branche: `monolith/`, `spektrum/`, `lumen/`, `lichtfeld/`,
+`halvo/`, `forma/`. Sie zeigen, was technisch geht (WebGL, 3D, Simulationen) und erscheinen auf byorde.com
 in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
 `BRANCHEN`. Abweichend von den sechs Demos:
 
@@ -45,7 +45,11 @@ in einem eigenen Abschnitt (`SHOWREELS` in `orde-website/build.py`), nicht in
   erst nach dem Vorspann fotografiert. Die fps-Anzeige wird dabei ausgeblendet.
 - **Gewicht:** `monolith` bringt 11,9 MB Full-HD-Video mit (lädt erst beim
   Hinscrollen), `halvo` 12 MB (das Drohnenvideo lädt erst bei Szene 5), die anderen
-  0,1 bis 6,3 MB.
+  0,1 bis 6,3 MB (`forma` 2,1 MB, die Videos laden erst kurz vor der Galerie).
+- **`forma`:** rechnet in der Qualität mit, die das Gerät schafft: bis zur doppelten
+  Auflösung, wird es zu langsam, fällt zuerst die Glasbrechung weg, dann sinkt die Auflösung,
+  nie unter 1,25. Bei `navigator.webdriver` (also in `vorschau-erzeugen.py`) einfache Auflösung
+  und ohne Glasbrechung, sonst dauert ein Bild in der Software-Grafik über 30 Sekunden.
 
 Jede hat eine englische Fassung `en.html` (Rückkehr-Balken auf `/en/`,
 Monolith mit Fuß und am/pm). Sie stehen in `orde-website/build.py` unter
